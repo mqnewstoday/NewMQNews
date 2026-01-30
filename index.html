@@ -801,22 +801,41 @@
         window.showNotif = showNotif;
 
 
-        // 4. PWA Install Logic
+        // 4. PWA Install Logic (Dengan Notif Konsisten)
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Tampilkan tombol Install di menu "Lainnya" (Secara default hidden-row, jadi aman)
+            // Tampilkan tombol Install di menu "Lainnya"
             const btn = document.getElementById('installBtn');
             if (btn) {
                 btn.onclick = async () => {
                     if (deferredPrompt) {
                         deferredPrompt.prompt();
                         const { outcome } = await deferredPrompt.userChoice;
+
+                        if (outcome === 'accepted') {
+                            showNotif("Sedang memproses instalasi...", "success");
+                        } else {
+                            showNotif("Instalasi dibatalkan.", "error");
+                        }
                         deferredPrompt = null;
+                    } else {
+                        // Kasus langka: prompt hilang atau sudah diinstall
+                        showNotif("Aplikasi mungkin sudah terinstall.", "error");
                     }
                 };
             }
+        });
+
+        // Event saat sukses install
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            showNotif("Aplikasi BERHASIL diinstall!", "success");
+
+            // Sembunyikan tombol kalau perlu
+            const btn = document.getElementById('installBtn');
+            if (btn) btn.style.display = 'none';
         });
 
         // --- [BARU] FUNGSI RENDER REKOMENDASI ---
