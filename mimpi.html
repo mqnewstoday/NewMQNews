@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mubasyirat - MQ News</title>
+
+    <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="theme.css">
+
+    <style>
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: 'Lato', sans-serif;
+            padding-bottom: 0;
+            /* No footer */
+        }
+
+        /* HEADER SEDERHANA (Back Only) */
+        .simple-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .simple-header {
+            background: rgba(18, 18, 18, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-back {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-back:active {
+            background: rgba(0, 0, 0, 0.05);
+            transform: scale(0.95);
+        }
+
+        .header-title {
+            flex: 1;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-right: 40px;
+            /* Balance left icon */
+        }
+
+        /* CONTENT CONTAINER */
+        .dream-content {
+            margin-top: 60px;
+            /* Header height */
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* GAMBAR UTAMA (Reels/TikTok Ratio Support) */
+        .dream-hero {
+            width: 100%;
+            /* Default to Portrait ratio to match user request */
+            aspect-ratio: 9/16;
+            max-height: 70vh;
+            /* Don't take up entire screen height */
+            background: #000;
+            /* Cinematic background for letterboxing */
+            position: relative;
+            margin: 0 auto;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dream-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* Show FULL image without cropping */
+        }
+
+        /* Optional: Add blurred background for fill if needed */
+        .dream-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--bg-img);
+            /* We can set this via JS if we want advanced effect */
+            background-size: cover;
+            filter: blur(20px);
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .dream-hero img {
+            z-index: 1;
+        }
+
+        /* AUDIO PLAYER BLOCK */
+        .audio-block {
+            padding: 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 60px;
+            /* Below header */
+            z-index: 900;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 10px rgba(157, 27, 27, 0.4);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: 0.2s;
+        }
+
+        .play-btn:active {
+            transform: scale(0.9);
+        }
+
+        .audio-info {
+            flex: 1;
+        }
+
+        .audio-title {
+            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+
+        .audio-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .btn-save-dream {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .btn-save-dream.saved {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* NARASI TEKS */
+        .dream-text {
+            padding: 25px 20px 50px 20px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-main);
+            text-align: justify;
+        }
+
+        .dream-text p {
+            margin-bottom: 20px;
+        }
+
+        .dream-text::first-letter {
+            font-size: 3.5rem;
+            float: left;
+            margin-right: 10px;
+            line-height: 1;
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+        }
+
+        /* NOTIFIKASI (Style Copas dari simpan.html) */
+        .custom-notif {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            color: var(--text-main);
+            padding: 12px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            min-width: 250px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-notif.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .custom-notif.success {
+            border-left: 5px solid #2e7d32;
+        }
+
+        .custom-notif.error {
+            border-left: 5px solid #d32f2f;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="simple-header">
+        <div class="btn-back" onclick="window.location.href='index.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+        </div>
+        <div class="header-title">MUBASYIRAT</div>
+    </div>
+
+    <!-- Konten -->
+    <div class="dream-content" id="dream-container">
+        <!-- Hero Image -->
+        <div class="dream-hero">
+            <img id="d-img" src="" onerror="this.src='https://placehold.co/600x400?text=Loading...'">
+        </div>
+
+        <!-- Audio & Save -->
+        <div class="audio-block">
+            <div class="play-btn" id="btn-play" onclick="toggleAudio()">
+                <svg id="icon-play" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+                <svg id="icon-pause" style="display:none" viewBox="0 0 24 24" fill="currentColor" width="24"
+                    height="24">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                </svg>
+            </div>
+            <div class="audio-info">
+                <div class="audio-title" id="d-title">Memuat Judul...</div>
+                <div class="audio-status" id="audio-status">Audio Narasi</div>
+            </div>
+            <div class="btn-save-dream" id="btn-save" onclick="toggleSave()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Simpan</span>
+            </div>
+        </div>
+
+        <!-- Teks Narasi -->
+        <div class="dream-text" id="d-text">
+            <p>Sedang memuat narasi mimpi...</p>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="audio-player"></audio>
+
+    <!-- Notifikasi -->
+    <div id="notifBox" class="custom-notif">
+        <div id="notifIcon"></div>
+        <span id="notifText">Pesan</span>
+    </div>
+
+    <!-- Init Script -->
+    <script src="theme-init.js"></script>
+    <script type="module">
+        import { auth } from './firebase-config.js';
+
+        let currentData = null;
+        const player = document.getElementById('audio-player');
+        const btnPlay = document.getElementById('btn-play');
+        const iconPlay = document.getElementById('icon-play');
+        const iconPause = document.getElementById('icon-pause');
+        const statusText = document.getElementById('audio-status');
+
+        // AMBIL PARAMETER URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const titleParam = urlParams.get('title');
+
+        // SHEET ID BARU (NANTI DIGANTI USER)
+        // KITA PAKAI PLACEHOLDER DULU ATAU ID LAMA TAPI TAB BARU (KALAU BISA).
+        // TAPI USER BILANG "SHEET YANG BERBEDA".
+        const SHEET_ID_DREAMS = "AKfycbx_PLACEHOLDER_SHEET_ID_HERE"; // User harus ganti ini nanti
+        // KARENA BLM ADA, KITA PAKE LOGIKA: "Kalau script gagal fetch, tampilkan dummy".
+        // TAPI USER BILANG DIA AKAN BIKIN SHEETNYA NANTI.
+        // SAYA AKAN PAKE ID SEMENTARA ATAU DUMMY LOGIC.
+
+        // SAYA AKAN GUNAKAN SHEET SAMA TAPI MUNGKIN LOGIKANYA NANTI DI GANTI
+        // UNTUK SEKARANG SAYA HARDCODE DULU BEBERAPA DATA BIAR BISA DITEST TAMPILANNYA
+        // JIKA USER SUDAH KASIH SHEET BARU, TINGGAL GANTI URL FETCH.
+
+        // FUNGSI FETCH
+        async function fetchDream() {
+            if (!titleParam) return;
+
+            // LOGIKA FETCH CSV (SAMA KAYAK BACA.HTML TAPI BEDA SHEET)
+            // SEMENTARA KITA PAKE DATA DUMMY DULU KARENA SHEETNYA BELUM ADA
+            // NANTI SAYA KASIH LIST APA AJA YG PERLU DIISI DI SHEET.
+
+            // === DUMMY DATA MODE (UNTUK DEMO) ===
+            const dummyDreams = [
+                {
+                    judul: "Mimpi Bertemu Rasulullah SAW",
+                    gambar: "https://source.unsplash.com/random/800x600/?mosque,night",
+                    audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                    narasi: "<p>Dalam mimpi ini, saya melihat cahaya yang sangat terang benderang...</p><p>Rasulullah SAW bersabda bahwa masa kebangkitan Islam sudah sangat dekat...</p>"
+                }
+            ];
+
+            // Coba cari di dummy (karena blm ada sheet)
+            // Kalo titleParam ada, kita anggep ketemu dummy pertama dulu buat visual
+            const data = dummyDreams[0];
+            // REALNYA NANTI FETCH CSV DISINI.
+
+            // SET UI
+            currentData = {
+                title: titleParam || data.judul, // Pakai title dari URL kalo ada
+                image: data.gambar,
+                audio: data.audio,
+                narasi: data.narasi
+            };
+
+            document.getElementById('d-title').innerText = currentData.title;
+            document.getElementById('d-img').src = currentData.image;
+            // Set background for blur effect
+            document.querySelector('.dream-hero').style.setProperty('--bg-img', `url('${currentData.image}')`);
+
+            document.getElementById('d-text').innerHTML = currentData.narasi;
+            player.src = currentData.audio;
+
+            checkSavedStatus();
+        }
+
+        // AUDIO CONTROLS
+        window.toggleAudio = function () {
+            if (player.paused) {
+                player.play();
+                iconPlay.style.display = 'none';
+                iconPause.style.display = 'block';
+                statusText.innerText = "Sedang Memutar...";
+                btnPlay.style.transform = "scale(1.1)";
+            } else {
+                player.pause();
+                iconPlay.style.display = 'block';
+                iconPause.style.display = 'none';
+                statusText.innerText = "Audio Jeda";
+                btnPlay.style.transform = "scale(1)";
+            }
+        }
+
+        player.onended = function () {
+            iconPlay.style.display = 'block';
+            iconPause.style.display = 'none';
+            statusText.innerText = "Selesai Diputar";
+        };
+
+        // SAVE LOGIC
+        const SAVE_KEY = 'mq_saved_mimpi';
+
+        function checkSavedStatus() {
+            const saved = JSON.parse(localStorage.getItem(SAVE_KEY)) || [];
+            const isSaved = saved.some(item => item.title === currentData.title);
+            updateSaveBtn(isSaved);
+        }
+
+        function updateSaveBtn(isSaved) {
+            const btn = document.getElementById('btn-save');
+            if (isSaved) {
+                btn.classList.add('saved');
+                btn.querySelector('span').innerText = "Tersimpan";
+            } else {
+                btn.classList.remove('saved');
+                btn.querySelector('span').innerText = "Simpan";
+            }
+        }
+
+        window.toggleSave = function () {
+            let saved = JSON.parse(localStorage.getItem(SAVE_KEY)) || [];
+            const index = saved.findIndex(item => item.title === currentData.title);
+
+            if (index === -1) {
+                // ADD
+                saved.push(currentData);
+                showNotif("Mimpi berhasil disimpan!", "success");
+                updateSaveBtn(true);
+            } else {
+                // REMOVE (Optional: atau prevent duplicate?)
+                // Usually toggle remove is good UX
+                saved.splice(index, 1);
+                showNotif("Dihapus dari simpanan.", "error"); // Pake error style merah
+                updateSaveBtn(false);
+            }
+            localStorage.setItem(SAVE_KEY, JSON.stringify(saved));
+        }
+
+        // NOTIF
+        function showNotif(msg, type) {
+            const box = document.getElementById('notifBox');
+            const text = document.getElementById('notifText');
+            const icon = document.getElementById('notifIcon');
+
+            text.innerText = msg;
+            box.className = "custom-notif active " + type;
+
+            if (type === 'success') {
+                icon.innerHTML = `<svg style="width:20px;height:20px;fill:#2e7d32" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+            } else {
+                icon.innerHTML = `<svg style="width:20px;height:20px;fill:#d32f2f" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
+            }
+
+            setTimeout(() => {
+                box.classList.remove('active');
+                box.classList.remove('success');
+                box.classList.remove('error');
+            }, 3000);
+        }
+
+        // RUN
+        fetchDream();
+
+    </script>
+</body>
+
+</html>

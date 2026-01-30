@@ -236,6 +236,66 @@
                 </div>
             </div>
 
+            <!-- MUBASYIRAT SECTION (NEW) -->
+            <div class="mubasyirat-section">
+                <div class="mubasyirat-title">MUBASYIRAT MUHAMMAD QASIM</div>
+                <div class="dream-scroll-container" id="dream-container-scroll">
+                    <div class="loader" style="width:100%; text-align:center; padding:20px;">Memuat Mubasyirat...</div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    // LINK CSV RESMI DARI USER
+                    const MUBASYIRAT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=703095600&single=true&output=csv";
+
+                    function renderDreams(data) {
+                        const container = document.getElementById('dream-container-scroll');
+                        container.innerHTML = "";
+                        data.forEach(item => {
+                            // Support berbagai variasi key safe
+                            const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
+
+                            const title = getK(item, 'judul') || "Tanpa Judul";
+                            // Fallback thumbnail jika kosong
+                            const thumb = getK(item, 'thumbnail') || "https://placehold.co/450x800?text=No+Image";
+                            const date = getK(item, 'tanggal') || ""; // Tanggal mungkin kosong di CSV baru
+
+                            const html = `
+                        <div class="dream-card" onclick="window.location.href='mimpi.html?title=' + encodeURIComponent('${title}')">
+                            <div class="dream-thumb">
+                                <img src="${thumb}" loading="lazy" onerror="this.src='https://placehold.co/450x800?text=Error'">
+                                <div class="dream-overlay"></div>
+                                <div class="play-overlay">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                            </div>
+                            <div class="dream-info">
+                                <div class="dream-title">${title}</div>
+                                ${date ? `<div class="dream-date">
+                                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    ${date}
+                                </div>` : ''}
+                            </div>
+                        </div>
+                        `;
+                            container.insertAdjacentHTML('beforeend', html);
+                        });
+                    }
+
+                    if (window.Papa) {
+                        Papa.parse(MUBASYIRAT_CSV_URL, {
+                            download: true, header: true, skipEmptyLines: true,
+                            complete: (res) => {
+                                if (res.data && res.data.length > 0) renderDreams(res.data);
+                                else container.innerHTML = "<div style='text-align:center;width:100%'>Belum ada data mimpi.</div>";
+                            },
+                            error: () => document.getElementById('dream-container-scroll').innerHTML = "<div style='text-align:center;width:100%'>Gagal memuat data.</div>"
+                        });
+                    }
+                });
+            </script>
+
         </main>
     </div>
 

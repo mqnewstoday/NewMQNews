@@ -1323,3 +1323,173 @@ footer {
     color: #333;
     font-size: 0.95rem;
 }
+
+/* =========================================
+   NEW SECTION: MUBASYIRAT (Horizontal Scroll)
+   ========================================= */
+.mubasyirat-section {
+    padding: 30px 20px 50px 20px;
+    background: linear-gradient(to bottom, var(--bg-body) 0%, rgba(157, 27, 27, 0.05) 100%);
+    border-top: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+}
+
+.mubasyirat-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mubasyirat-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: var(--gold);
+    margin: 5px auto 0 auto;
+    border-radius: 2px;
+}
+
+/* HORIZONTAL SCROLL CONTAINER */
+.dream-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 10px 5px 20px 5px;
+    /* Bottom padding for shadow */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+}
+
+.dream-scroll-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.dream-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 10px;
+}
+
+/* CARD ITEM (9:16 Portrait Ratio for Reels/TikTokVibe) */
+.dream-card {
+    min-width: 220px;
+    /* Lebih ramping */
+    width: 220px;
+    height: 391px;
+    /* Ratio ~9:16 */
+    background: var(--bg-card);
+    border-radius: 12px;
+    overflow: hidden;
+    scroll-snap-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+}
+
+.dream-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(157, 27, 27, 0.2);
+    border-color: var(--primary);
+}
+
+.dream-thumb {
+    width: 100%;
+    height: 100%;
+    /* Full Height Image for 9:16 vibe */
+    position: relative;
+    overflow: hidden;
+}
+
+.dream-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+/* Info overlay di atas gambar (TikTok style) */
+.dream-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 10%, transparent);
+    z-index: 2;
+    height: auto;
+    display: block;
+}
+
+.dream-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #fff;
+    /* Teks putih karena overlay */
+    line-height: 1.4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 5px;
+}
+
+.dream-date {
+    font-size: 0.75rem;
+    color: #ddd;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Remove separate background for info since it is overlay now */
+/* Also remove old dream-overlay as we use gradient on info */
+.dream-overlay {
+    display: none;
+}
+
+/* ANIMATION ICON PLAY OVERLAY */
+.play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 50px;
+    height: 50px;
+    background: rgba(157, 27, 27, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: 0.3s;
+    z-index: 3;
+    box-shadow: 0 0 20px rgba(157, 27, 27, 0.5);
+}
+
+.dream-card:hover .play-overlay {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* DARK MODE ADJUSTMENT for Dream Card */
+body.dark-mode .mubasyirat-section {
+    background: linear-gradient(to bottom, var(--bg-body) 0%, rgba(0, 0, 0, 0.5) 100%);
+    border-top: 1px solid #333;
+}
+
+body.dark-mode .dream-card {
+    background: #000;
+    /* Hitam pekat for cinematic look */
+    border-color: #222;
+}

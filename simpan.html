@@ -172,6 +172,12 @@
             object-fit: cover;
         }
 
+        /* KHUSUS MIMPI (Portrait Thumb) - Hemat Space */
+        .item-card.mimpi-mode .item-thumb {
+            width: 60px;
+            /* ~9:16 ratio relative to 90px height */
+        }
+
         .item-info {
             flex: 1;
             padding: 10px;
@@ -445,6 +451,20 @@
                 </div>
                 <div class="cat-count" id="count-audio">0</div>
             </div>
+
+            <!-- NEW CATEGORY: MIMPI -->
+            <div class="category-card" onclick="openCategory('mimpi')">
+                <div class="cat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </div>
+                <div class="cat-info">
+                    <div class="cat-title">MUBASYIRAT</div>
+                    <div class="cat-desc">Mimpi Tersimpan</div>
+                </div>
+                <div class="cat-count" id="count-mimpi">0</div>
+            </div>
         </div>
 
         <div id="view-list" class="list-view">
@@ -472,6 +492,7 @@
         function updateCounts() {
             document.getElementById('count-berita').innerText = getSavedData('mq_saved_news').length;
             document.getElementById('count-audio').innerText = getSavedData('bookmarks_audio').length;
+            document.getElementById('count-mimpi').innerText = getSavedData('mq_saved_mimpi').length;
         }
 
         // --- 2. LOGIKA NAVIGASI ---
@@ -480,7 +501,7 @@
             viewMenu.style.display = 'none';
             viewList.style.display = 'block';
 
-            titleEl.innerText = type === 'berita' ? "BERITA TERSIMPAN" : "AUDIO TERSIMPAN";
+            titleEl.innerText = type === 'berita' ? "BERITA TERSIMPAN" : (type === 'mimpi' ? "MIMPI TERSIMPAN" : "AUDIO TERSIMPAN");
 
             renderList(type);
             history.pushState({ view: type }, null, `#${type}`);
@@ -510,8 +531,11 @@
 
         // --- 3. RENDER DATA ---
         function renderList(type) {
-            // FIX: Gunakan key yang benar (mq_saved_news untuk berita)
-            const key = type === 'berita' ? 'mq_saved_news' : 'bookmarks_audio'; // Sesuaikan audio nanti jika perlu
+            let key;
+            if (type === 'berita') key = 'mq_saved_news';
+            else if (type === 'mimpi') key = 'mq_saved_mimpi';
+            else key = 'bookmarks_audio';
+
             const data = getSavedData(key);
 
             viewList.innerHTML = "";
@@ -528,8 +552,9 @@
             data.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'item-card';
+                if (type === 'mimpi') card.classList.add('mimpi-mode'); // Add class for portrait styling
 
-                // MAPPING DATA (Fix mismatch judul vs title)
+                // MAPPING DATA
                 let title, desc, thumb, targetUrl;
 
                 if (type === 'berita') {
@@ -537,11 +562,15 @@
                     desc = item.isi || item.desc || "";
                     thumb = item.gambar || item.thumb || "https://placehold.co/100?text=IMG";
                     targetUrl = item.url || "#";
-
-                    // Hilangkan HTML tags dari deskripsi biar rapi
+                    desc = desc.replace(/<[^>]*>?/gm, ''); // Clean HTML
+                } else if (type === 'mimpi') {
+                    title = item.title || "Mimpi";
+                    desc = item.narasi || "Narasi mimpi...";
+                    thumb = item.image || "https://placehold.co/100?text=IMG";
+                    targetUrl = `mimpi.html?title=${encodeURIComponent(title)}`;
                     desc = desc.replace(/<[^>]*>?/gm, '');
                 } else {
-                    // Audio fallback
+                    // Audio
                     title = item.title;
                     desc = item.desc;
                     thumb = item.thumb;
@@ -626,6 +655,7 @@
         // Cek hash url (kalo user refresh pas di detail)
         if (window.location.hash === '#berita') openCategory('berita');
         if (window.location.hash === '#audio') openCategory('audio');
+        if (window.location.hash === '#mimpi') openCategory('mimpi');
 
     </script>
     <!-- MODAL KONFIRMASI -->
