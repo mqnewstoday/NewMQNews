@@ -1,0 +1,26 @@
+{
+  "name": "MQ News Today",
+  "short_name": "MQ News",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#9d1b1b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "ALT_LogoMQN.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "ALT_LogoMQN.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "LogoMQN144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }
+  ]
+}
