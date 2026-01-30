@@ -1082,8 +1082,8 @@ footer {
     max-width: 800px;
     margin: 30px auto;
     /* Jarak atas bawah */
-    padding: 0;
-    /* Ikut padding parent */
+    padding: 0 20px;
+    /* FIX: Tambah padding kiri-kanan biar sejajar sama teks utama */
     text-align: left;
     /* Rata Kiri sesuai request */
     border-top: 1px dashed #ddd;
@@ -1103,11 +1103,12 @@ footer {
 
 .share-buttons-row {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     /* Lebih rapat */
     flex-wrap: wrap;
-    justify-content: flex-start;
-    /* Rata Kiri */
+    justify-content: center;
+    /* FIX: Tombol rata tengah */
+    margin-top: 10px;
 }
 
 .share-btn {
