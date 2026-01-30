@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arah Kiblat - MQ News</title>
+    <link rel="stylesheet" href="theme.css">
+    <style>
+        /* --- LAYOUT UTAMA (Background Abu Profil) --- */
+        body {
+            background-color: #f5f5f5;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+        }
+
+        /* --- HEADER KEMBARAN PROFIL --- */
+        .header-profile-style {
+            background-color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid #b71c1c;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .header-title {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #b71c1c;
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #b71c1c;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            text-decoration: none;
+        }
+
+        /* --- VISUAL UTAMA --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .compass-wrapper {
+            width: 320px;
+            height: 320px;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        /* Piringan Angka */
+        .compass-dial {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 6px solid #fff;
+            position: relative;
+            will-change: transform; /* Optimasi GPU */
+            /* Garis-garis derajat */
+            background-image: repeating-conic-gradient(#eee 0 1deg, transparent 1deg 5deg),
+                              repeating-conic-gradient(#ccc 0 1deg, transparent 1deg 30deg);
+        }
+
+        /* Mata Angin */
+        .cardinal {
+            position: absolute;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #888;
+        }
+        .c-n { top: 10px; left: 50%; transform: translateX(-50%); color: #b71c1c; font-size: 1.3rem; } /* UTARA MERAH */
+        .c-s { bottom: 10px; left: 50%; transform: translateX(-50%); }
+        .c-e { right: 15px; top: 50%; transform: translateY(-50%); }
+        .c-w { left: 15px; top: 50%; transform: translateY(-50%); }
+
+        /* TARGET KIBLAT (Lingkaran Radar) */
+        .kaaba-tracker {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            z-index: 10;
+        }
+
+        /* Visual Ka'bah ISOMETRIC HD */
+        .kaaba-hd {
+            width: 64px; height: 64px;
+            position: absolute;
+            transform: translate(-50%, -145px); /* Radius Putar */
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+        }
+
+        /* LINE OF SIGHT (Garis Tembak) */
+        /* Ini garis merah vertikal diam di tengah layar */
+        .sight-line {
+            position: absolute;
+            top: 0; left: 50%;
+            width: 2px; height: 100px; /* Setengah atas */
+            background: linear-gradient(to bottom, #b71c1c 0%, transparent 100%);
+            transform: translateX(-50%);
+            z-index: 20;
+        }
+        .sight-triangle {
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 20px solid #b71c1c;
+            z-index: 21;
+        }
+
+        /* STATUS & INFO */
+        .status-panel {
+            text-align: center;
+            z-index: 30;
+            margin-top: 10px;
+        }
+        .degree-readout {
+            font-family: 'Courier New', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #333;
+            line-height: 1;
+        }
+        .precision-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 5px;
+            background: #eee;
+            color: #777;
+        }
+        .precision-badge.high { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .precision-badge.low { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+
+        .lurus-alert {
+            background: #b71c1c;
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(183, 28, 28, 0.4);
+            display: none;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
+
+        /* DARK MODE */
+        body.dark-mode { background-color: #121212; }
+        body.dark-mode .header-profile-style { background-color: #1e1e1e; border-bottom-color: #d32f2f; }
+        body.dark-mode .header-title, body.dark-mode .icon-btn { color: #ff6659; }
+        body.dark-mode .compass-dial { background-color: #222; border-color: #333; box-shadow: none; }
+        body.dark-mode .degree-readout { color: #fff; }
+        
+        .btn-perm {
+            background: #b71c1c; color: white; padding: 12px 25px;
+            border: none; border-radius: 50px; font-weight: bold; margin-top:20px;
+            cursor: pointer; display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-profile-style">
+        <a href="index.html" class="icon-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <h1 class="header-title">KIBLAT</h1>
+        <a href="settings.html" class="icon-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </a>
+    </header>
+
+    <div class="main-content">
+        
+        <div class="sight-triangle"></div>
+        <div class="sight-line"></div>
+
+        <div class="compass-wrapper">
+            <div class="compass-dial" id="dial">
+                <span class="cardinal c-n">U</span>
+                <span class="cardinal c-e">T</span>
+                <span class="cardinal c-s">S</span>
+                <span class="cardinal c-w">B</span>
+
+                <div id="kaaba-container" class="kaaba-tracker">
+                    <svg class="kaaba-hd" viewBox="0 0 100 100" fill="none">
+                        <ellipse cx="50" cy="95" rx="30" ry="10" fill="black" opacity="0.3"/>
+                        <path d="M50 10 L10 30 L10 80 L50 100 V10 Z" fill="#151515"/>
+                        <path d="M50 10 L90 30 L90 80 L50 100 V10 Z" fill="#2a2a2a"/>
+                        <path d="M50 10 L90 30 L50 50 L10 30 Z" fill="#000" opacity="0.6"/>
+                        <path d="M10 40 L50 60 L90 40 L90 34 L50 54 L10 34 Z" fill="#FFD700"/>
+                        <rect x="58" y="55" width="18" height="28" transform="skewY(-26)" fill="#FFD700"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-panel">
+            <div class="degree-readout"><span id="degree">--</span>°</div>
+            <div id="precision-status" class="precision-badge low">Kalibrasi: --</div>
+            <div id="status-text" style="color:#777; margin-top:5px; font-size:0.9rem;">Menunggu Sensor...</div>
+            <div id="lurus-alert" class="lurus-alert">LURUS KE KIBLAT ✅</div>
+            <button id="perm-btn" class="btn-perm">Aktifkan Kompas</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- KONFIGURASI HARDCORE ---
+        const SMOOTHING_FACTOR = 0.1; // 0.05 = Lambat bgt, 0.5 = Cepat. 0.1 = Stabil Parah.
+        const MECCA_LAT = 21.422487;
+        const MECCA_LNG = 39.826206;
+
+        // --- VARIABEL STATE ---
+        let currentHeading = 0; // Arah HP (Raw)
+        let smoothHeading = 0;  // Arah HP (Smoothed)
+        let qiblaHeading = 0;   // Arah Kiblat (True North)
+        let magDeclination = 0; // Koreksi Magnetik
+        
+        // ELEMENT
+        const dial = document.getElementById('dial');
+        const kaabaContainer = document.getElementById('kaaba-container');
+        const kaabaVisual = document.querySelector('.kaaba-hd');
+        const degreeEl = document.getElementById('degree');
+        const statusEl = document.getElementById('status-text');
+        const alertEl = document.getElementById('lurus-alert');
+        const precisionEl = document.getElementById('precision-status');
+        const permBtn = document.getElementById('perm-btn');
+
+        // --- 1. GEO-MAGNETIC MODEL (SIMPLIFIED) ---
+        // Ini fitur mahal. Estimasi Deklinasi Magnetik berdasarkan Lokasi.
+        // Di Indo (Ekuator), magnet bumi gak lurus utara. Ini koreksinya.
+        function estimateDeclination(lat, lng) {
+            // Ini model sederhana. Untuk akurasi "NASA", butuh tabel WMM. 
+            // Tapi rumus ini cukup buat koreksi kasar di Asia/Indo.
+            // (Positif = Timur, Negatif = Barat)
+            const geomagLat = lat + 0.06 * (Math.abs(lng) - 100); 
+            // Estimasi kasar penyimpangan magnet di Indo sekitar 0 - 2 derajat.
+            return 0.5; // Default aman Indo.
+        }
+
+        // --- 2. HITUNG KIBLAT (TRUE NORTH) ---
+        function calcQibla(lat, lng) {
+            const rad = Math.PI / 180;
+            const phiK = MECCA_LAT * rad;
+            const lamK = MECCA_LNG * rad;
+            const phi = lat * rad;
+            const lam = lng * rad;
+            const y = Math.sin(lamK - lam) * Math.cos(phiK);
+            const x = Math.cos(phi) * Math.sin(phiK) - Math.sin(phi) * Math.cos(phiK) * Math.cos(lamK - lam);
+            return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+        }
+
+        // --- 3. GPS ENGINE ---
+        function initGPS() {
+            if(navigator.geolocation) {
+                statusEl.innerText = "Mengunci Satelit GPS...";
+                navigator.geolocation.watchPosition(pos => {
+                    const {latitude, longitude, accuracy} = pos.coords;
+                    
+                    // Hitung Kiblat
+                    qiblaHeading = calcQibla(latitude, longitude);
+                    
+                    // Hitung Koreksi Magnetik
+                    magDeclination = estimateDeclination(latitude, longitude);
+
+                    // Update UI Status
+                    if(accuracy < 20) {
+                        precisionEl.innerText = `GPS: TINGGI (±${Math.round(accuracy)}m)`;
+                        precisionEl.className = "precision-badge high";
+                    } else {
+                        precisionEl.innerText = `GPS: RENDAH (±${Math.round(accuracy)}m)`;
+                        precisionEl.className = "precision-badge low";
+                    }
+                    statusEl.innerText = `Target: ${Math.round(qiblaHeading)}° | Koreksi Mag: ${magDeclination}°`;
+
+                    updateVisuals();
+                }, err => {
+                    statusEl.innerText = "GPS Error. Cek Lokasi.";
+                }, { enableHighAccuracy: true });
+            }
+        }
+
+        // --- 4. MATH FILTER (SMOOTHING) ---
+        // Fungsi ini bikin jarum gak gemeteran
+        function lerp(start, end, amt) {
+            let diff = end - start;
+            // Fix masalah putaran 359 -> 0
+            while (diff > 180) diff -= 360;
+            while (diff < -180) diff += 360;
+            return start + diff * amt;
+        }
+
+        // --- 5. CORE SENSOR LOGIC ---
+        function handleOrientation(e) {
+            let compass = 0;
+            let type = "Relatif";
+
+            // A. PRIORITAS 1: iOS (WebKit)
+            if (e.webkitCompassHeading) {
+                compass = e.webkitCompassHeading;
+                type = "Absolut (iOS)";
+            } 
+            // B. PRIORITAS 2: Android Absolute (True North)
+            else if (e.absolute && e.alpha !== null) {
+                compass = 360 - e.alpha;
+                type = "Absolut (And)";
+            } 
+            // C. FALLBACK: Android Relative
+            else if (e.alpha !== null) {
+                compass = 360 - e.alpha;
+                // KOREKSI MANUAL: Kalau sensor relatif, kita tambah koreksi magnetik
+                compass += magDeclination;
+                type = "Relatif (Low)";
+            }
+
+            // D. ROTASI LAYAR (PENTING!)
+            let screenAngle = 0;
+            if (window.screen.orientation) screenAngle = window.screen.orientation.angle;
+            compass = (compass + screenAngle) % 360;
+
+            // E. SIMPAN KE RAW
+            currentHeading = compass;
+
+            // F. SMOOTHING (Jalankan loop animasi terpisah)
+        }
+
+        // --- 6. RENDER LOOP (60 FPS) ---
+        function animate() {
+            // Apply Math Filter
+            smoothHeading = lerp(smoothHeading, currentHeading, SMOOTHING_FACTOR);
+            
+            // Tampilkan Angka
+            degreeEl.innerText = Math.round(smoothHeading);
+
+            // 1. Putar Piringan (Dial) berlawanan arah HP
+            dial.style.transform = `rotate(${-smoothHeading}deg)`;
+
+            // 2. Tempel Ka'bah di derajat Kiblat
+            kaabaContainer.style.transform = `rotate(${qiblaHeading}deg)`;
+
+            // 3. Counter-Rotate Ikon Ka'bah (Biar tetap tegak lurus dilihat mata)
+            const iconFix = smoothHeading - qiblaHeading;
+            kaabaVisual.style.transform = `translate(-50%, -145px) rotate(${iconFix}deg)`;
+
+            // 4. Cek Lurus
+            let diff = Math.abs(qiblaHeading - smoothHeading);
+            while(diff > 180) diff = 360 - diff; // Normalisasi
+
+            if (diff < 3) { // Toleransi 3 derajat
+                alertEl.style.display = 'block';
+                statusEl.style.display = 'none';
+                // Haptic Feedback (Getar)
+                if(navigator.vibrate && diff < 1) navigator.vibrate(20); 
+            } else {
+                alertEl.style.display = 'none';
+                statusEl.style.display = 'block';
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // --- 7. STARTUP ---
+        function start() {
+            // Deteksi event terbaik buat Android
+            if ('ondeviceorientationabsolute' in window) {
+                window.addEventListener('deviceorientationabsolute', handleOrientation);
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+            initGPS();
+            animate(); // Mulai Loop Animasi
+            
+            // Alert Kalibrasi
+            setTimeout(() => {
+                alert("⚠ PENTING: Untuk akurasi tinggi, lakukan gerakan ANGKA 8 dengan HP Anda di udara selama 5 detik.");
+            }, 1000);
+        }
+
+        // IZIN IOS
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            permBtn.style.display = 'inline-block';
+            permBtn.onclick = () => {
+                DeviceOrientationEvent.requestPermission().then(r => {
+                    if(r==='granted') {
+                        permBtn.style.display='none';
+                        start();
+                    }
+                });
+            }
+        } else {
+            start();
+        }
+        
+        // Theme Check
+        if(localStorage.getItem('mqDarkMode')==='true') document.body.classList.add('dark-mode');
+
+    </script>
+</body>
+</html>

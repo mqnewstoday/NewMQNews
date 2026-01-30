@@ -1,0 +1,639 @@
+/* =========================================
+   THEME.CSS - THE FINALE (GOD MODE ON FIRE)
+   ========================================= */
+
+:root {
+    /* DEFAULT VARIABLES */
+    --primary: #9d1b1b;
+    --gold: #c5a059;
+    --bg-body: #f8f9fa;
+    --bg-card: #ffffff;
+    --text-main: #334155;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --input-bg: #f8fafc;
+    --base-size: 16px;
+}
+
+/* =========================================
+   DARK MODE SETTINGS
+   ========================================= */
+body.dark-mode {
+    --primary: #ff4d4d;      /* Merah Neon */
+    --gold: #ffd700;
+    --bg-body: #000000;      /* Hitam Total */
+    --bg-card: #121212;      /* Abu Gelap */
+    --input-bg: #1a1a1a;
+    --text-main: #eeeeee;    /* Putih Terang */
+    --text-muted: #888888;   /* Abu Kalem */
+    --border: #222222;       /* Border Gelap Samar */
+}
+
+/* =========================================
+   ZONA NUKLIR (!IMPORTANT OVERRIDES)
+   ========================================= */
+
+/* 1. BACKGROUND & TEXT GLOBAL */
+body.dark-mode {
+    background-color: #000000 !important;
+    color: #eeeeee !important;
+}
+
+/* 2. PAKSA SEMUA KARTU JADI GELAP */
+body.dark-mode .news-card,
+body.dark-mode .login-card,
+body.dark-mode .register-card,
+body.dark-mode .edit-card,
+body.dark-mode .profile-card,
+body.dark-mode .related-card,
+body.dark-mode .sidebar,
+body.dark-mode header,
+body.dark-mode .custom-modal-box,
+body.dark-mode #article-view,
+body.dark-mode .comment-card { /* Kartu Komentar Gelap */
+    background-color: #121212 !important;
+    background: #121212 !important;
+    border-color: #222222 !important;
+    color: #eeeeee !important;
+    box-shadow: none !important;
+}
+
+/* 3. FIX KOMENTAR (YANG TADI GAK KEBACA) - NEW FIX! */
+body.dark-mode .com-body, 
+body.dark-mode .comment-text,
+body.dark-mode .comment-content {
+    color: #e0e0e0 !important; /* Putih Abu Terang */
+    opacity: 1 !important;
+}
+body.dark-mode .com-name {
+    color: var(--primary) !important; /* Nama User Merah */
+}
+body.dark-mode .com-date {
+    color: #777 !important; /* Tanggal Abu Gelap */
+}
+
+/* 4. FIX TOMBOL SHARE / BAGIKAN (YANG MASIH PUTIH) - NEW FIX! */
+body.dark-mode .share-btn {
+    background-color: #1a1a1a !important; /* Gelap */
+    color: #ffffff !important;             /* Teks Putih */
+    border: 1px solid #333 !important;     /* Border Samar */
+}
+body.dark-mode .share-btn:hover {
+    border-color: var(--primary) !important;
+    background-color: #222 !important;
+}
+body.dark-mode .share-btn svg {
+    fill: #ffffff !important; /* Ikon Putih */
+}
+
+/* 5. FIX ARTIKEL BERITA (TEKS INVISIBLE) */
+body.dark-mode .art-body,
+body.dark-mode .art-body * { /* Tembak semua elemen dalam artikel */
+    color: #e0e0e0 !important;
+    background-color: transparent !important;
+}
+
+/* 6. FIX SEARCH BOX (KAMUFLASE) */
+body.dark-mode .search-box {
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+}
+body.dark-mode .search-box input,
+body.dark-mode .search-input {
+    background-color: transparent !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+/* Input Lain tetap ada border */
+body.dark-mode input.form-input,
+body.dark-mode textarea.form-input,
+body.dark-mode .comment-input {
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    color: #fff !important;
+}
+
+/* 7. SIDEBAR HALUS */
+body.dark-mode .sidebar a {
+    border-bottom: 1px solid #1a1a1a !important;
+    color: #bbbbbb !important;
+}
+body.dark-mode .sidebar a:hover {
+    background-color: #1a1a1a !important;
+    color: var(--primary) !important;
+}
+
+/* 8. NAVIGASI MERAH JADI HITAM */
+body.dark-mode .category-nav {
+    background: #121212 !important;
+    border-bottom: 1px solid #222 !important;
+}
+body.dark-mode .cat-link {
+    background: #1a1a1a !important;
+    color: #ccc !important;
+    border-color: #333 !important;
+}
+body.dark-mode .cat-link.active {
+    background: var(--primary) !important;
+    color: #fff !important;
+}
+
+/* 9. FOOTER & ICON FIX */
+body.dark-mode footer {
+    background: linear-gradient(180deg, #121212 0%, #000000 100%) !important;
+    border-top: 3px solid var(--primary) !important;
+}
+body.dark-mode .soc-link, 
+body.dark-mode .small-social-btn {
+    background-color: #1a1a1a !important;
+    color: #888 !important;
+    border: 1px solid #333 !important;
+}
+body.dark-mode .soc-link:hover {
+    background-color: var(--primary) !important;
+    color: #fff !important;
+    border-color: var(--primary) !important;
+}
+
+/* 10. JUDUL & TEKS UMUM */
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, 
+body.dark-mode .card-title, 
+body.dark-mode .rel-title,
+body.dark-mode .brand-text {
+    color: #ffffff !important;
+}
+body.dark-mode p, 
+body.dark-mode .card-excerpt, 
+body.dark-mode .card-date,
+body.dark-mode .rel-date,
+body.dark-mode .share-title {
+    color: #999999 !important;
+}
+body.dark-mode .profile-btn {
+    background: var(--primary) !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+/* RESET */
+* { box-sizing: border-box; }
+body { transition: background 0.2s ease; }
+
+/* =========================================
+   FIX UKURAN FONT (VERSI ELASTIS & RESPONSIF)
+   ========================================= */
+
+html {
+    font-size: 16px; /* Default */
+    /* Transisi diperlambat dikit (0.3s) biar efek membesarnya kelihatan 'kenyal' */
+    transition: font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- MODE KECIL --- */
+html.font-small {
+    font-size: 14.5px !important; /* Jangan terlalu kecil biar tetep kebaca */
+}
+
+/* --- MODE BESAR (REVISI) --- */
+html.font-large {
+    /* 1. JANGAN 20px! Itu kegedean buat HP. 18px itu udah naik 12.5%, udah kerasa bedanya */
+    font-size: 18px !important; 
+    
+    /* 2. RAHASIA ELASTIS: Line Height dilonggarin */
+    /* Ini bikin teks gak numpuk sesak pas membesar */
+    line-height: 1.75 !important; 
+}
+
+/* --- PENYESUAIAN KHUSUS BIAR GAK PECAH --- */
+/* Kalau mode besar, paksa sidebar & judul biar gak kaku */
+html.font-large .sidebar a {
+    font-size: 0.9rem !important; /* Menu sidebar ngecil dikit biar muat */
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+}
+
+html.font-large .card-title {
+    line-height: 1.4 !important; /* Judul berita dikasih nafas */
+}
+
+/* =========================================
+   WIDGET TANGGAL & JAM (FINAL + IKON SEIMBANG)
+   ========================================= */
+
+.date-header-container {
+    /* --- TEKNIK PENYEIMBANG (FLEXBOX) --- */
+    display: flex;
+    justify-content: space-between; /* Teks mentok kiri, Ikon mentok kanan */
+    align-items: center; /* Posisi vertikal di tengah */
+    
+    /* Padding & Margin Ramping */
+    padding: 5px 20px; 
+    margin-bottom: 5px;
+    background-color: var(--bg-body);
+    
+    /* Garis Bawah Default */
+    border-bottom: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    
+    /* WARNA DEFAULT (MODE TERANG = MERAH) */
+    /* Kita set warna di container induknya, biar teks & ikon mewarisi warna ini */
+    color: #d32f2f; 
+}
+
+/* STYLE TEKS (KIRI) */
+.live-date-text {
+    font-family: sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    /* Warnanya otomatis ikut container induk (Merah) */
+}
+
+/* STYLE IKON (KANAN) */
+.date-icon {
+    width: 16px;  /* Ukuran ikon pas */
+    height: 16px;
+    opacity: 0.8; /* Agak transparan dikit biar manis */
+    /* Warnanya otomatis ikut container induk karena di HTML pake fill="currentColor" */
+}
+
+/* =========================================
+   KHUSUS MODE GELAP (DARK MODE)
+   ========================================= */
+
+body.dark-mode .date-header-container {
+    border-bottom: 1px solid #2a2a2a; /* Garis samar */
+    
+    /* UBAH WARNA JADI ABU-ABU */
+    /* Teks & Ikon otomatis berubah jadi abu-abu semua */
+    color: #aaaaaa; 
+}
+
+/* =========================================
+   INTEGRASI FONT SIZE
+   ========================================= */
+body.font-large .live-date-text { font-size: 0.85rem; }
+body.font-large .date-icon { width: 18px; height: 18px; } /* Ikon ikut membesar */
+
+body.font-small .live-date-text { font-size: 0.65rem; }
+body.font-small .date-icon { width: 14px; height: 14px; } /* Ikon ikut mengecil */
+
+
+/* =========================================
+   WIDGET BANNER (32:9 - GOOGLE SHEET)
+   ========================================= */
+
+.showcase-wrapper {
+    /* LURUS DENGAN LOGO (Padding kiri-kanan container utama lu) */
+    margin: 0 20px 25px 20px; /* Bawahnya kasih jarak 25px biar gak nempel berita */
+    padding-top: 10px;
+    opacity: 0; /* Sembunyi dulu sebelum gambar dimuat (biar smooth) */
+    animation: fadeInBanner 1s forwards;
+}
+
+@keyframes fadeInBanner { to { opacity: 1; } }
+
+.showcase-strip {
+    width: 100%;
+    /* RASIO SANGAT GEPENG */
+    aspect-ratio: 32 / 9;
+    /* Batas Tinggi (HP & PC) */
+    min-height: 80px;
+    max-height: 180px;
+    
+    background-color: #111;
+    position: relative;
+    overflow: hidden; /* Wajib hidden biar slide di luar kotak gak keliatan */
+    border: 1px solid #333; /* Border estetik */
+}
+
+/* ITEM SLIDE */
+.banner-slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0; /* Default sembunyi */
+    transition: opacity 1s ease-in-out; /* Efek Pudar (Fade) lebih elegan drpd geser */
+    z-index: 1;
+}
+
+.banner-slide.active {
+    opacity: 1; /* Muncul */
+    z-index: 2;
+}
+
+.banner-slide img {
+    width: 100%; height: 100%;
+    object-fit: cover; /* ANTI PENYOK */
+    object-position: center;
+    filter: brightness(0.8);
+}
+
+/* TEKS OVERLAY */
+.banner-caption {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%;
+    padding: 4px 10px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    color: #fff;
+    font-size: 0.7rem;
+    font-family: monospace;
+    letter-spacing: 1px;
+    z-index: 3;
+    pointer-events: none;
+}
+
+
+/* --- UPDATE STYLE OFFLINE TERMINAL (TIMPA YANG LAMA) --- */
+
+#offline-terminal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #000000; /* Hitam Pekat */
+    color: #00ff00; /* Hijau Terminal */
+    z-index: 99999; /* Paling depan */
+    
+    /* Flexbox biar di tengah layar */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    /* Font wajib monospace biar karakter sejajar */
+    font-family: 'Courier New', Courier, monospace; 
+    overflow: hidden;
+}
+
+.terminal-content {
+    /* Bungkus konten biar rapi di tengah */
+    text-align: center;
+}
+
+#ascii-stage {
+    /* Style area animasi */
+    font-size: 22px; /* Ukuran pas biar emoji moai keliatan */
+    font-weight: bold;
+    line-height: 1.4;
+    white-space: pre; /* WAJIB: Biar spasi kebaca */
+    margin-bottom: 25px;
+    
+    /* Efek glowing dikit */
+    text-shadow: 0 0 4px rgba(0, 255, 0, 0.6); 
+    
+    /* Biar gak goyang2 pas animasi jalan */
+    display: inline-block;
+    text-align: left; 
+    width: 260px; /* Lebar fix buat nampung animasi */
+}
+
+.offline-status {
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Efek Kedip */
+.blink { 
+    animation: blinker 0.8s linear infinite; 
+    color: #ff3333; /* Merah warning */
+    font-weight: bold; 
+}
+@keyframes blinker { 50% { opacity: 0; } }
+
+
+/* EFEK LOADING SATELIT */
+@keyframes satelliteFocus {
+    0% { filter: blur(10px) grayscale(100%); opacity: 0; transform: scale(1.02); }
+    50% { opacity: 1; }
+    100% { filter: blur(0) grayscale(0); opacity: 1; transform: scale(1); }
+}
+
+/* Terapkan ke semua gambar dalam artikel */
+img {
+    animation: satelliteFocus 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+
+
+
+/* =========================================
+   OVERRIDE MODE GELAP/TERANG (MANUAL FIX)
+   ========================================= */
+/* Kalau variabel CSS lu belum sempurna, ini jaring pengamannya */
+
+/* Mode Terang */
+body:not(.dark-mode) .quote-text { color: #333; }
+body:not(.dark-mode) .quote-source { color: #666; }
+body:not(.dark-mode) .quote-container-universal { border-color: #ddd; }
+
+/* Mode Gelap */
+body.dark-mode .quote-text { color: #ccc; }
+body.dark-mode .quote-source { color: #888; }
+body.dark-mode .quote-container-universal { border-color: #333; }
+
+/* =========================================
+   INTEGRASI UKURAN FONT (ACCESSIBILITY)
+   ========================================= */
+
+/* Font BESAR */
+body.font-large .quote-text { font-size: 1.2rem; }
+body.font-large .quote-source { font-size: 0.9rem; }
+
+/* Font KECIL */
+body.font-small .quote-text { font-size: 0.85rem; }
+body.font-small .quote-source { font-size: 0.65rem; }
+
+
+/* =========================================
+   UNIVERSAL THEME VARIABLES (DARK/LIGHT/FONT)
+   ========================================= */
+:root {
+    /* ... variabel lama lu ... */
+    
+    /* VARIABEL BARU BUAT KOTAK SARAN (LIGHT MODE) */
+    --bg-tip: #ffffff;       /* Putih bersih */
+    --text-tip: #334155;     /* Abu gelap */
+    --border-tip: #e2e8f0;   /* Garis tipis */
+    --accent-tip: #4caf50;   /* Hijau (buat garis pinggir/ikon) */
+}
+
+/* DARK MODE OVERRIDE */
+body.dark-mode {
+    /* ... variabel lama lu ... */
+
+    /* VARIABEL BARU BUAT KOTAK SARAN (DARK MODE - BIAR GAK JONTRAS) */
+    --bg-tip: #1e1e1e;       /* Hitam Abu (Bukan Putih!) */
+    --text-tip: #e2e8f0;     /* Teks Terang */
+    --border-tip: #333333;   /* Garis Gelap */
+    /* --accent-tip tetep hijau biar keliatan */
+}
+
+
+/* FONT SIZE OVERRIDE */
+body.font-small { --base-size: 14px; }
+body.font-large { --base-size: 20px; }
+
+/* APLIKASI VARIABEL KE BODY */
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    font-size: var(--base-size);
+    transition: background 0.3s, color 0.3s, font-size 0.3s;
+}
+
+/* APLIKASI KE KERTAS/KONTAINER */
+.content-paper {
+    background: var(--bg-paper) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color);
+}
+
+/* =========================================
+   COMPONENT: KOTAK SARAN / TIP BOX
+   ========================================= */
+.suggestion-box {
+    background-color: var(--bg-tip); /* Ini kuncinya biar berubah */
+    color: var(--text-tip);
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-tip); /* Border halus */
+    border-left: 5px solid var(--accent-tip); /* Garis Hijau di kiri */
+    
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+/* Icon di dalem kotak saran */
+.suggestion-box svg, 
+.suggestion-box i {
+    color: var(--accent-tip);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* Teks di dalem kotak saran */
+.suggestion-box span, 
+.suggestion-box p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* =========================================
+   FOOTER STYLE
+   ========================================= */
+.main-footer {
+    text-align: center;
+    padding: 30px 20px;
+    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+    font-family: 'Lato', sans-serif;
+}
+
+.footer-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.footer-link:hover {
+    color: var(--primary);
+}
+
+
+/* =========================================
+   QUICK MENU (GRID SYSTEM EXPANDABLE)
+   ========================================= */
+.quick-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 0 15px;
+    
+    margin-top: 20px; 
+    
+    /* === BAGIAN INI YANG DIGANTI === */
+    /* Asalnya 25px (terlalu jauh), ganti jadi 5px atau 0px */
+    margin-bottom: 5px; 
+}
+
+
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    width: 100%; /* Lebar ngikutin grid */
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+/* KOTAK ICON */
+.icon-box {
+    width: 50px; height: 50px; /* Ukuran icon */
+    background: #f8f9fa;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    position: relative;
+}
+
+/* WARNA ICON (PASTI MERAH) */
+.icon-box svg {
+    width: 24px; height: 24px;
+    stroke: #9d1b1b !important;
+    fill: none !important;
+    stroke-width: 2px;
+    stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* LABEL */
+.menu-label {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+    line-height: 1.2;
+    transition: color 0.3s;
+}
+
+/* ITEM TERSEMBUNYI (HIDDEN ROW) */
+.hidden-row {
+    display: none; /* Default ngumpet */
+}
+
+/* EFEK HOVER & DARK MODE */
+.menu-item:hover .icon-box { transform: translateY(-3px); border-color: #9d1b1b; }
+.menu-item:active .icon-box { transform: scale(0.95); }
+
+/* DARK MODE */
+body.dark-mode .icon-box { background: #2d2d2d; border-color: #404040; }
+body.dark-mode .icon-box svg { stroke: #ff6b6b !important; }
+body.dark-mode .menu-label { color: #9ca3af !important; font-weight: 600; }
+
+
+/* Trik buat narik Judul Berita biar nempel ke atas */
+.news-header, /* Sesuaikan dengan class pembungkus judul berita lu */
+h3.news-title { 
+    margin-top: 5px !important; /* Paksa jarak atasnya jadi kecil */
+    padding-top: 0 !important;
+}
+
+

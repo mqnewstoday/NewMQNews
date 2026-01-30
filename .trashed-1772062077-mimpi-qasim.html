@@ -1,0 +1,2040 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
+    <link rel="shortcut icon" href="ALT_LogoMQN.png" type="image/png">
+    <title>MQ News Today</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css"> 
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="LogoMQN144.png" sizes="any">
+
+<meta name="theme-color" content="#9d1b1b">
+
+<link rel="apple-touch-icon" href="ALT_LogoMQN.png">
+
+    
+    <style>
+        /* =========================================
+           1. VARIABEL & RESET GLOBAL
+           ========================================= */
+        :root {
+            --primary: #9d1b1b;    
+            --secondary: #9d1b1b;  
+            --gold: #c5a059;       
+            --bg: #f8f9fa;         
+            --text: #334155;
+            --white: #ffffff;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden; 
+        }
+
+        /* =========================================
+           2. HEADER & BRANDING
+           ========================================= */
+        header {
+            background: var(--white);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-bottom: 3px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand img { height: 48px; width: auto; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
+        
+        .brand-text h1 { 
+            font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--primary); 
+            font-weight: 700; line-height: 1; margin: 0; 
+        }
+        .brand-text span { 
+            font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; 
+            color: var(--gold); display: block; margin-top: 4px; font-weight: 700; 
+        }
+
+        /* Hamburger Menu Icon */
+        .menu-toggle {
+            display: flex; flex-direction: column; justify-content: space-between;
+            width: 30px; height: 21px; cursor: pointer; z-index: 1002; 
+        }
+        .menu-toggle span {
+            display: block; height: 3px; width: 100%;
+            background: var(--primary); border-radius: 3px; transition: all 0.3s ease;
+        }
+        .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -8px); }
+
+        /* =========================================
+           3. SIDEBAR & NAVIGASI
+           ========================================= */
+        .sidebar {
+            position: fixed; top: 0; right: -300px; /* Hidden default */
+            width: 300px; height: 100dvh;
+            background: var(--white);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 1003; 
+            padding-top: 20px; padding-bottom: 80px;
+            transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            display: flex; flex-direction: column; overflow-y: auto; 
+        }
+        .sidebar.active { right: 0; }
+
+        .sidebar-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px 20px; border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 10px; gap: 15px; 
+        }
+
+        /* Search Box di Sidebar */
+        .search-box {
+            flex-grow: 1; display: flex; align-items: center;
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 50px;
+            padding: 8px 15px; transition: all 0.3s ease;
+        }
+        .search-box:focus-within {
+            border-color: var(--primary); background: #fff;
+            box-shadow: 0 0 0 3px rgba(157, 27, 27, 0.05);
+        }
+        .search-icon {
+            width: 18px; height: 18px; fill: #94a3b8; margin-right: 10px;
+            flex-shrink: 0; cursor: pointer; transition: fill 0.2s, transform 0.2s;
+        }
+        .search-icon:hover { fill: var(--primary); transform: scale(1.1); }
+        
+        .search-input {
+            width: 100%; border: none; background: transparent; outline: none;
+            font-family: 'Lato', sans-serif; font-size: 0.95rem; color: var(--text);
+        }
+        .search-input::placeholder { color: #cbd5e1; font-style: italic; }
+
+        .close-sidebar-btn {
+            font-size: 2rem; color: #94a3b8; cursor: pointer; line-height: 1;
+            transition: color 0.2s, transform 0.2s; flex-shrink: 0; 
+        }
+        .close-sidebar-btn:hover { color: var(--primary); transform: rotate(90deg); }
+
+        /* Link Menu Sidebar */
+        .sidebar a {
+            padding: 15px 30px; text-decoration: none;
+            font-family: 'Cinzel', serif; font-size: 0.95rem; color: #333; font-weight: 700;
+            border-bottom: 1px solid #f9f9f9; transition: all 0.3s;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .sidebar a:hover {
+            background: rgba(157, 27, 27, 0.05); color: var(--primary); padding-left: 40px; 
+        }
+        .sidebar a::after { content: '›'; font-size: 1.2rem; color: var(--gold); }
+
+        /* Wrapper Auth Bawah Sidebar */
+        .auth-bottom-wrapper {
+            margin-top: auto; 
+            margin-bottom: 20px; 
+            padding: 0 20px;    
+            display: flex; flex-direction: column;
+        }
+
+        /* Tombol Profil Khusus */
+        .profile-btn {
+            margin-top: auto;        /* Dorong ke bawah */
+            margin-bottom: 30px;     
+            margin-left: 20px;       
+            margin-right: 20px;      
+            
+            background-color: var(--primary);
+            color: #ffffff !important;
+            border-radius: 50px;              
+            
+            text-align: center;      
+            justify-content: center !important;
+            padding: 12px 0 !important;
+            font-weight: bold !important;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(157, 27, 27, 0.3);
+            border-bottom: none !important;
+        }
+        .profile-btn::after { display: none !important; }
+        .profile-btn:hover {
+            padding-left: 0 !important;
+            background-color: #7c1515 !important;
+            transform: scale(1.02);
+        }
+
+        /* Overlay Gelap Background */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1001;
+            display: none; opacity: 0; transition: opacity 0.3s;
+        }
+        .overlay.active { display: block; opacity: 1; }
+
+        /* =========================================
+           4. NAVIGASI KATEGORI (Horizontal Scroll)
+           ========================================= */
+        .category-nav {
+            background: var(--secondary); padding: 15px 0;
+            white-space: nowrap; overflow-x: auto;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: relative; box-shadow: inset 0 -5px 10px rgba(0,0,0,0.2);
+        }
+        .category-nav::-webkit-scrollbar { display: none; } 
+        .nav-inner { padding: 0 20px; }
+        
+        .cat-link {
+            display: inline-block; color: #ffffff; text-decoration: none;
+            padding: 8px 18px; font-size: 0.85rem; text-transform: uppercase;
+            letter-spacing: 1px; border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 4px; transition: all 0.3s; margin-right: 8px;
+            cursor: pointer; background: rgba(255,255,255,0.1); font-weight: 600;
+        }
+        .cat-link.active {
+            color: var(--primary); background: var(--white); border-color: var(--white);
+            font-weight: 800; box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* =========================================
+           5. LAYOUT UTAMA & BERITA (NEWS CARD)
+           ========================================= */
+        .main-container { 
+            max-width: 1100px; margin: 0 auto; padding: 40px 20px; 
+            flex: 1; scroll-margin-top: 100px; 
+        }
+        .section-label { display: flex; align-items: center; margin-bottom: 30px; }
+        .section-label span {
+            background: var(--primary); color: white; padding: 8px 20px;
+            font-size: 0.9rem; text-transform: uppercase; font-weight: bold;
+            letter-spacing: 1px; border-radius: 4px;
+        }
+        .section-line { height: 2px; background: var(--primary); flex-grow: 1; opacity: 0.2; margin-left: 10px; }
+
+        /* Grid System */
+        .news-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;
+        }
+        
+        /* Card Style */
+        .news-card {
+            background: var(--white); border-radius: 12px; overflow: hidden;
+            box-shadow: var(--card-shadow); display: flex; flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; 
+            height: 100%;
+        }
+        .news-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-img-wrap { width: 100%; height: 220px; overflow: hidden; position: relative; }
+        .card-img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+        }
+        .news-card:hover .card-img { transform: scale(1.1); }
+
+        .card-body { padding: 24px; display: flex; flex-direction: column; flex-grow: 1; }
+        
+        .card-category-badge {
+            align-self: flex-start; font-size: 0.7rem; font-weight: 800; color: var(--primary);
+            background: rgba(157, 27, 27, 0.1); padding: 4px 10px; border-radius: 20px;
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;
+        }
+        .card-title {
+            font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700;
+            color: #1a202c; line-height: 1.3; margin-bottom: 12px; transition: color 0.2s;
+        }
+        .news-card:hover .card-title { color: var(--primary); }
+
+        .card-excerpt {
+            font-family: 'Lato', sans-serif; font-size: 0.95rem; color: #64748b; margin-bottom: 20px;
+            line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; 
+            -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1;
+        }
+        .card-footer { 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-top: 1px solid #f1f5f9; padding-top: 15px; margin-top: auto; 
+        }
+        .card-date { font-size: 0.75rem; color: #94a3b8; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .card-date::before { content: ''; display: inline-block; width: 8px; height: 8px; border: 1px solid #94a3b8; border-radius: 50%; }
+        
+        .read-btn { 
+            font-size: 0.8rem; font-weight: 700; color: var(--primary); 
+            text-decoration: none; cursor: pointer; transition: opacity 0.2s; 
+        }
+        .read-btn:hover { opacity: 0.8; }
+
+        /* =========================================
+           6. HALAMAN ARTIKEL (DETAIL VIEW)
+           ========================================= */
+        #article-view { 
+            display: none; background: white; min-height: 80vh; 
+            padding-bottom: 50px; animation: fadeIn 0.3s ease; 
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .article-header {
+            max-width: 800px; margin: 0 auto; padding: 20px 20px 0;
+            display: flex; flex-direction: column;
+        }
+
+        .back-icon-btn {
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; color: var(--primary); cursor: pointer; transition: transform 0.2s;
+            margin-bottom: 10px; font-weight: 300; line-height: 1;
+        }
+        .back-icon-btn:hover { transform: scale(1.1); }
+
+        .art-hero-img {
+            display: block; width: 100%; max-width: 800px; height: auto; max-height: 500px;
+            margin: 20px auto; padding: 0 20px; box-sizing: border-box;
+            border-radius: 12px; object-fit: cover;
+        }
+
+        .video-container {
+            display: none; width: 100%; max-width: 800px; margin: 20px auto;
+            padding: 0 20px; box-sizing: border-box;
+        }
+        .video-container iframe {
+            width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; display: block;
+        }
+
+        .art-content-box { max-width: 800px; margin: 0 auto; padding: 30px 20px; }
+        .art-meta { 
+            color: var(--gold); font-weight: bold; text-transform: uppercase; 
+            font-size: 0.85rem; margin-bottom: 10px; display: block; 
+        }
+        .art-title { 
+            font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary); 
+            line-height: 1.2; margin-bottom: 20px; 
+        }
+        .art-body { 
+            font-size: 1.1rem; line-height: 1.8; color: #1e293b; 
+            white-space: pre-wrap; font-family: 'Georgia', serif; 
+        }
+        .art-body img { 
+            max-width: 100%; height: auto; display: block; margin: 30px auto; 
+            border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+
+        /* Social Share di Artikel */
+        .social-share-area {
+            max-width: 800px; margin: 40px auto 20px; padding: 0 20px;
+            text-align: center; border-top: 1px solid #eee; padding-top: 20px;
+        }
+        .social-label {
+            font-size: 0.9rem; color: #888; margin-bottom: 15px; 
+            font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+        }
+        .social-icons { display: flex; justify-content: center; gap: 20px; }
+        .social-btn {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #f5f5f5; display: flex; align-items: center; justify-content: center;
+            color: var(--primary); text-decoration: none; transition: all 0.3s;
+        }
+        .social-btn:hover { background: var(--primary); color: white; transform: translateY(-3px); }
+        .social-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+        /* =========================================
+           7. KOMENTAR SECTION
+           ========================================= */
+        .comment-section {
+            max-width: 800px; margin: 0 auto; padding: 20px;
+            border-top: 1px solid #eee; margin-top: 30px;
+        }
+        .comment-title {
+            font-family: 'Cinzel', serif; color: var(--primary); 
+            font-size: 1.2rem; margin-bottom: 15px; 
+            border-left: 4px solid var(--gold); padding-left: 10px;
+        }
+
+        /* Form */
+        .comment-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
+        .comment-input {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+            font-family: 'Lato', sans-serif; resize: vertical; min-height: 80px;
+        }
+        .comment-input:focus { outline: none; border-color: var(--primary); }
+        .btn-comment {
+            align-self: flex-end; background: var(--primary); color: white; border: none;
+            padding: 8px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .btn-comment:hover { background: #7c1515; }
+
+        /* List Komentar */
+        .comment-list { display: flex; flex-direction: column; gap: 10px; }
+        .comment-card {
+            background: #fff; padding: 10px 12px; border-radius: 8px;
+            border-left: 3px solid #ddd; border-bottom: 1px solid #f0f0f0;
+            transition: 0.2s; display: flex; flex-direction: column; gap: 2px;
+        }
+        .comment-card:hover { border-left-color: var(--primary); background: #fafafa; }
+
+        .com-header { 
+            display: flex; justify-content: flex-start; align-items: baseline; 
+            gap: 8px; margin-bottom: 2px; 
+        }
+        .com-name { font-weight: 700; color: var(--primary); font-size: 0.9rem; }
+        .com-date { color: #999; font-size: 0.7rem; }
+        .com-body { 
+            font-size: 0.9rem; color: #333; line-height: 1.4; text-align: left; margin-top: 0;
+        }
+
+        /* =========================================
+           8. FOOTER
+           ========================================= */
+        footer { 
+            background: linear-gradient(180deg, #9d1b1b 0%, #7c1515 100%);
+            color: #e2e8f0; padding: 50px 20px 20px; 
+            margin-top: auto; border-top: 5px solid var(--gold); 
+        }
+        .footer-content { 
+            max-width: 900px; margin: 0 auto; margin-bottom: 40px; 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; 
+        }
+        .footer-col h3 { font-family: 'Cinzel', serif; color: var(--white); margin-bottom: 20px; font-size: 1.1rem; }
+        .footer-logo img { height: 50px; margin-bottom: 15px; opacity: 0.9; filter: brightness(0) invert(1); }
+        
+        .footer-links a { 
+            display: block; color: #cbd5e1; text-decoration: none; 
+            margin-bottom: 10px; font-size: 0.9rem; transition: color 0.2s; 
+        }
+        .footer-links a:hover { color: var(--gold); }
+        
+        .footer-wa-link {
+            color: #cbd5e1; text-decoration: none; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px; font-weight: bold;
+        }
+        .footer-wa-link:hover { color: var(--gold); }
+
+        /* Social Icons Footer */
+        .footer-social-row {
+            display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;
+            padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .small-social-btn { color: #cbd5e1; transition: color 0.3s, transform 0.3s; }
+        .small-social-btn:hover { color: var(--gold); transform: scale(1.1); }
+        .small-social-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+        .copyright { text-align: center; padding-top: 10px; font-size: 0.8rem; color: rgba(255,255,255,0.6); }
+
+        /* =========================================
+           9. MODAL & UTILITIES
+           ========================================= */
+        /* Modal Style */
+        .custom-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(3px); animation: fadeIn 0.2s ease;
+        }
+        .custom-modal-box {
+            background: white; padding: 25px; width: 90%; max-width: 320px;
+            border-radius: 15px; text-align: center;
+            border-top: 5px solid var(--primary);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transform: scale(0.9);
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .modal-title { font-family: 'Cinzel', serif; color: var(--primary); font-size: 1.4rem; margin-bottom: 10px; }
+        .modal-desc { font-size: 0.95rem; color: #64748b; margin-bottom: 25px; }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+        .modal-btn {
+            padding: 10px 20px; border-radius: 50px; border: none; 
+            font-weight: bold; cursor: pointer; transition: 0.2s; flex: 1;
+        }
+        .btn-cancel { background: #f1f5f9; color: #64748b; }
+        .btn-cancel:hover { background: #e2e8f0; }
+        .btn-yes { background: var(--primary); color: white; }
+        .btn-yes:hover { background: #7c1515; box-shadow: 0 4px 10px rgba(157, 27, 27, 0.3); }
+
+        @keyframes popUp { to { transform: scale(1); } }
+
+        /* Toast Notification */
+        .custom-notif {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: #fff; padding: 15px 25px; border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 9999;
+            display: flex; align-items: center; gap: 15px;
+            font-weight: bold; font-family: 'Lato', sans-serif;
+            transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            min-width: 300px; justify-content: center;
+        }
+        .custom-notif.active { top: 30px; }
+        .custom-notif.success { border-left: 5px solid #2e7d32; color: #2e7d32; }
+        .custom-notif.error { border-left: 5px solid #d32f2f; color: #d32f2f; }
+
+        /* Utils */
+        .loader { text-align: center; padding: 40px; color: #94a3b8; font-style: italic; }
+        .no-data { text-align: center; padding: 30px; background: #fff; border-radius: 8px; border: 1px dashed #ccc; color: #666; }
+
+          /* --- STYLE SOSMED ICON (Universal) --- */
+.social-icons-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Style Dasar Tombol */
+.soc-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.soc-link svg {
+    width: 20px; 
+    height: 20px;
+    fill: currentColor; /* Ini kuncinya: Warna ngikutin text-color */
+}
+
+/* --- VARIAN 1: Untuk di Halaman ARTIKEL (Background Abu, Ikon Merah) --- */
+.article-mode .soc-link {
+    background-color: #f1f5f9;
+    color: var(--primary); /* Ikon jadi Merah */
+}
+
+.article-mode .soc-link:hover {
+    background-color: var(--primary);
+    color: #ffffff; /* Pas hover jadi Putih */
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(157, 27, 27, 0.3);
+}
+
+/* --- VARIAN 2: Untuk di FOOTER (Background Transparan, Ikon Abu Terang) --- */
+.footer-mode .soc-link {
+    background-color: rgba(255,255,255,0.05); /* Sedikit transparan */
+    color: #cbd5e1; /* Ikon Abu Terang */
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer-mode .soc-link:hover {
+    background-color: var(--gold); /* Pas hover jadi Emas */
+    color: #fff;
+    border-color: var(--gold);
+    transform: scale(1.1);
+}
+
+/* --- STYLE TOMBOL SHARE --- */
+.share-article-wrapper {
+    max-width: 800px;
+    margin: 30px auto; /* Jarak atas bawah */
+    padding: 0;        /* Ikut padding parent */
+    text-align: left;  /* Rata Kiri sesuai request */
+    border-top: 1px dashed #ddd; /* Garis pemisah halus */
+    padding-top: 20px;
+}
+
+.share-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.share-buttons-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; /* Biar rapi kalau layar kecil */
+}
+
+.share-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 50px; /* Lonjong minimalis */
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Lato', sans-serif;
+}
+
+.share-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor; /* Warna ikon ngikut teks */
+}
+/* Khusus ikon Salin Link yg pakai stroke */
+.btn-copy svg { fill: none; }
+
+/* Efek Hover (Warna Berubah saat disentuh) */
+.share-btn:hover { transform: translateY(-2px); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+.btn-wa:hover   { border-color: #25D366; color: #25D366; background: #f0fdf4; }
+.btn-fb:hover   { border-color: #1877F2; color: #1877F2; background: #eff6ff; }
+.btn-x:hover    { border-color: #000000; color: #000000; background: #f8fafc; }
+.btn-copy:hover { border-color: var(--primary); color: var(--primary); background: #fff5f5; }
+
+/* --- STYLE REKOMENDASI BERITA (LIST VIEW) --- */
+.related-section-wrapper {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px solid #f1f5f9;
+}
+
+/* Khusus di halaman artikel, kita kasih jarak biar ga nempel share button */
+.related-section-wrapper.article-mode {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 0 20px;
+    border-top: 1px dashed #ddd;
+}
+
+/* --- UPDATE WARNA LABEL PILIHAN EDITOR --- */
+.small-label span {
+    background: var(--primary); /* SEKARANG MERAH KONSISTEN */
+    color: white; 
+    padding: 5px 15px; 
+    font-size: 0.8rem; 
+    text-transform: uppercase; 
+    font-weight: bold; 
+    border-radius: 4px;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 5px rgba(157, 27, 27, 0.3); /* Tambah bayangan merah halus */
+}
+
+.related-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Kartu Kecil (Layout Horizontal) */
+.related-card {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease;
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+}
+
+.related-card:hover {
+    transform: translateX(5px); /* Efek geser dikit pas hover */
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.rel-img-wrap {
+    width: 100px; /* Lebar fix gambar */
+    height: 75px; /* Tinggi fix gambar */
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.rel-img {
+    width: 100%; height: 100%; object-fit: cover;
+}
+
+.rel-body {
+    display: flex; flex-direction: column; justify-content: center;
+}
+
+.rel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 5px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.rel-date {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+
+
+    </style>
+</head>
+<body>
+<script src="theme-init.js"></script>
+    <header>
+
+        <div class="brand">
+            <img src="ALT_LogoMQN.png" alt="Logo MQ" onerror="this.style.display='none'">
+            <div class="brand-text">
+                <h1>MQ News Today</h1>
+                <span>Truth & Clarity</span>
+            </div>
+        </div>
+        <div class="menu-toggle" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" onclick="executeSearch()" title="Cari Berita">
+                    <path d="M21.71 20.29l-5.01-5.01C17.54 13.68 18 11.91 18 10c0-4.41-3.59-8-8-8S2 5.59 2 10s3.59 8 8 8c1.91 0 3.68-.46 5.28-1.3l5.01 5.01c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.42zM4 10c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6-6-2.69-6-6z"/>
+                </svg>
+                <input type="text" id="searchInput" class="search-input" placeholder="Cari berita..." onkeypress="handleEnterKey(event)">
+            </div>
+            <div class="close-sidebar-btn" onclick="toggleSidebar()">×</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#" onclick="toggleSidebar(); closeArticlePage(); setCategory(null, 'Semua')">BERANDA</a>
+            <a href="https://muhammadqasimpk.org/id" target="_blank">MUHAMMAD QASIM OFFICIAL</a>
+            <a href="https://casereportsinregrowth.com" target="_blank">MUKJIZAT</a>
+            <a href="https://saweria.co/mqnewstoday" target="_blank">SUPPORT ME</a>
+        </div>
+
+        <div class="auth-bottom-wrapper">
+            <a href="#" id="logout-btn" class="logout-link-small" style="display: none;">
+                KELUAR / LOGOUT ›
+            </a>
+
+            <a href="login.html" id="auth-link" class="profile-btn">
+                <span id="auth-text">MASUK / DAFTAR</span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+
+
+    <div id="home-view">
+        <div class="category-nav">
+            <div class="nav-inner" id="nav-container">
+                <a onclick="setCategory(null, 'Semua')" class="cat-link active">Semua</a>
+                <a onclick="setCategory(null, 'Geopolitik')" class="cat-link">Geopolitik</a>
+                <a onclick="setCategory(null, 'Eskatologi')" class="cat-link">Eskatologi</a>
+                <a onclick="setCategory(null, 'Mimpi Qasim')" class="cat-link">Mimpi Qasim</a>
+                <a onclick="setCategory(null, 'Timur Tengah')" class="cat-link">Timur Tengah</a>
+                <a onclick="setCategory(null, 'Trending')" class="cat-link">Trending</a>
+            </div>
+        </div>
+
+<div class="date-header-container">
+    <div id="live-date" class="live-date-text">Memuat Waktu...</div>
+    
+    <svg class="date-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+    </svg>
+</div>
+
+
+<div id="banner-container" class="showcase-wrapper" style="display: none;">
+    <div class="showcase-strip" id="banner-track">
+        </div>
+</div>
+
+
+<div class="quick-menu-grid">
+    
+    <a href="buku.html" class="menu-item">
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+        </div>
+        <span class="menu-label">PDF</span>
+    </a>
+
+    <a href="pesan-tauhid.html" class="menu-item">
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <span class="menu-label">19 PESAN</span>
+    </a>
+
+    <a href="audio.html" class="menu-item">
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"></path><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+        </div>
+        <span class="menu-label">AUDIO</span>
+    </a>
+
+    <button class="menu-item" onclick="toggleMoreMenu()" id="btnMore">
+        <div class="icon-box">
+            <svg id="iconMore" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        </div>
+        <span class="menu-label" id="textMore">LAINNYA</span>
+    </button>
+
+    <a href="simpan.html" class="menu-item hidden-row">
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <span class="menu-label">TERSIMPAN</span>
+    </a>
+
+    <a href="https://chat.whatsapp.com/Cb6nVjlAtj06JRdeFzRpKw" class="menu-item hidden-row">
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <span class="menu-label">JOIN GRUP</span>
+    </a>
+
+    <button class="menu-item hidden-row" id="installBtn">
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </div>
+        <span class="menu-label">INSTALL APP</span>
+    </button>
+
+    <a href="https://saweria.co/mqnewstoday" target="_blank" class="menu-item hidden-row">
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                <line x1="6" y1="1" x2="6" y2="4"></line>
+                <line x1="10" y1="1" x2="10" y2="4"></line>
+                <line x1="14" y1="1" x2="14" y2="4"></line>
+            </svg>
+        </div>
+        <span class="menu-label">SAWERIA</span>
+    </a>
+
+</div>
+
+
+
+<div id="mq-quote-widget" class="mq-quote-compact" style="display:none;">
+    <div class="quote-label">QUOTES OF THE END TIMES</div>
+    
+    <blockquote id="mq-quote-text">Loading...</blockquote>
+    
+    <div id="mq-quote-source">-- --</div>
+</div>
+
+
+
+
+
+        <main class="main-container" id="mainContainer">
+            <div class="section-label">
+                <span id="current-category-label">Berita Terkini</span>
+                <div class="section-line"></div>
+            </div>
+            <div id="news-container" class="news-grid">
+                <div class="loader">Mengunduh data berita...</div>
+            </div>
+            <div id="news-container" class="news-grid"></div>
+
+<div class="related-section-wrapper">
+    <div class="section-label small-label"><span>Pilihan Editor</span></div>
+    <div id="home-related-list" class="related-list">
+        </div>
+</div>
+
+        </main>
+    </div>
+
+
+    <div id="article-view">
+        <div class="article-header">
+            <div class="back-icon-btn" onclick="closeArticlePage()">×</div>
+            <span id="art-meta" class="art-meta"></span>
+            <h1 id="art-title" class="art-title"></h1>
+        </div>
+
+        <img id="art-img" class="art-hero-img" src="" alt="">
+
+        <div id="art-video-wrap" class="video-container" style="display:none;">
+            <iframe id="art-video-frame" src="" allowfullscreen></iframe>
+        </div>
+
+        <div class="art-content-box">
+            <div id="art-desc" class="art-body"></div>
+        </div>
+
+        <div class="social-share-area">
+            <div class="social-label">Ikuti Kami</div>
+            <div class="social-icons">
+              <div class="social-icons-group article-mode">
+    
+    <a href="https://x.com/MQNewsToday" target="_blank" class="soc-link" aria-label="X Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+
+    <a href="https://www.instagram.com/mqnews.today?igsh=Z2hlM3pyeno3ZDY2" target="_blank" class="soc-link" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+
+    <a href="https://www.tiktok.com/@mqnews.today?_r=1&_t=ZS-92THjGhQHkD" target="_blank" class="soc-link" aria-label="TikTok">
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+    </a>
+
+    <a href="https://www.youtube.com/@MQNewsToday" target="_blank" class="soc-link" aria-label="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    </a>
+
+</div>
+
+                </div>
+
+            <div class="comment-section">
+                <h3 class="comment-title">Diskusi Pembaca</h3>
+
+                <div class="comment-form">
+                    <textarea id="commentText" class="comment-input" placeholder="Tulis tanggapan Anda dengan sopan..."></textarea>
+                    <button onclick="postComment()" class="btn-comment">KIRIM KOMENTAR</button>
+                </div>
+
+                <div id="commentList" class="comment-list">
+                    <div class="loader">Memuat komentar...</div>
+                </div>
+            </div>
+
+    
+    <div class="social-icons">
+        </div>
+
+    <div class="share-article-wrapper">
+        <h4 class="share-title">Bagikan Berita Ini:</h4>
+        <div class="share-buttons-row">
+            <button onclick="shareArticle('wa')" class="share-btn btn-wa">
+                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                WhatsApp
+            </button>
+            
+            <button onclick="shareArticle('fb')" class="share-btn btn-fb">
+                <svg viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+                Facebook
+            </button>
+
+            <button onclick="shareArticle('x')" class="share-btn btn-x">
+                <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                Twitter
+            </button>
+
+            <button onclick="shareArticle('copy')" class="share-btn btn-copy">
+                <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Salin Link
+            </button>
+        </div>
+    </div>
+    <div class="comment-section">
+        </div>
+        
+        </div> <div class="related-section-wrapper article-mode">
+    <h4 class="share-title">Baca Juga:</h4>
+    <div id="article-related-list" class="related-list">
+        </div>
+</div>
+
+
+</div>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="MQ_LogoSecond.png" alt="Logo White">
+                </div>
+                <p>
+                    MQ News Today berdedikasi untuk menyajikan informasi yang sering luput dari media arus utama.
+                    Fokus pada kebenaran dan analisis mendalam.
+                </p>
+            </div>
+
+            <div class="footer-col">
+                <h3>Kategori</h3>
+                <div class="footer-links">
+                    <a href="#" onclick="closeArticlePage(); setCategory(null, 'Semua')">Beranda</a>
+                    <a href="#" onclick="closeArticlePage(); setCategory(null, 'Geopolitik')">Geopolitik</a>
+                    <a href="#" onclick="closeArticlePage(); setCategory(null, 'Eskatologi')">Eskatologi</a>
+                    <a href="#" onclick="closeArticlePage(); setCategory(null, 'Mimpi Qasim')">Mimpi Qasim</a>
+                    <a href="#" onclick="closeArticlePage(); setCategory(null, 'Timur Tengah')">Timur Tengah</a>
+                    <a href="#" onclick="closeArticlePage(); setCategory(null, 'Trending')">Trending</a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h3>Hubungi Kami</h3>
+                <a href="https://wa.me/6285705856030" target="_blank" class="footer-wa-link">
+                    (+62) 857-0585-6030
+                </a>
+            </div>
+        </div>
+ 
+          <div class="social-icons-group article-mode">
+    
+    <a href="https://x.com/MQNewsToday" target="_blank" class="soc-link" aria-label="X Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+
+    <a href="https://www.instagram.com/mqnews.today?igsh=Z2hlM3pyeno3ZDY2" target="_blank" class="soc-link" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+
+    <a href="https://www.tiktok.com/@mqnews.today?_r=1&_t=ZS-92THjGhQHkD" target="_blank" class="soc-link" aria-label="TikTok">
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+    </a>
+
+    <a href="https://www.youtube.com/@MQNewsToday" target="_blank" class="soc-link" aria-label="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    </a>
+
+</div>
+
+ 
+        <div class="copyright">
+               <a href="tentang-kami.html" style="text-decoration: none; color: inherit;">
+            © 2026 MQ News Today
+        </a>
+        </div>
+    </footer>
+
+
+    <div id="logoutModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <h3 class="modal-title">Konfirmasi</h3>
+            <p class="modal-desc">Apakah Anda yakin ingin keluar dari akun?</p>
+            <div class="modal-actions">
+                <button id="btnCancelLogout" class="modal-btn btn-cancel">Batal</button>
+                <button id="btnConfirmLogout" class="modal-btn btn-yes">Ya, Keluar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="limitModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <h3 class="modal-title" style="color: var(--primary);">Batas Akses Tamu</h3>
+            <p class="modal-desc">Anda telah membaca <strong>3 berita gratis</strong>. Silakan masuk atau daftar untuk akses tanpa batas.</p>
+            <div class="modal-actions">
+                <button onclick="document.getElementById('limitModal').style.display='none'" class="modal-btn btn-cancel">Nanti Saja</button>
+                <button onclick="window.location.href='login.html'" class="modal-btn btn-yes">Masuk / Daftar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notifBox" class="custom-notif">
+        <div id="notifIcon"></div>
+        <span id="notifText">Pesan notifikasi...</span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+<script>
+    // --- KONFIGURASI ---
+    const sheetID = "1FDzhBlVOFlnlQgphN2gsGJUdDeFWonpoJcadY8JqUcM"; 
+    
+    // Variabel Global
+    let allNews = [];         // Semua berita mentah dari CSV
+    let activeData = [];      // Berita yang sedang aktif (bisa hasil search/filter)
+    let currentIndex = 0;     // Posisi load berita sekarang
+    const BATCH_SIZE = 9;     // Jumlah berita per load (9 berita)
+
+    // --- 1. INIT: AMBIL DATA ---
+    function init() {
+        // Set history awal biar Back Button aman
+        if (!history.state) {
+            history.replaceState({ page: 'home' }, "Home", window.location.href);
+        }
+
+        const url = `https://docs.google.com/spreadsheets/d/${sheetID}/export?format=csv`;
+        Papa.parse(url, {
+            download: true, header: true, skipEmptyLines: true,
+                        complete: function(results) { 
+                allNews = results.data; 
+
+                // --- 1. CEK TITIPAN DARI BACA.HTML ---
+                const titipan = sessionStorage.getItem('target_baca');
+
+                if (titipan) {
+                    sessionStorage.removeItem('target_baca'); // Hapus biar gak nyangkut
+                    const judulAsli = decodeURIComponent(titipan);
+
+                    // Cari Berita
+                    const ketemu = allNews.find(i => (i.judul || i.title) === judulAsli);
+
+                    // KALO KETEMU: BUKA ARTIKEL & STOP
+                    if (ketemu) {
+                        activeData = allNews.slice().reverse();
+                        openArticlePage(ketemu, false);
+                        
+                        // Load rekomendasi di background
+                        setTimeout(() => { 
+                            if(typeof renderRelatedNews === 'function') renderRelatedNews('article-related-list', judulAsli); 
+                        }, 500);
+                        
+                        return; // <--- REM TANGAN: JANGAN RENDER HOME
+                    }
+                }
+                // -------------------------------------
+
+                // --- 2. KALO GAK ADA TITIPAN: RENDER HOME ---
+                activeData = allNews.slice().reverse();
+                resetRender();
+                
+                // Panggil fungsi-fungsi render lain punya lu
+                if(typeof updateClock === 'function') updateClock();
+                if(typeof renderRelatedNews === 'function') setTimeout(() => renderRelatedNews('home-related-list'), 500);
+                
+                // Cek deep link bawaan (opsional, script lama lu)
+                if(typeof checkUrlForArticle === 'function') checkUrlForArticle(); 
+            },
+
+            error: function() { 
+                document.getElementById('news-container').innerHTML = "<div class='no-data'>Gagal koneksi. Cek internet Anda.</div>"; 
+            }
+        });
+    }
+// --- SCRIPT JAM REDAKSI ---
+function updateClock() {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateStr = now.toLocaleDateString('id-ID', options);
+    const timeStr = now.toLocaleTimeString('id-ID'); // Jam:Menit:Detik
+    
+    const el = document.getElementById('live-date');
+    if(el) el.innerText = `${dateStr} | ${timeStr} WIB`;
+}
+setInterval(updateClock, 1000); // Update tiap detik
+updateClock(); // Jalanin langsung pas load
+
+// --- SCRIPT BANNER OTOMATIS (GOOGLE SHEET) ---
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. MASUKKAN LINK CSV SHEET "BANNER" LU DI SINI:
+    const BANNER_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=530510330&single=true&output=csv"; 
+    
+    const container = document.getElementById('banner-container');
+    const track = document.getElementById('banner-track');
+    
+    // Fungsi Parse CSV (Sama kayak berita)
+    function parseCSV(text) {
+        const rows = text.split('\n').slice(1); // Buang header baris 1
+        return rows.map(row => {
+            // Split koma (regex ini menangani koma di dalam tanda kutip)
+            const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+            if (!cols) return null;
+            return {
+                img: cols[0]?.replace(/"/g, '').trim(),
+                caption: cols[1]?.replace(/"/g, '').trim(),
+                link: cols[2]?.replace(/"/g, '').trim()
+            };
+        }).filter(item => item && item.img); // Hanya ambil yg ada gambarnya
+    }
+
+    // Fungsi Render Banner (Versi Aman & Support Link Lokal)
+    async function loadBanner() {
+        try {
+            const res = await fetch(BANNER_SHEET_URL);
+            const text = await res.text();
+            let data = parseCSV(text); // Tetap pakai parseCSV kamu
+
+            // LIMIT CUMA 3 GAMBAR
+            if (data.length > 3) data = data.slice(0, 3);
+
+            if (data.length > 0) {
+                // Tampilkan Container
+                container.style.display = 'block';
+                track.innerHTML = ''; // Bersihkan
+
+                data.forEach((item, index) => {
+                    const activeClass = index === 0 ? 'active' : '';
+                    
+                    // --- LOGIKA BARU: CEK LINK LOKAL vs LUAR ---
+                    let tag = 'div';
+                    let hrefAttr = '';
+                    let styleAttr = '';
+
+                    // Cek kolom link ada isinya gak?
+                    if (item.link && item.link.trim() !== '') {
+                        tag = 'a'; // Jadiin link
+                        
+                        // Cek apakah link luar (http) atau lokal?
+                        const target = item.link.includes('http') ? '_blank' : '_self';
+                        
+                        hrefAttr = `href="${item.link}" target="${target}"`;
+                        styleAttr = 'style="cursor:pointer; display:block; text-decoration:none;"';
+                    }
+                    // --------------------------------------------
+
+                    const html = `
+                        <${tag} ${hrefAttr} ${styleAttr} class="banner-slide ${activeClass}" data-index="${index}">
+                            <img src="${item.img}" alt="Banner ${index + 1}">
+                            ${item.caption ? `<div class="banner-caption">${item.caption}</div>` : ''}
+                        </${tag}>
+                    `;
+                    track.innerHTML += html;
+                });
+
+                // Jalankan Auto Slide (Tetap pakai fungsi kamu)
+                if (data.length > 1) startSlider();
+            }
+
+        } catch (err) {
+            console.error("Gagal muat banner:", err);
+            container.style.display = 'none'; 
+        }
+    }
+
+
+    // Logika Auto Slide (Fade Effect)
+    function startSlider() {
+        const slides = document.querySelectorAll('.banner-slide');
+        let current = 0;
+        
+        setInterval(() => {
+            // Sembunyikan yg sekarang
+            slides[current].classList.remove('active');
+            
+            // Pindah ke selanjutnya
+            current = (current + 1) % slides.length;
+            
+            // Munculkan yg baru
+            slides[current].classList.add('active');
+        }, 5000); // Ganti tiap 5 Detik
+    }
+
+    // JALANKAN!
+    loadBanner();
+});
+
+
+
+
+    // --- 2. SISTEM RENDER & LOAD MORE (INTI BARU) ---
+    
+    // Reset layar sebelum menampilkan hasil baru (misal habis search)
+    function resetRender() {
+        const container = document.getElementById('news-container');
+        container.innerHTML = ""; // Bersihkan layar
+        currentIndex = 0;         // Reset hitungan
+        
+        // Hapus tombol load more lama jika ada
+        const oldBtn = document.getElementById('btn-load-more');
+        if(oldBtn) oldBtn.remove();
+
+        if (activeData.length === 0) {
+            container.innerHTML = `<div class="no-data">Tidak ditemukan berita.</div>`;
+            return;
+        }
+
+        loadNextBatch(); // Muat 9 pertama
+    }
+
+    // Muat 9 berita berikutnya
+    function loadNextBatch() {
+        const container = document.getElementById('news-container');
+        const batch = activeData.slice(currentIndex, currentIndex + BATCH_SIZE);
+        
+        batch.forEach(item => {
+            const html = createCardHTML(item);
+            container.insertAdjacentHTML('beforeend', html);
+        });
+
+        currentIndex += BATCH_SIZE;
+        manageLoadMoreButton(); // Cek perlu tombol lagi gak?
+    }
+
+    // Atur tombol "Muat Lebih Banyak"
+    function manageLoadMoreButton() {
+        const oldBtn = document.getElementById('btn-load-more');
+        if(oldBtn) oldBtn.remove(); // Hapus dulu biar gak numpuk
+
+        // Jika masih ada sisa berita yang belum tampil
+        if (currentIndex < activeData.length) {
+            const btnHTML = `
+                <div id="btn-load-more" style="text-align:center; margin-top:30px; width:100%; grid-column: 1/-1;">
+                    <button onclick="loadNextBatch()" style="
+                        background:white; border:1px solid #ccc; padding:10px 30px; 
+                        border-radius:50px; cursor:pointer; font-weight:bold; color:#555;
+                        transition:0.3s; font-family:'Lato', sans-serif;">
+                        MUAT LEBIH BANYAK ↓
+                    </button>
+                </div>
+            `;
+            document.getElementById('news-container').insertAdjacentHTML('afterend', btnHTML);
+        }
+    }
+
+        // Template HTML Kartu Berita (DENGAN TOMBOL SIMPAN)
+    function createCardHTML(item) {
+        const judul = getVal(item, 'judul') || getVal(item, 'title');
+        if (!judul) return "";
+        
+        const isi = getVal(item, 'isi') || getVal(item, 'content') || "Tidak ada detail.";
+        const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
+        const kategori = getVal(item, 'kategori') || 'News';
+        let gambar = getVal(item, 'gambar') || getVal(item, 'image');
+        
+        if(!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/600x400?text=MQ+News";
+        
+        // Escape string biar aman pas dikirim ke fungsi
+        // KODE BARU (ANTI ERROR)
+// 1. .replace(/["']/g, "") -> Buang semua tanda kutip biar gak ngerusak HTML
+// 2. .replace(/\n/g, " ")  -> Ubah ENTER jadi SPASI (Ini kuncinya!)
+const safeJudul = (judul || "").replace(/["']/g, "").replace(/\n/g, " ");
+const safeIsi = (isi || "").replace(/["']/g, "").replace(/\n/g, " ").substring(0, 150); // Kita potong 150 huruf aja biar ringan
+
+        const safeGambar = gambar;
+        // Kita simpan URL artikel (baca.html?...)
+        // Ini bener: Tetap di index.html tapi bawa parameter ?article=
+const safeUrl = window.location.origin + window.location.pathname + "?article=" + encodeURIComponent(judul);
+
+        const safeItem = JSON.stringify(item).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+        
+        return `
+            <article class="news-card">
+                <div class="card-img-wrap">
+                    <img src="${gambar}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400?text=Image+Error'">
+                </div>
+                <div class="card-body">
+                    <div class="card-category-badge">${kategori}</div>
+                    <h3 class="card-title">${judul}</h3>
+                    <p class="card-excerpt">${isi.substring(0, 100)}...</p>
+                    <div class="card-footer">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="card-date">${tanggal}</span>
+                            
+                            <button onclick="saveNews('${safeJudul}', '${safeIsi}', '${safeGambar}', '${safeUrl}', event)" 
+                                    style="background:none; border:none; cursor:pointer; padding:5px; color:var(--text); transition:0.2s;"
+                                    title="Simpan Berita">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <span class="read-btn" onclick='openArticlePage(${safeItem}, true)'>BACA →</span>
+                    </div>
+                </div>
+            </article>`;
+    }
+
+
+    // --- 3. FITUR SEARCH & KATEGORI (DIUPDATE UNTUK LOAD MORE) ---
+    
+    function setCategory(el, cat) {
+        // Jika sedang baca artikel, tutup dulu
+        if(document.getElementById('article-view').style.display === 'block') closeArticlePage();
+        
+        // UI Update
+        currentFilter = cat;
+        document.querySelectorAll('.cat-link').forEach(link => link.classList.remove('active'));
+        if(el) el.classList.add('active'); 
+        else document.querySelectorAll('.cat-link').forEach(l => {if(l.innerText.toUpperCase()===cat.toUpperCase()) l.classList.add('active')});
+        document.getElementById('current-category-label').innerText = cat === 'Semua' ? 'Berita Terkini' : cat;
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // FILTER DATA (Masuk ke activeData)
+        if (cat === 'Semua') {
+            activeData = allNews.slice().reverse();
+        } else {
+            activeData = allNews.filter(i => (getVal(i, 'kategori')||'').toLowerCase().includes(cat.toLowerCase().trim())).slice().reverse();
+        }
+        
+        // RENDER ULANG (Reset ke 9 awal)
+        resetRender();
+    }
+
+    function executeSearch() {
+        const key = document.getElementById('searchInput').value.toLowerCase();
+        
+        // Tutup artikel jika sedang terbuka
+        if(document.getElementById('article-view').style.display === 'block') closeArticlePage();
+        
+        // FILTER DATA BERDASARKAN KEYWORD
+        if (!key.trim()) {
+            // Kalau kosong, tampilkan semua
+            activeData = allNews.slice().reverse();
+            document.getElementById('current-category-label').innerText = "Berita Terkini";
+        } else {
+            // Kalau ada keyword, cari di judul atau isi
+            activeData = allNews.filter(i => 
+                (getVal(i,'judul')||'').toLowerCase().includes(key) || 
+                (getVal(i,'isi')||'').toLowerCase().includes(key)
+            );
+            document.getElementById('current-category-label').innerText = `Hasil Cari: "${key}"`;
+        }
+
+        // Tutup sidebar setelah search
+        if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+        
+        // RENDER ULANG HASIL CARI (Reset ke 9 awal)
+        resetRender();
+        
+        setTimeout(() => { document.getElementById('mainContainer').scrollIntoView({ behavior: 'smooth' }); }, 100);
+        document.getElementById('searchInput').blur();
+        document.getElementById('searchInput').value = "";
+    }
+
+    // --- 4. NAVIGASI (BACK BUTTON & SIDEBAR) ---
+
+    // Toggle Sidebar (Logic Stack: Buka=Push, Tutup=Back)
+    function toggleSidebar() {
+        const sb = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const toggleBtn = document.querySelector('.menu-toggle');
+
+        if (sb.classList.contains('active')) {
+            history.back(); // Tutup pakai Back
+        } else {
+            history.pushState({ page: 'sidebar' }, null, ""); // Buka pakai Push
+            sb.classList.add('active');
+            overlay.classList.add('active');
+            toggleBtn.classList.add('active');
+        }
+    }
+    window.toggleSidebar = toggleSidebar; 
+
+    // Handler Tombol Back HP/Browser
+    window.onpopstate = function(e) {
+        const sb = document.getElementById('sidebar');
+        
+        // 1. Jika Sidebar Nyala -> Matikan
+        if (sb.classList.contains('active')) {
+            sb.classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.querySelector('.menu-toggle').classList.remove('active');
+            return;
+        }
+
+        // 2. Jika Mundur ke Home -> Tutup Artikel
+        if (!e.state || e.state.page === 'home') {
+            document.getElementById('article-view').style.display = 'none';
+            document.getElementById('home-view').style.display = 'block';
+            document.getElementById('art-video-frame').src = "";
+            return;
+        }
+        
+        // 3. Jika Maju ke Artikel -> Reload
+        if (e.state && e.state.page === 'article') { location.reload(); }
+    };
+
+    // Tutup Artikel Manual (Tombol X) -> Pakai Back
+    function closeArticlePage() {
+        if (history.state && history.state.page === 'article') { 
+            history.back(); 
+        } else {
+            document.getElementById('article-view').style.display = 'none';
+            document.getElementById('home-view').style.display = 'block';
+            document.getElementById('art-video-frame').src = "";
+            window.scrollTo(0,0);
+        }
+    }
+
+    // --- 5. BUKA ARTIKEL & FITUR LAIN ---
+    
+    function checkUrlForArticle() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const judulDiUrl = urlParams.get('article');
+        if (judulDiUrl) {
+            const target = allNews.find(item => {
+                const judulItem = getVal(item, 'judul') || getVal(item, 'title');
+                return judulItem === decodeURIComponent(judulDiUrl);
+            });
+            if (target) {
+                // Logic Anti-Boomerang (Refresh vs New Visit)
+                if (history.state && history.state.page === 'article' && history.state.title === target.judul) {
+                    openArticlePage(target, false); 
+                } else {
+                    openArticlePage(target, true); 
+                }
+            }
+        }
+    }
+
+    const getVal = (item, key) => {
+        const foundKey = Object.keys(item).find(k => k.toLowerCase() === key.toLowerCase());
+        return foundKey ? item[foundKey] : "";
+    };
+
+    function checkGuestLimit(articleTitle) {
+        if (window.isLoggedIn) return true; 
+        let readHistory = JSON.parse(localStorage.getItem('mq_guest_history') || "[]");
+        if (readHistory.includes(articleTitle)) return true; 
+        if (readHistory.length >= 3) {
+            document.getElementById('limitModal').style.display = 'flex'; 
+            return false;
+        }
+        readHistory.push(articleTitle);
+        localStorage.setItem('mq_guest_history', JSON.stringify(readHistory));
+        return true;
+    }
+
+    function openArticlePage(item, pushToHistory = true) {
+        const title = getVal(item, 'judul') || getVal(item, 'title');
+        if (!checkGuestLimit(title)) return;
+
+        document.getElementById('art-title').innerText = title;
+        document.getElementById('art-desc').innerHTML = (getVal(item, 'isi') || getVal(item, 'content')).replace(/\n/g, '<br>');
+        document.getElementById('art-meta').innerText = (getVal(item, 'kategori')||'NEWS') + " • " + (getVal(item, 'tanggal')||'');
+        document.getElementById('art-img').src = getVal(item, 'gambar') || getVal(item, 'image') || "";
+
+        const vType = getVal(item, 'VideoType'); const vID = getVal(item, 'VideoID');
+        const vidWrap = document.getElementById('art-video-wrap'); const vidFrame = document.getElementById('art-video-frame');
+        if (vType && vID) {
+            let src = "";
+            if (vType.toLowerCase() === 'youtube') src = `https://www.youtube.com/embed/${extractYouTubeID(vID)}`;
+            else if (vType.toLowerCase() === 'tiktok') src = `https://www.tiktok.com/embed/v2/${extractTikTokID(vID)}`;
+            if(src) { vidFrame.src = src; vidWrap.style.display = 'flex'; }
+        } else { vidWrap.style.display = 'none'; vidFrame.src = ""; }
+
+        document.getElementById('home-view').style.display = 'none';
+        document.getElementById('article-view').style.display = 'block';
+        window.scrollTo(0, 0);
+        
+        if (pushToHistory) {
+            const newURL = "?article=" + encodeURIComponent(title);
+            history.pushState({ page: 'article', title: title }, title, newURL);
+        }
+        if(window.loadComments) window.loadComments(title);
+        renderRelatedNews('article-related-list', title);
+    }
+
+    function handleEnterKey(e) { if (e.key === 'Enter') { e.preventDefault(); executeSearch(); } }
+    function extractYouTubeID(url) { if(!url) return null; const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/|live\/)([^#&?]*).*/); return (m && m[2].length === 11) ? m[2] : url; }
+    function extractTikTokID(url) { if(!url) return null; const m = url.match(/\/video\/(\d+)/); return m ? m[1] : url; }
+    
+    
+    
+    // --- FITUR SHARE SOSMED (FIX LINK + NOTIF TETAP) ---
+    function shareArticle(platform) {
+        // 1. Ambil Judul Artikel (Bersihkan spasi)
+        const rawTitle = document.getElementById('art-title').innerText.trim();
+
+        // 2. BIKIN LINK TUJUAN (Mengarah ke baca.html)
+        // Link jadinya: https://mqnews.my.id/baca.html?judul=Gempa
+        // Ini bener: Ambil URL website saat ini (index.html) + tempel ?article=
+const baseUrl = window.location.href.split('?')[0]; // Ambil link bersih tanpa sampah lama
+const targetLink = baseUrl + "?article=" + encodeURIComponent(rawTitle);
+
+
+        // 3. Encode buat URL Sosmed (Biar aman)
+        const encodedTitle = encodeURIComponent(rawTitle);
+        const encodedLink = encodeURIComponent(targetLink);
+
+        let shareUrl = "";
+        switch(platform) {
+            // Link WA, FB, X sekarang pake encodedLink (yang bener)
+            case 'wa': shareUrl = `https://wa.me/?text=*${encodedTitle}*%0A${encodedLink}`; break;
+            case 'fb': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`; break;
+            case 'x': shareUrl = `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedLink}`; break;
+            
+            case 'copy': 
+                // Salin Link yang bener
+                navigator.clipboard.writeText(targetLink).then(() => {
+                    // --- BAGIAN INI TETAP PAKE STYLE NOTIF LU ---
+                    if(typeof showCustomNotif === 'function') {
+                        showCustomNotif("Link tersalin!", "success");
+                    } else {
+                        alert("Link tersalin!");
+                    }
+                }).catch(() => {
+                    prompt("Salin manual:", targetLink);
+                }); 
+                return;
+        }
+        if(shareUrl) window.open(shareUrl, '_blank');
+    }
+
+
+    // --- [BARU] FUNGSI RENDER REKOMENDASI ---
+    function renderRelatedNews(containerID, excludeTitle = null) {
+        const container = document.getElementById(containerID);
+        if(!container) return;
+        
+        container.innerHTML = ""; // Bersihkan dulu
+        
+        // 1. Filter berita (supaya berita yg lagi dibaca gak muncul di rekomendasi)
+        let candidates = allNews.filter(item => {
+            const t = getVal(item, 'judul') || getVal(item, 'title');
+            return t !== excludeTitle;
+        });
+
+        // 2. Acak Urutan (Shuffle) biar yang muncul beda-beda
+        candidates.sort(() => 0.5 - Math.random());
+
+        // 3. Ambil 5 Berita Saja
+        const selected = candidates.slice(0, 3);
+
+        // 4. Render ke HTML
+        selected.forEach(item => {
+            const judul = getVal(item, 'judul') || getVal(item, 'title');
+            const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
+            let gambar = getVal(item, 'gambar') || getVal(item, 'image');
+            if(!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/150x100?text=MQ";
+
+            const safeItem = JSON.stringify(item).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
+            const html = `
+                <div class="related-card" onclick='openArticlePage(${safeItem}, true)' style="cursor:pointer;">
+                    <div class="rel-img-wrap">
+                        <img src="${gambar}" class="rel-img" loading="lazy">
+                    </div>
+                    <div class="rel-body">
+                        <div class="rel-title">${judul}</div>
+                        <div class="rel-date">${tanggal}</div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+    }
+
+        // --- FUNGSI SIMPAN BERITA (INTEGRASI SIMPAN.HTML) ---
+    function saveNews(title, desc, thumb, url, event) {
+        // Stop biar gak ngebuka artikel pas klik simpan
+        if(event) event.stopPropagation();
+
+        const item = {
+            title: title,
+            desc: desc.substring(0, 100) + "...", // Simpan pendek aja
+            thumb: thumb,
+            url: url,
+            type: 'berita',
+            date: new Date().toISOString()
+        };
+
+        // Ambil data lama
+        let bookmarks = JSON.parse(localStorage.getItem('bookmarks_berita')) || [];
+
+        // Cek Duplikat
+        const exists = bookmarks.some(b => b.title === title);
+        if(exists) {
+            showCustomNotif("Berita ini sudah tersimpan!", "error");
+            return;
+        }
+
+        // Simpan
+        bookmarks.push(item);
+        localStorage.setItem('bookmarks_berita', JSON.stringify(bookmarks));
+        
+        showCustomNotif("Berita berhasil disimpan!", "success");
+    }
+
+
+    // Jalankan Aplikasi
+    init();
+</script>
+
+
+
+           <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, addDoc, query, where, orderBy, limit, getDocs, serverTimestamp } 
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // --- FIREBASE CONFIGURATION ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyCMDVcDKxaf3v7iHZYpQ1k6k0G55yW9njQ",
+      authDomain: "mq-news-today.firebaseapp.com",
+      projectId: "mq-news-today",
+      storageBucket: "mq-news-today.firebasestorage.app",
+      messagingSenderId: "310073854630",
+      appId: "1:310073854630:web:25dac91125b3be85f94267",
+      measurementId: "G-0VMCLH4RD5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUserName = "Anonymous";
+    let currentUserUid = null;
+
+    // ==========================================
+    // 1. SISTEM AUTH & UI HANDLER
+    // ==========================================
+    onAuthStateChanged(auth, async (user) => {
+        // Elemen UI
+        const authLink  = document.getElementById('auth-link'); // Tombol Merah
+        const authText  = document.getElementById('auth-text'); // Teks di tombol merah
+        const logoutBtn = document.getElementById('logout-btn'); // Link kecil di atas tombol
+        
+        // Elemen Modal Logout
+        const modal = document.getElementById('logoutModal');
+        const btnConfirm = document.getElementById('btnConfirmLogout');
+        const btnCancel  = document.getElementById('btnCancelLogout');
+
+        if (user) {
+            // --- KONDISI: USER LOGIN ---
+            window.isLoggedIn = true;
+            currentUserUid = user.uid;
+
+            // 1. Ubah Text Tombol Merah & Arahkan ke Profil
+            if (authText) authText.innerText = "Halo...";
+            
+            try {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                if (snap.exists()) {
+                    const namaLengkap = snap.data().nama || "User";
+                    // Ambil nama depan saja biar muat
+                    currentUserName = namaLengkap;
+                    authText.innerText = "Halo, " + namaLengkap.split(' ')[0];
+                } else {
+                    authText.innerText = "Halo, User";
+                }
+            } catch (err) {
+                console.error("Error fetch user:", err);
+                authText.innerText = "Halo, User";
+            }
+
+            if (authLink) {
+                authLink.onclick = (e) => {
+                    e.preventDefault(); // Jangan logout, tapi ke profil
+                    window.location.href = 'profil.html';
+                };
+            }
+
+            // 2. Tampilkan Tombol Logout Kecil
+            if (logoutBtn) {
+                logoutBtn.style.display = 'flex'; // Munculkan
+                logoutBtn.onclick = (e) => {
+                    e.preventDefault();
+                    if (modal) {
+                        modal.style.display = 'flex'; // Buka Modal
+                        // Tutup Sidebar biar modal fokus
+                        document.getElementById('sidebar').classList.remove('active');
+                        document.getElementById('overlay').classList.remove('active');
+                    }
+                };
+            }
+
+            // 3. Logic Tombol di dalam Modal Logout
+            if (btnConfirm) {
+                // Hapus listener lama biar gak numpuk (clone node trick simple)
+                const newBtn = btnConfirm.cloneNode(true);
+                btnConfirm.parentNode.replaceChild(newBtn, btnConfirm);
+                
+                newBtn.addEventListener('click', async () => {
+                    await signOut(auth);
+                    modal.style.display = 'none';
+                    showCustomNotif("Berhasil Keluar.", "success");
+                });
+            }
+
+        } else {
+            // --- KONDISI: USER LOGOUT / GUEST ---
+            window.isLoggedIn = false;
+            currentUserUid = null;
+            currentUserName = "Anonymous";
+
+            // 1. Sembunyikan Tombol Logout Kecil
+            if (logoutBtn) logoutBtn.style.display = 'none';
+            if (modal) modal.style.display = 'none';
+
+            // 2. Ubah Tombol Merah jadi "MASUK / DAFTAR"
+            if (authText) authText.innerText = "MASUK / DAFTAR";
+
+            if (authLink) {
+                authLink.onclick = (e) => {
+                    e.preventDefault();
+                    window.location.href = 'login.html';
+                };
+            }
+        }
+
+        // Logic Tombol Batal di Modal (Selalu sama)
+        if (btnCancel) {
+            btnCancel.onclick = () => { modal.style.display = 'none'; };
+        }
+    });
+
+    // ==========================================
+    // 2. SISTEM KOMENTAR (FIXED DUPLICATE CODE)
+    // ==========================================
+    
+    // Expose ke window agar bisa dipanggil onclick HTML
+    window.postComment = async function() {
+        const input = document.getElementById('commentText');
+        const isi = input.value.trim();
+        const judulBerita = document.getElementById('art-title')?.innerText.trim();
+
+        if (!isi) { showCustomNotif("Tulis komentar dulu!", "error"); return; }
+        if (!judulBerita) return;
+
+        const btn = document.querySelector('.btn-comment');
+        
+        // --- CEK 1: Limit Perangkat (LocalStorage) ---
+        const storageKey = "comment_limit_" + btoa(judulBerita); // Encode base64 biar aman key-nya
+        let deviceHistory = JSON.parse(localStorage.getItem(storageKey) || "[]");
+
+        if (deviceHistory.length >= 2) {
+            showCustomNotif("Batas komentar perangkat tercapai (Max 2).", "error");
+            return;
+        }
+
+        btn.innerText = "Mengirim...";
+        btn.disabled = true;
+
+        try {
+            // --- CEK 2: Limit Akun (Firestore) ---
+            if (currentUserUid) {
+                const qCheck = query(
+                    collection(db, "comments"), 
+                    where("articleTitle", "==", judulBerita),
+                    where("uid", "==", currentUserUid)
+                );
+                const checkSnap = await getDocs(qCheck);
+
+                if (checkSnap.size >= 2) {
+                    showCustomNotif("Akun Anda sudah mencapai batas komentar.", "error");
+                    btn.innerText = "KIRIM KOMENTAR";
+                    btn.disabled = false;
+                    return;
+                }
+            }
+
+            // --- EKSEKUSI KIRIM ---
+            await addDoc(collection(db, "comments"), {
+                articleTitle: judulBerita,
+                nama: currentUserName,
+                uid: currentUserUid || "anon",
+                isi: isi,
+                timestamp: serverTimestamp()
+            });
+
+            // Simpan history local
+            deviceHistory.push(Date.now());
+            localStorage.setItem(storageKey, JSON.stringify(deviceHistory));
+
+            input.value = "";
+            showCustomNotif("Komentar berhasil dikirim!", "success");
+
+            // Refresh List Komentar
+            window.loadComments(judulBerita);
+
+        } catch (e) {
+            console.error("Gagal post comment:", e);
+            showCustomNotif("Gagal mengirim komentar. Cek koneksi.", "error");
+        } finally {
+            btn.innerText = "KIRIM KOMENTAR";
+            btn.disabled = false;
+        }
+    };
+
+    // Fungsi Load Komentar
+    window.loadComments = async function(judulBerita) {
+        const listDiv = document.getElementById('commentList');
+        if (!listDiv) return;
+
+        const title = (judulBerita || "").trim();
+        if (!title) return;
+
+        listDiv.innerHTML = `<div class="loader">Memuat diskusi...</div>`;
+
+        try {
+            // Query Firestore
+            // NOTE: Jika error "Index Required", hapus bagian 'orderBy' sementara
+            // atau klik link di console untuk buat index otomatis.
+            const q = query(
+                collection(db, "comments"),
+                where("articleTitle", "==", title),
+                orderBy("timestamp", "desc"),
+                limit(5)
+            );
+
+            const snap = await getDocs(q);
+            listDiv.innerHTML = "";
+
+            if (snap.empty) {
+                listDiv.innerHTML = `<div style="text-align:center;color:#999;padding:20px;font-style:italic;">Belum ada komentar. Jadilah yang pertama!</div>`;
+                return;
+            }
+
+            snap.forEach(doc => {
+                const d = doc.data();
+                let waktu = "";
+                if (d.timestamp) {
+                    // Format tanggal simpel Indonesia
+                    const t = d.timestamp.toDate();
+                    waktu = t.toLocaleDateString('id-ID', {day:'numeric', month:'short'}) + " • " + t.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+                }
+
+                // Render Card Komentar
+                listDiv.innerHTML += `
+                    <div class="comment-card">
+                        <div class="com-header">
+                            <span class="com-name">${d.nama}</span>
+                            <span class="com-date">${waktu}</span>
+                        </div>
+                        <div class="com-body">${d.isi}</div>
+                    </div>
+                `;
+            });
+
+        } catch (e) {
+            console.error("Error loading comments:", e);
+            // Fallback pesan error yang user-friendly
+            if(e.message.includes("index")) {
+                listDiv.innerHTML = `<div style="color:orange;text-align:center;">Admin: Index Firestore diperlukan (Cek Console).</div>`;
+            } else {
+                listDiv.innerHTML = `<div style="color:red;text-align:center;">Gagal memuat komentar.</div>`;
+            }
+        }
+    };
+
+    // ==========================================
+    // 3. UTILITY: CUSTOM NOTIF
+    // ==========================================
+    window.showCustomNotif = function(msg, type) {
+        const box = document.getElementById('notifBox');
+        const text = document.getElementById('notifText');
+        const iconDiv = document.getElementById('notifIcon');
+        
+        box.className = "custom-notif"; 
+        text.innerText = msg;
+        
+        // Ganti Icon SVG based on type
+        if (type === 'success') {
+            box.classList.add('success');
+            iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#2e7d32" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+        } else {
+            box.classList.add('error');
+            iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#d32f2f" viewBox="0 0 24 24"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`;
+        }
+
+        // Animasi Masuk
+        requestAnimationFrame(() => { box.classList.add('active'); });
+        
+        // Auto Hilang 3 Detik
+        setTimeout(() => { box.classList.remove('active'); }, 3000);
+    }
+
+</script>
+<script src="offline.js"></script> 
+<script src="index.js"></script>
+<script>
+    // FUNGSI BUKA TUTUP MENU
+    function toggleMoreMenu() {
+        const hiddenItems = document.querySelectorAll('.hidden-row');
+        const btnText = document.getElementById('textMore');
+        const btnIcon = document.getElementById('iconMore');
+        
+        hiddenItems.forEach(item => {
+            if (item.style.display === 'flex') {
+                // Kalo lagi kebuka -> Tutup
+                item.style.display = 'none';
+                btnText.innerText = "LAINNYA";
+                // Ganti ikon jadi Grid kotak-kotak
+                btnIcon.innerHTML = '<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>';
+            } else {
+                // Kalo lagi ketutup -> Buka
+                item.style.display = 'flex';
+                btnText.innerText = "TUTUP";
+                // Ganti ikon jadi X (Silang) atau Panah Atas
+                btnIcon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>';
+            }
+        });
+    }
+
+    // =========================================
+    // LOGIKA PWA INSTALL APP (FIXED)
+    // =========================================
+    
+    let deferredPrompt; // Wadah buat nyimpen event install
+
+    // 1. Tangkap event 'beforeinstallprompt' (Browser siap menginstall)
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Cegah browser ngasih notif bar bawaan yang jelek
+        e.preventDefault();
+        // Simpan event ke variabel biar bisa dipanggil nanti pas tombol diklik
+        deferredPrompt = e;
+        console.log("PWA Siap Diinstall!");
+    });
+
+    // 2. Logic Tombol Install
+    const installBtn = document.getElementById('installBtn');
+    installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            // A. Munculkan Pop-up Install Bawaan HP/Browser
+            deferredPrompt.prompt();
+            
+            // B. Tunggu user milih (Install / Batal)
+            const { outcome } = await deferredPrompt.userChoice;
+            
+            if (outcome === 'accepted') {
+                showCustomNotif("Mengunduh aplikasi...", "success");
+            } else {
+                showCustomNotif("Instalasi dibatalkan.", "error");
+            }
+            
+            // C. Reset variabel (karena prompt cuma bisa dipake sekali)
+            deferredPrompt = null;
+        } else {
+            // D. Kalau browser gak support atau App sudah terinstall
+            // Cek apakah user pake iPhone (iOS gak support tombol install, harus manual)
+            const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
+            
+            if (isIos) {
+                showCustomNotif("Di iPhone: Tekan 'Share' ➢ 'Add to Home Screen'", "error");
+            } else {
+                showCustomNotif("Aplikasi sudah terinstall atau tidak didukung.", "error");
+            }
+        }
+    });
+
+    // 3. Deteksi Kalau Sukses Install
+    window.addEventListener('appinstalled', () => {
+        showCustomNotif("Berhasil ditambahkan ke layar utama!", "success");
+        deferredPrompt = null;
+    });
+
+    // =========================================
+    // REGISTRASI SERVICE WORKER (WAJIB BUAT PWA)
+    // =========================================
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            // Pastikan kamu punya file 'sw.js' atau 'offline.js' di folder yang sama
+            navigator.serviceWorker.register('offline.js') 
+                .then(reg => console.log('Service Worker: Registered'))
+                .catch(err => console.log('Service Worker: Error', err));
+        });
+    }
+
+</script>
+</body>
+
+
+

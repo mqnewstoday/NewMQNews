@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bookmark - MQ News</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="theme.css">
+
+    <style>
+        /* CSS TAMBAHAN KHUSUS HALAMAN INI (Layout List) */
+        body {
+            background-color: var(--bg);
+            /* Pake variabel dari theme.css */
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header sama persis Profil.html */
+        .profile-header-nav {
+            background: var(--white);
+            padding: 0 15px;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-weight: 700;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .header-icon-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 50%;
+        }
+
+        .header-icon-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 2px;
+        }
+
+        /* Container Utama */
+        .bookmark-container {
+            flex: 1;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* MENU PILIHAN (Berita / Audio) */
+        #view-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: fadeIn 0.3s;
+        }
+
+        .category-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s;
+        }
+
+        .category-card:active {
+            transform: scale(0.98);
+        }
+
+        .cat-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(157, 27, 27, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cat-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--primary);
+        }
+
+        .cat-info {
+            flex: 1;
+        }
+
+        .cat-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .cat-desc {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .cat-count {
+            background: var(--primary);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* LIST ITEM */
+        .list-view {
+            display: none;
+            animation: slideIn 0.3s;
+        }
+
+        .item-card {
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            height: 90px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .item-thumb {
+            width: 90px;
+            background: #eee;
+            flex-shrink: 0;
+        }
+
+        .item-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-info {
+            flex: 1;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .item-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--text);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .item-desc {
+            font-size: 0.75rem;
+            color: #64748b;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Tombol Hapus */
+        .btn-delete {
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid rgba(0, 0, 0, 0.1);
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .btn-delete svg {
+            width: 20px;
+            height: 20px;
+            stroke: #94a3b8;
+            transition: 0.2s;
+        }
+
+        .btn-delete:active svg {
+            stroke: #d32f2f;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #64748b;
+        }
+
+        .empty-state svg {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+            stroke: currentColor;
+        }
+
+        /* Copas Style Notif dari Register/Index */
+        .custom-notif {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--white);
+            padding: 12px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            min-width: 280px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-notif.active {
+            top: 40px;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .custom-notif.success {
+            border-left: 5px solid #2e7d32;
+        }
+
+        .custom-notif span {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <script src="theme-init.js"></script>
+    <script>
+        (function () {
+            // Manual check jaga-jaga kalau theme-init belum jalan
+            const t = localStorage.getItem('theme');
+            if (t === 'dark') document.body.classList.add('dark-mode'); // Pastikan CSS dark-mode di theme.css lu ada
+            const f = localStorage.getItem('fontSize');
+            if (f && f !== 'normal') document.body.classList.add('font-' + f);
+        })();
+    </script>
+
+    <header class="profile-header-nav">
+        <a href="javascript:void(0);" onclick="handleBack()" class="header-icon-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+        </a>
+
+        <h1 class="header-title" id="pageTitle">BOOKMARK</h1>
+
+        <a href="settings.html" class="header-icon-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+            </svg>
+        </a>
+    </header>
+
+    <div class="bookmark-container">
+
+        <div id="view-menu">
+            <div class="category-card" onclick="openCategory('berita')">
+                <div class="cat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <div class="cat-info">
+                    <div class="cat-title">BERITA</div>
+                    <div class="cat-desc">Artikel Tersimpan</div>
+                </div>
+                <div class="cat-count" id="count-berita">0</div>
+            </div>
+
+            <div class="category-card" onclick="openCategory('audio')">
+                <div class="cat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                    </svg>
+                </div>
+                <div class="cat-info">
+                    <div class="cat-title">AUDIO</div>
+                    <div class="cat-desc">Podcast Tersimpan</div>
+                </div>
+                <div class="cat-count" id="count-audio">0</div>
+            </div>
+        </div>
+
+        <div id="view-list" class="list-view">
+        </div>
+
+    </div>
+
+    <div id="notifBox" class="custom-notif">
+        <div id="notifIcon"></div>
+        <span id="notifText">Pesan notifikasi</span>
+    </div>
+
+    <script>
+        const viewMenu = document.getElementById('view-menu');
+        const viewList = document.getElementById('view-list');
+        const titleEl = document.getElementById('pageTitle');
+
+        let currentView = 'menu';
+
+        // --- 1. AMBIL DATA DARI LOCALSTORAGE ---
+        function getSavedData(key) {
+            return JSON.parse(localStorage.getItem(key)) || [];
+        }
+
+        function updateCounts() {
+            document.getElementById('count-berita').innerText = getSavedData('mq_saved_news').length;
+            document.getElementById('count-audio').innerText = getSavedData('bookmarks_audio').length;
+        }
+
+        // --- 2. LOGIKA NAVIGASI ---
+        function openCategory(type) {
+            currentView = type;
+            viewMenu.style.display = 'none';
+            viewList.style.display = 'block';
+
+            titleEl.innerText = type === 'berita' ? "BERITA TERSIMPAN" : "AUDIO TERSIMPAN";
+
+            renderList(type);
+            history.pushState({ view: type }, null, `#${type}`);
+        }
+
+        function handleBack() {
+            if (currentView !== 'menu') {
+                // Balik ke Menu Utama
+                currentView = 'menu';
+                titleEl.innerText = "BOOKMARK";
+                viewMenu.style.display = 'flex';
+                viewList.style.display = 'none';
+                updateCounts();
+                history.replaceState(null, null, 'simpan.html');
+            } else {
+                // Balik ke Index
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Handle Tombol Back HP
+        window.onpopstate = function (event) {
+            if (!event.state || !event.state.view) {
+                if (currentView !== 'menu') handleBack();
+            }
+        };
+
+        // --- 3. RENDER DATA ---
+        function renderList(type) {
+            // FIX: Gunakan key yang benar (mq_saved_news untuk berita)
+            const key = type === 'berita' ? 'mq_saved_news' : 'bookmarks_audio'; // Sesuaikan audio nanti jika perlu
+            const data = getSavedData(key);
+
+            viewList.innerHTML = "";
+
+            if (data.length === 0) {
+                viewList.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        <p>Belum ada ${type} tersimpan.</p>
+                    </div>`;
+                return;
+            }
+
+            data.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+
+                // MAPPING DATA (Fix mismatch judul vs title)
+                let title, desc, thumb, targetUrl;
+
+                if (type === 'berita') {
+                    title = item.judul || item.title || "No Title";
+                    desc = item.isi || item.desc || "";
+                    thumb = item.gambar || item.thumb || "https://placehold.co/100?text=IMG";
+                    targetUrl = item.url || "#";
+
+                    // Hilangkan HTML tags dari deskripsi biar rapi
+                    desc = desc.replace(/<[^>]*>?/gm, '');
+                } else {
+                    // Audio fallback
+                    title = item.title;
+                    desc = item.desc;
+                    thumb = item.thumb;
+                    targetUrl = `audio.html#track=${encodeURIComponent(item.title)}`;
+                }
+
+                card.innerHTML = `
+                    <div class="item-thumb">
+                        <img src="${thumb}" loading="lazy" onerror="this.src='https://placehold.co/100?text=IMG'">
+                    </div>
+                    <div class="item-info" onclick="window.location.href='${targetUrl}'">
+                        <div class="item-title">${title}</div>
+                        <div class="item-desc">${desc}</div>
+                    </div>
+                    <div class="btn-delete" onclick="deleteItem('${key}', ${index}, '${type}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </div>
+                `;
+                viewList.appendChild(card);
+            });
+        }
+
+        // --- 4. HAPUS DATA ---
+        window.deleteItem = function (key, index, type) {
+            if (!confirm("Hapus item ini?")) return;
+
+            const data = getSavedData(key);
+            data.splice(index, 1);
+            localStorage.setItem(key, JSON.stringify(data));
+
+            showNotif("Berhasil dihapus!", "success");
+            renderList(type);
+            updateCounts();
+        }
+
+        function showNotif(message, type) {
+            const box = document.getElementById('notifBox');
+            const text = document.getElementById('notifText');
+            const iconDiv = document.getElementById('notifIcon');
+
+            text.innerText = message;
+            box.className = "custom-notif active";
+
+            if (type === 'success') {
+                box.classList.add('success');
+                iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#2e7d32" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+            }
+
+            setTimeout(() => {
+                box.classList.remove('active');
+                box.classList.remove('success');
+            }, 3000);
+        }
+
+        // Init
+        updateCounts();
+        // Cek hash url (kalo user refresh pas di detail)
+        if (window.location.hash === '#berita') openCategory('berita');
+        if (window.location.hash === '#audio') openCategory('audio');
+
+    </script>
+</body>
+
+</html>

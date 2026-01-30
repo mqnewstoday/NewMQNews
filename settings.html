@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan - MQ News</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           1. VARIABEL & TEMA (LOGIKA WARNA)
+           ========================================= */
+        :root {
+            /* --- MODE TERANG (DEFAULT) --- */
+            --primary: #9d1b1b;      /* Merah Marun MQ */
+            --accent: #c5a059;       /* Emas */
+            --bg-body: #f8f9fa;      /* Abu sangat muda */
+            --bg-card: #ffffff;      /* Putih */
+            --text-main: #334155;    /* Abu Gelap (Bukan Hitam pekat biar enak) */
+            --text-muted: #64748b;   /* Abu Sedang */
+            --border: #e2e8f0;       /* Garis Halus */
+            --header-text: #9d1b1b;  /* Judul Header Merah */
+            
+            /* UKURAN FONT BASE */
+            --base-size: 16px;
+        }
+
+        /* --- MODE GELAP (REVISI KONTRAS) --- */
+        body.dark-mode {
+            /* Override warna biar mata nyaman */
+            --primary: #ff6b6b;      /* Merah Muda Terang (Biar kebaca di hitam) */
+            --accent: #ffd700;       /* Emas Terang */
+            --bg-body: #121212;      /* Hitam Pekat */
+            --bg-card: #1e1e1e;      /* Abu Gelap (Kartu) */
+            --text-main: #f1f5f9;    /* Putih Terang */
+            --text-muted: #94a3b8;   /* Abu Terang */
+            --border: #333333;       /* Garis Gelap */
+            
+            /* PERUBAHAN PENTING: Header jadi Putih di Mode Gelap */
+            --header-text: #ffffff;  
+        }
+
+        /* --- LOGIKA UKURAN FONT --- */
+        body.font-small { --base-size: 13px; }
+        body.font-normal { --base-size: 16px; } /* Default */
+        body.font-large { --base-size: 20px; }
+
+        /* =========================================
+           2. RESET & LAYOUT DASAR
+           ========================================= */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-size: var(--base-size); /* Ini kuncinya biar font berubah semua */
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            transition: background 0.3s, color 0.3s, font-size 0.2s ease; /* Animasi halus */
+        }
+
+        /* =========================================
+           3. HEADER (NAVIGASI)
+           ========================================= */
+        header {
+            background: var(--bg-card);
+            padding: 0 20px;
+            border-bottom: 3px solid var(--primary); /* Garis tetap merah/terang */
+            display: flex; align-items: center; justify-content: space-between;
+            height: 70px; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header-btn svg { 
+            width: 28px; height: 28px; 
+            fill: var(--header-text); /* Ikut warna judul */
+        }
+        .brand-text { 
+            font-family: 'Cinzel', serif; 
+            font-size: 1.4rem; 
+            color: var(--header-text); /* Merah di Terang, Putih di Gelap */
+            font-weight: 700; 
+        }
+
+        /* =========================================
+           4. CONTAINER & MENU LIST
+           ========================================= */
+        .container {
+            flex: 1; padding: 20px;
+            max-width: 600px; margin: 0 auto; width: 100%;
+        }
+
+        .section-label {
+            font-size: 0.85em; font-weight: bold; color: var(--primary);
+            margin: 25px 0 10px; text-transform: uppercase; letter-spacing: 1px;
+            border-bottom: 1px solid var(--border); padding-bottom: 5px;
+        }
+
+        .menu-item {
+            background: var(--bg-card); padding: 18px;
+            border-radius: 12px; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            cursor: pointer; transition: transform 0.1s;
+        }
+        .menu-item:active { transform: scale(0.98); }
+        
+        .menu-text h4 { font-size: 1.1em; margin-bottom: 5px; color: var(--text-main); }
+        .menu-text p { font-size: 0.9em; color: var(--text-muted); }
+        .arrow-icon { font-size: 1.2em; color: var(--text-muted); font-weight: bold; }
+
+        /* Style khusus tombol Bahaya (Hapus Akun/Logout) */
+        .menu-item.danger { border: 1px solid #ef5350; background: rgba(239, 83, 80, 0.1); }
+        .menu-item.danger h4 { color: #d32f2f; }
+        body.dark-mode .menu-item.danger h4 { color: #ef5350; }
+
+        .menu-item.logout-btn { 
+            margin-top: 40px; background: #d32f2f; 
+            justify-content: center; border: none; 
+        }
+        .menu-item.logout-btn h4 { color: white; margin: 0; font-weight: bold; }
+
+        /* =========================================
+           5. KONTROL (SWITCH & FONT)
+           ========================================= */
+        /* Toggle Switch */
+        .switch { position: relative; display: inline-block; width: 52px; height: 30px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* Tombol Ukuran Font */
+        .font-actions button {
+            width: 40px; height: 40px; border: 1px solid var(--border);
+            background: var(--bg-body); border-radius: 8px; color: var(--text-main);
+            font-weight: bold; cursor: pointer; margin-left: 8px;
+            font-size: 1rem; transition: 0.2s;
+        }
+        /* State Aktif */
+        .font-actions button.active { 
+            background: var(--primary); color: white; border-color: var(--primary); 
+            transform: scale(1.1); /* Efek membesar dikit pas aktif */
+        }
+
+        /* =========================================
+           6. POPUP & NOTIFIKASI (MODAL)
+           ========================================= */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 3000;
+            justify-content: center; align-items: center; backdrop-filter: blur(4px);
+        }
+        .modal-box {
+            background: var(--bg-card); width: 85%; max-width: 350px;
+            padding: 25px; border-radius: 16px; text-align: center;
+            border-top: 5px solid var(--accent); /* Aksen Emas */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: popUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-title { font-family: 'Cinzel', serif; font-size: 1.3em; color: var(--primary); margin-bottom: 10px; }
+        .modal-msg { font-size: 1em; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
+        
+        .modal-input {
+            width: 100%; padding: 14px; border: 2px solid var(--border);
+            background: var(--bg-body); color: var(--text-main);
+            border-radius: 10px; margin-bottom: 20px; font-size: 1em; outline: none;
+        }
+        .modal-input:focus { border-color: var(--primary); }
+
+        .modal-actions { display: flex; gap: 12px; }
+        .btn-modal { flex: 1; padding: 12px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 0.95em; }
+        .btn-cancel { background: var(--bg-body); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-confirm { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+
+        /* NOTIFIKASI FLOATING (SAMA DENGAN REGISTER/EDIT) */
+        .custom-notif {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: white; padding: 12px 25px; border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 9999; 
+            display: flex; align-items: center; gap: 12px; 
+            opacity: 0; visibility: hidden; transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            min-width: 300px;
+        }
+        .custom-notif.active { top: 40px; opacity: 1; visibility: visible; }
+        .custom-notif.success { border-left: 6px solid #2e7d32; }
+        .custom-notif.error { border-left: 6px solid #d32f2f; }
+        .notif-text { font-size: 0.95rem; font-weight: bold; color: #333; }
+        
+        /* Copyright footer */
+        .footer-info { text-align: center; margin-top: 30px; font-size: 0.8em; color: var(--text-muted); opacity: 0.6; }
+
+        .font-btn-group { display: flex; gap: 10px; margin-top: 10px; }
+    .font-btn {
+        flex: 1; padding: 10px; border: 1px solid var(--border); 
+        background: var(--input-bg); color: var(--text-main);
+        border-radius: 8px; cursor: pointer; font-weight: bold;
+    }
+    /* Biar pas hover ada efeknya */
+    .font-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+    <script>
+        (function() {
+            // Cek Tema
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') document.body.classList.add('dark-mode');
+            
+            // Cek Font (Langsung apply ke body)
+            const savedFont = localStorage.getItem('fontSize');
+            if (savedFont) document.body.classList.add('font-' + savedFont);
+            else document.body.classList.add('font-normal');
+        })();
+    </script>
+
+    <header>
+        <a href="profil.html" class="header-btn">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <span class="brand-text">PENGATURAN</span>
+        <div style="width:28px;"></div>
+    </header>
+
+    <div class="container">
+        
+        <div class="section-label">Tampilan</div>
+        
+        <div class="menu-item">
+            <div class="menu-text">
+                <h4>Mode Gelap</h4>
+                <p>Ubah tampilan nyaman di mata</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-text">
+                <h4>Ukuran Teks</h4>
+                <p>Sesuaikan besar huruf aplikasi</p>
+            </div>
+            <div class="font-actions">
+                <button onclick="changeFontSize('small')" id="btnSmall">A-</button>
+                <button onclick="changeFontSize('normal')" id="btnNormal">A</button>
+                <button onclick="changeFontSize('large')" id="btnLarge">A+</button>
+            </div>
+        </div>
+
+        <div class="section-label">Data & Keamanan</div>
+        
+        <div class="menu-item" onclick="appActions.clearCache()">
+            <div class="menu-text">
+                <h4>Hapus Cache</h4>
+                <p>Bersihkan riwayat data sementara</p>
+            </div>
+            <span class="arrow-icon">›</span>
+        </div>
+
+        <div class="menu-item" onclick="appActions.changePass()">
+            <div class="menu-text">
+                <h4>Ganti Password</h4>
+                <p>Perbarui kata sandi akun</p>
+            </div>
+            <span class="arrow-icon">›</span>
+        </div>
+
+        <div class="menu-item danger" onclick="appActions.deleteAccount()">
+            <div class="menu-text">
+                <h4>Hapus Akun</h4>
+                <p>Hapus permanen & data hilang</p>
+            </div>
+            <span class="arrow-icon">›</span>
+        </div>
+
+        <div class="menu-item logout-btn" onclick="appActions.logout()">
+            <h4>KELUAR APLIKASI</h4>
+        </div>
+        
+        <div class="footer-info">
+           <a href="tentang-kami.html" style="text-decoration: none; color: inherit;">
+            © 2026 MQ News Today
+        </a>
+        </div>
+    </div>
+
+    <div id="notifBox" class="custom-notif">
+        <div id="notifIcon"></div>
+        <span id="notifText" class="notif-text">Pesan notifikasi</span>
+    </div>
+
+    <div id="modalConfirm" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="confirmTitle" class="modal-title">Konfirmasi</h3>
+            <p id="confirmMsg" class="modal-msg">Pesan konfirmasi...</p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="ui.closeModal('modalConfirm')">Batal</button>
+                <button id="btnConfirmAction" class="btn-modal btn-confirm">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalPrompt" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="promptTitle" class="modal-title">Input Data</h3>
+            <p id="promptMsg" class="modal-msg">Masukkan data:</p>
+            <input type="text" id="promptInput" class="modal-input">
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="ui.closeModal('modalPrompt')">Batal</button>
+                <button id="btnPromptSubmit" class="btn-modal btn-confirm">Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    
+
+<script src="theme-init.js"></script>
+
+<script src="settings-action.js"></script>
+
+        <script type="module">
+        // === 1. IMPORT LIBRARY (VERSI STABIL 10.7.1) ===
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut, 
+            updatePassword, 
+            deleteUser, 
+            reauthenticateWithCredential, 
+            EmailAuthProvider 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // === 2. CONFIG ===
+        const firebaseConfig = {
+          apiKey: "AIzaSyCMDVcDKxaf3v7iHZYpQ1k6k0G55yW9njQ",
+          authDomain: "mq-news-today.firebaseapp.com",
+          projectId: "mq-news-today",
+          storageBucket: "mq-news-today.firebasestorage.app",
+          messagingSenderId: "310073854630",
+          appId: "1:310073854630:web:25dac91125b3be85f94267",
+          measurementId: "G-0VMCLH4RD5"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // === 3. UI MANAGER (TAMPILAN) ===
+        window.ui = {
+            // Notifikasi Banner
+            showNotif: (msg, type) => {
+                const box = document.getElementById('notifBox');
+                const txt = document.getElementById('notifText');
+                const icon = document.getElementById('notifIcon');
+
+                txt.innerText = msg;
+                box.className = "custom-notif active " + type; 
+                icon.innerHTML = type === 'success' ? 
+                    `<svg style="width:24px;height:24px;fill:#2e7d32" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>` : 
+                    `<svg style="width:24px;height:24px;fill:#d32f2f" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>`;
+
+                setTimeout(() => { box.classList.remove('active', 'success', 'error'); }, 3000);
+            },
+            
+            closeModal: (id) => document.getElementById(id).style.display = 'none',
+
+            // Modal Yes/No
+            askConfirm: (title, msg, onYes) => {
+                document.getElementById('confirmTitle').innerText = title;
+                document.getElementById('confirmMsg').innerText = msg;
+                
+                const btn = document.getElementById('btnConfirmAction');
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                newBtn.onclick = () => { ui.closeModal('modalConfirm'); onYes(); };
+                document.getElementById('modalConfirm').style.display = 'flex';
+            },
+
+            // Modal Input (Manual Control agar tombol Loading terlihat)
+            askInput: (title, msg, placeholder, isPassword, onSubmit) => {
+                document.getElementById('promptTitle').innerText = title;
+                document.getElementById('promptMsg').innerText = msg;
+                const inp = document.getElementById('promptInput');
+                const btn = document.getElementById('btnPromptSubmit');
+                
+                // Reset State
+                inp.value = "";
+                inp.placeholder = placeholder;
+                inp.type = isPassword ? "password" : "text";
+                btn.innerText = "Kirim"; 
+                btn.disabled = false;    
+
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+
+                newBtn.onclick = () => {
+                    if(inp.value.trim()) {
+                        onSubmit(inp.value.trim());
+                    }
+                };
+                document.getElementById('modalPrompt').style.display = 'flex';
+                inp.focus();
+            }
+        };
+
+        // === 4. LOGIKA UTAMA (ACTIONS) ===
+        window.appActions = {
+            
+            // HAPUS CACHE
+            clearCache: () => {
+                ui.askConfirm("Hapus Cache?", "Data sementara akan dibersihkan.", () => {
+                    localStorage.removeItem('mq_guest_history'); 
+                    ui.showNotif("Cache Bersih!", "success");
+                });
+            },
+
+            // LOGOUT
+            logout: () => {
+                ui.askConfirm("Keluar?", "Yakin ingin keluar aplikasi?", () => {
+                    signOut(auth).then(() => window.location.href = 'index.html');
+                });
+            },
+
+            // --- GANTI PASSWORD (VERIFIKASI LAMA -> BARU) ---
+            changePass: () => {
+                const user = auth.currentUser;
+                if(!user) { window.location.href = 'login.html'; return; }
+
+                // STEP 1: PASSWORD LAMA
+                ui.askInput(
+                    "Cek Keamanan", 
+                    "Masukkan Password LAMA Anda:", 
+                    "Password lama...", 
+                    true, 
+                    async (oldPass) => {
+                        // Loading State
+                        const btn = document.getElementById('btnPromptSubmit');
+                        const originalText = btn.innerText;
+                        btn.innerText = "Memverifikasi...";
+                        btn.disabled = true;
+
+                        try {
+                            // Cek ke Firebase
+                            const credential = EmailAuthProvider.credential(user.email, oldPass);
+                            await reauthenticateWithCredential(user, credential);
+
+                            // Sukses -> Tutup Modal
+                            ui.closeModal('modalPrompt');
+
+                            // STEP 2: PASSWORD BARU
+                            setTimeout(() => {
+                                ui.askInput(
+                                    "Password Baru", 
+                                    "Verifikasi OK! Masukkan Password BARU:", 
+                                    "Min 6 karakter...", 
+                                    true, 
+                                    async (newPass) => {
+                                        if(newPass.length < 6) {
+                                            ui.showNotif("Gagal: Minimal 6 karakter!", "error");
+                                            document.getElementById('btnPromptSubmit').innerText = "Kirim";
+                                            document.getElementById('btnPromptSubmit').disabled = false;
+                                            return;
+                                        }
+
+                                        // Loading State
+                                        const btn2 = document.getElementById('btnPromptSubmit');
+                                        btn2.innerText = "Menyimpan...";
+                                        btn2.disabled = true;
+
+                                        try {
+                                            await updatePassword(user, newPass);
+                                            ui.closeModal('modalPrompt');
+                                            ui.showNotif("Sukses! Logout otomatis...", "success");
+                                            
+                                            setTimeout(async () => {
+                                                 await signOut(auth); 
+                                                 window.location.href = 'login.html';
+                                            }, 1500);
+
+                                        } catch (err) {
+                                            ui.showNotif("Gagal: " + err.message, "error");
+                                            btn2.innerText = "Kirim";
+                                            btn2.disabled = false;
+                                        }
+                                    }
+                                );
+                            }, 400);
+
+                        } catch (err) {
+                            console.error(err);
+                            ui.showNotif("Password Lama SALAH!", "error");
+                            btn.innerText = originalText;
+                            btn.disabled = false;
+                        }
+                    }
+                );
+            },
+
+            // HAPUS AKUN
+            deleteAccount: () => {
+                const user = auth.currentUser;
+                if(!user) return;
+
+                ui.askConfirm("HAPUS AKUN?", "Permanen. Yakin?", () => {
+                    ui.askInput(
+                        "Konfirmasi Akhir", 
+                        "Ketik 'HAPUS' (Huruf Besar) untuk setuju:", 
+                        "...", false, 
+                        async (text) => {
+                            if(text === 'HAPUS') {
+                                const btn = document.getElementById('btnPromptSubmit');
+                                btn.innerText = "Menghapus...";
+                                btn.disabled = true;
+
+                                try {
+                                    await deleteUser(user);
+                                    ui.closeModal('modalPrompt');
+                                    ui.showNotif("Akun Dihapus.", "success");
+                                    setTimeout(() => window.location.href = 'index.html', 1500);
+                                } catch(e) {
+                                    ui.showNotif("Login ulang dulu!", "error");
+                                    ui.closeModal('modalPrompt');
+                                }
+                            } else {
+                                ui.showNotif("Salah ketik.", "error");
+                                document.getElementById('btnPromptSubmit').innerText = "Kirim";
+                                document.getElementById('btnPromptSubmit').disabled = false;
+                            }
+                        }
+                    );
+                });
+            }
+        };
+
+        // === 5. LOGIKA FONT SIZE REAL-TIME (INI YANG KEMARIN HILANG) ===
+        window.changeFontSize = (size) => {
+            // Hapus class lama
+            document.body.classList.remove('font-small', 'font-normal', 'font-large');
+            
+            // Tambah class baru (Langsung berubah saat diklik)
+            if(size !== 'normal') document.body.classList.add('font-' + size);
+            
+            // Simpan ke storage
+            localStorage.setItem('fontSize', size);
+            
+            // Update warna tombol
+            updateFontBtns(size);
+        };
+
+        function updateFontBtns(size) {
+            document.querySelectorAll('.font-actions button').forEach(b => b.classList.remove('active'));
+            if(size === 'small') document.getElementById('btnSmall').classList.add('active');
+            else if(size === 'large') document.getElementById('btnLarge').classList.add('active');
+            else document.getElementById('btnNormal').classList.add('active');
+        }
+        
+        // Init Button State saat load
+        const currentFont = localStorage.getItem('fontSize') || 'normal';
+        updateFontBtns(currentFont);
+
+
+        // === 6. LOGIKA DARK MODE ===
+        const toggle = document.getElementById('darkModeToggle');
+        if(localStorage.getItem('theme') === 'dark' && toggle) toggle.checked = true;
+        
+        if(toggle) {
+            toggle.addEventListener('change', () => {
+                if(toggle.checked) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        }
+
+        // CEK LOGIN
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = 'login.html';
+        });
+
+
+
+    </script>
+
+    
+
+</body>
+<script src="offline.js"></script>
+</html>

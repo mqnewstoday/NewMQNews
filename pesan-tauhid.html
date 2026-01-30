@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>19 Pesan Penting - MQ News</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="theme.css"> 
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* =========================================
+           VARIABLES & THEME
+           ========================================= */
+        :root {
+            --primary: #9d1b1b;       
+            --accent: #80df06;        
+            --bg-body: #f8f9fa;      
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --header-text: #9d1b1b;
+            --shadow: 0 4px 20px rgba(0,0,0,0.06);
+            --radius: 16px;
+        }
+
+        /* RESET */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+            padding-bottom: 40px;
+        }
+
+        /* HEADER */
+        .profile-header-nav {
+            background: var(--bg-card);
+            padding: 0 15px;
+            height: 70px;
+            position: sticky; top: 0; z-index: 1000;
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif; font-size: 1.1rem;
+            color: var(--header-text); font-weight: 700;
+            margin: 0; flex-grow: 1; text-align: center;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .header-icon-btn {
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; text-decoration: none; border-radius: 50%;
+            transition: background 0.2s;
+            position: relative;
+        }
+        .header-icon-btn:hover { background: rgba(157, 27, 27, 0.05); }
+
+        .header-icon-btn svg {
+            width: 26px; height: 26px;
+            stroke: var(--primary);
+            stroke-width: 2px;
+            fill: none;
+            stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            padding: 30px 20px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(157,27,27,0.03) 0%, transparent 100%);
+        }
+
+        .hero h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--text-main);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* CARD GRID */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px 20px;
+            display: grid;
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: all 0.3s ease; /* Smooth transition pas memanjang */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 15px; left: 15px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            color: var(--accent);
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 10;
+            border: 1px solid var(--accent);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            background-color: #eee;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* --- LOGIKA BACA SELENGKAPNYA --- */
+        .card-text {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            margin-bottom: 10px;
+            
+            /* Default: Dipotong 3 baris */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        /* Kalau kelas 'expanded' aktif, tampilkan semua */
+        .card-text.expanded {
+            -webkit-line-clamp: unset;
+            overflow: visible;
+        }
+
+        /* Tombol Baca Selengkapnya */
+        .btn-read-more {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.85rem;
+            padding: 0;
+            margin-bottom: 15px;
+            cursor: pointer;
+            text-align: left;
+            display: inline-block;
+            width: fit-content;
+        }
+        
+        .btn-read-more:hover {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE */
+        @media (min-width: 600px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card { animation: fadeUp 0.6s ease forwards; opacity: 0; }
+    </style>
+</head>
+<body>
+
+    <header class="profile-header-nav">
+        <a href="index.html" class="header-icon-btn" onclick="handleBack(event)">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <h1 class="header-title">19 PESAN</h1>
+        <a href="settings.html" class="header-icon-btn">
+            <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+        </a>
+    </header>
+
+    <div class="hero">
+        <h2>Panduan Menjaga Hati</h2>
+        <p>19 Pesan Mimpi Muhammad Qasim Tentang Syirik Modern dan Cara Menghindarinya.</p>
+    </div>
+
+    <div class="container" id="contentGrid"></div>
+
+    <script src="theme-init.js"></script>
+
+    <script>
+        // DATA 19 PESAN (TEKS DARI USER TIDAK DIUBAH)
+        const messages = [
+            {
+                title: "Iklan & Billboard",
+                desc: "Bila melihat gambar mahluk bernyawa (manusia@haiwan) di papan pada iklan, maka segera palingkan wajahmu dan ucapkan Subhanallah yang maksudnya Maha Suci Allah dari apa yang kulihat.",
+                tip: "Ucapkan 'Subhanallah' saat memalingkan wajah.",
+                img: "https://i.ibb.co.com/vC3bjYk4/Create-a-retro-202512311315.jpg"
+            },
+            {
+                title: "Patung & Gambar",
+                desc: "Bila melihat patung atau gambar mahluk bernyawa dimana saja maka alihkan lah pandangan anda dan jangan melihatnya.",
+                tip: "Jangan menatap, langsung alihkan pandangan.",
+                img: "https://i.ibb.co.com/7dMXC3CZ/Create-a-retro-202512311318.jpg"
+            },
+            {
+                title: "Film & Dewa Palsu",
+                desc: "Bila ada filem yang memperlihatkan tuhan-tuhan palsu, dewa atau manusia dengan kekuatan super di dalamnya maka segera berhenti menonton filem tersebut.",
+                tip: "Segera matikan atau ganti tontonan.",
+                img: "https://i.ibb.co.com/v6qCgsQB/Create-a-retro-202512311322.jpg"
+            },
+            {
+                title: "Kamar Tidur",
+                desc: "Bila ada gambar mahluk bernyawa di kamar anda maka sembunyikan agar tidak terlihat pada pandangan mata atau bila sebelumnya terpajang di dinding rumah maka turunkan dan singkirkan.",
+                tip: "Pastikan kamar bersih dari pajangan bernyawa.",
+                img: "https://i.ibb.co.com/847RQsfL/Create-an-illustration-202512311340.jpg"
+            },
+            {
+                title: "Mainan Anak",
+                desc: "Bila anak anda punya mainan berbentuk mahluk hidup maka simpan mainan tersebut di tempat yang tidak terlihat pada pandangan mata setiap anak anda selesai bermain.",
+                tip: "Masukkan ke kotak tertutup setelah main.",
+                img: "https://i.ibb.co.com/vn4PX3Q/Create-a-retro-202512311343.jpg"
+            },
+            {
+                title: "Dekorasi Rumah",
+                desc: "Bila ada gambar atau patung mahluk bernyawa di rumah anda baik ukuran besar atau kecil maka buang atau sembunyikan barang-barang tersebut agar tidak terlihat oleh pandangan mata.",
+                tip: "Simpan di gudang atau buang jika perlu.",
+                img: "https://i.ibb.co.com/qXSRJz0/Create-a-retro-202512311347.jpg"
+            },
+            {
+                title: "Kemasan Produk",
+                desc: "Bila ada parfum atau produk rumahan lain yang ada gambar mahluk hidup di kemasannya maka tutupi gambar itu dengan lakban atau coret dengan spidol agar gambar tersebut tidak terlihat pandangan mata sebab produk tersebut masih harus digunakan sampai habis.",
+                tip: "Lakban atau spidol bagian wajahnya.",
+                img: "https://i.ibb.co.com/8nF9PXyB/Create-a-retro-202512311352.jpg"
+            },
+            {
+                title: "Bungkus Kecil",
+                desc: "Produk kecil sekalipun seperti permen bila ada gambar mahluk hidup di kemasannya maka jangan disimpan di kantong sebelum kemasannya dibuang.",
+                tip: "Langsung buang bungkusnya, jangan dikantongi.",
+                img: "https://i.ibb.co.com/Lh23fkzb/Create-a-retro-202512311356.jpg"
+            },
+            {
+                title: "Harapan & Syirik Hati",
+                desc: "Mengatakan bahwa seseorang itu adalah secercah harapan bagimu juga merupakan perilaku syirik, seorang muslim seharusnya mengatakan bahwa hanya Allah saja satu-satunya harapan dan tempat menaruh harap.",
+                tip: "Hanya Allah satu-satunya harapan.",
+                img: "https://i.ibb.co.com/Txyq4khz/Create-a-retro-202512311404.jpg"
+            },
+            {
+                title: "File Digital",
+                desc: "Menyimpan foto di handphone/komputer/laptop itu tidak masalah karena tidak dipamerkan tapi harus disembunyikan ke dalam folder dan hanya buka bila diperlukan.",
+                tip: "Simpan dalam folder khusus, jangan dipajang.",
+                img: "https://i.ibb.co.com/gLypwTKJ/Create-a-retro-202512311411.jpg"
+            },
+            {
+                title: "Foto Profil",
+                desc: "Memasang gambar mahluk hidup sebagai profil di akun-akun sosial media atau sebagai wallpaper juga termasuk perilaku syirik karena orang-orang terpaksa harus melihat gambar-gambar tersebut walaupun sebenarnya tidak perlu maka remove saja gambar-gambar tersebut.",
+                tip: "Ganti profil/wallpaper dengan benda mati/pemandangan.",
+                img: "https://i.ibb.co.com/wFWh9Xcm/Create-a-retro-202512311420.jpg"
+            },
+            {
+                title: "Dokumentasi Keluarga",
+                desc: "Boleh saja mengambil foto dirimu dan keluargamu dengan handphone atau kamera lain tapi sembunyikan foto-foto itu dan hanya dibuka ketika perlu.",
+                tip: "Untuk kenangan pribadi saja, bukan pajangan.",
+                img: "https://i.ibb.co.com/m5rQqWG8/Create-a-retro-202512311424.jpg"
+            },
+            {
+                title: "Rumah Teman",
+                desc: "Bila di rumah teman ada gambar mahluk hidup maka jangan paksa mereka untuk menyingkirkannya karena rumah itu bukan hakmu dan kamu tidak bertanggungjawab atas barang tersebut. Tapi kalau temanmu memang mau belajar menghindari perilaku syirik dan mereka mau menyingkirkannya maka tidak masalah.",
+                tip: "Jaga pandangan, tidak perlu memaksa orang lain.",
+                img: "https://i.ibb.co.com/dsbtQ6TS/Create-a-retro-202512311428.jpg"
+            },
+            {
+                title: "Taman & Air Mancur",
+                desc: "Bila di rumahmu ada pot bunga atau air mancur berbentuk patung mahluk hidup maka buang saja dan jangan lagi disimpan atau bila melihat yang seperti itu di rumah orang lain maka palingkan wajahmu dan jangan dipandang.",
+                tip: "Hindari ornamen taman berbentuk hewan/manusia.",
+                img: "https://i.ibb.co.com/tTFFPvR0/Create-a-retro-202512311432.jpg"
+            },
+            {
+                title: "Dunia Sinema",
+                desc: "Allah adalah tuhan di setiap lapis alam maka di dunia perfileman pun Allah harus menjadi satu-satunya tuhan disana sebagaimana orang sering berkata Cinema World atau Movie World. Maka apabila ada film yang memperlihatkan ritual penyembahan berhala seperti di film-film India atau perilaku musyrik lainnya atau film yang memperlihatkan tokoh tuhan, dewa dan manusia super palsu lainnya maka berhenti segera dari menonton film-film tersebut.",
+                tip: "Jauhi tontonan yang mengandung kesyirikan.",
+                img: "https://i.ibb.co.com/GvqZXjP5/Create-a-retro-202512311438.jpg"
+            },
+            {
+                title: "Dokumen Negara",
+                desc: "Ada masanya kita harus menuruti pemerintah dan aturan-aturannya dimana pemakaian foto atau gambar diperlukan misalnya gambar pahlawan di uang kertas, foto-foto di kartu tanda penduduk, paspor dan lain sebagainya maka hal yang seperti ini diperbolehkan.",
+                tip: "Diperbolehkan karena darurat/aturan negara.",
+                img: "https://i.ibb.co.com/QFQyVRGb/800fa467-b3f0-498e-ad06-23b92b034977.jpg"
+            },
+            {
+                title: "Kemasan Obat",
+                desc: "Bila kamu punya masalah kesehatan dan ada gambar mahluk hidup di kemasan obatmu maka diperbolehkan untuk menyimpannya di kantong, tapi gambar yang tidak diperlukan jangan disimpan di kantong.",
+                tip: "Boleh disimpan jika untuk keperluan medis.",
+                img: "https://i.ibb.co.com/xqFZHMBS/Create-a-retro-202512311447.jpg"
+            },
+            {
+                title: "Pakaian & Sajadah",
+                desc: "Pastikan tidak ada gambar mahluk hidup di pakaian yang kita pakai, gorden yang menutupi jendela kita atau di seprai kasur, handuk, keset kaki, karpet bahkan sajadah. Kadang di sajadah ada motif tumbuhan yang dibentuk seperti mahluk hidup maka jangan pakai sajadah yang seperti itu.",
+                tip: "Periksa motif kain/sajadah dengan teliti.",
+                img: "https://i.ibb.co.com/mQLT9yT/Create-a-retro-202512311453.jpg"
+            },
+            {
+                title: "Emoji & Stiker",
+                desc: "Pemakaian gambar berbentuk mahluk hidup untuk chatting seperti emoji, emoticon, dsb. juga termasuk perilaku syirik kecil maka jangan dilakukan lagi.",
+                tip: "Gunakan teks saja, hindari emoji wajah.",
+                img: "https://i.ibb.co.com/nqm8tkfv/Create-a-retro-202512311457.jpg"
+            }
+        ];
+
+        // RENDER KARTU
+        const grid = document.getElementById('contentGrid');
+
+        messages.forEach((item, index) => {
+            const delay = index * 0.05; 
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.style.animationDelay = `${delay}s`;
+
+            // HTML Structure dengan Tombol Baca Selengkapnya
+            card.innerHTML = `
+                <div class="card-badge">#${index + 1}</div>
+                <div class="card-image">
+                    <img src="${item.img}" alt="${item.title}" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">${item.title}</h3>
+                    
+                    <div class="card-text" id="desc-${index}">
+                        ${item.desc}
+                    </div>
+                    
+                    <button class="btn-read-more" onclick="toggleReadMore(${index}, this)">
+                        Baca Selengkapnya ▾
+                    </button>
+                    
+                    <div class="suggestion-box">
+                        <i data-lucide="lightbulb"></i>
+                        <span>${item.tip}</span>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        // Initialize Icons
+        lucide.createIcons();
+
+        // FUNGSI TOGGLE BACA SELENGKAPNYA
+        function toggleReadMore(index, btn) {
+            const textElement = document.getElementById(`desc-${index}`);
+            
+            // Toggle class 'expanded'
+            textElement.classList.toggle('expanded');
+            
+            // Ganti Tulisan Tombol
+            if (textElement.classList.contains('expanded')) {
+                btn.innerHTML = "Tutup ▴";
+            } else {
+                btn.innerHTML = "Baca Selengkapnya ▾";
+            }
+        }
+
+        // Handle Back Logic
+        window.addEventListener('load', function() {
+            if (window.history && window.history.pushState) {
+                window.onpopstate = function(e) {
+                    window.location.href = 'index.html';
+                };
+            }
+        });
+        document.addEventListener("deviceready", function() {
+            document.addEventListener("backbutton", function (e) {
+                e.preventDefault();
+                window.location.href = "index.html";
+            }, false);
+        }, false);
+
+    </script>
+</body>
+</html>

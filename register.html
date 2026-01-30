@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun - MQ News Today</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="theme.css">
+
+    <style>
+        /* =========================================
+           1. UNIVERSAL THEME (JIMAT 1 - WAJIB SAMA)
+           ========================================= */
+        :root {
+            /* TEMA TERANG (DEFAULT) */
+            --primary: #9d1b1b;
+            /* Merah MQ */
+            --gold: #c5a059;
+            /* Emas MQ */
+            --bg-body: #f8f9fa;
+            /* Background Halaman */
+            --bg-card: #ffffff;
+            /* Background Kotak/Card */
+            --text-main: #334155;
+            /* Teks Utama */
+            --text-muted: #64748b;
+            /* Teks Pudar */
+            --border: #e2e8f0;
+            /* Garis Pinggir */
+            --input-bg: #f1f5f9;
+            /* Background Input */
+            --header-text: #9d1b1b;
+            /* Judul Header Merah */
+            --success: #2e7d32;
+            --error: #d32f2f;
+
+            /* UKURAN FONT BASE */
+            --base-size: 16px;
+        }
+
+        /* TEMA GELAP (ELEGAN) */
+        body.dark-mode {
+            --primary: #ff6b6b;
+            /* Merah Muda Terang */
+            --gold: #ffd700;
+            /* Emas Terang */
+            --bg-body: #121212;
+            /* Hitam Pekat */
+            --bg-card: #1e1e1e;
+            /* Abu Gelap Premium */
+            --text-main: #e2e8f0;
+            /* Putih Tulang */
+            --text-muted: #94a3b8;
+            /* Abu Terang */
+            --border: #333333;
+            /* Garis Gelap */
+            --input-bg: #2d2d2d;
+            /* Input Gelap */
+            --header-text: #ffffff;
+            /* Judul Header Putih */
+        }
+
+        /* LOGIKA UKURAN FONT */
+        body.font-small {
+            --base-size: 14px;
+        }
+
+        body.font-large {
+            --base-size: 19px;
+        }
+
+        /* RESET & BASE */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-size: var(--base-size);
+            transition: background 0.3s, color 0.3s;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================================
+           2. HEADER & LAYOUT
+           ========================================= */
+        header {
+            background: var(--bg-card);
+            padding: 15px 20px;
+            border-bottom: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            height: 70px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-decoration: none;
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 300;
+            line-height: 1;
+            padding: 5px;
+        }
+
+        .brand-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            height: 40px;
+            width: auto;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+        }
+
+        .brand-text {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--header-text);
+            /* Ikut Merah/Putih */
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* CONTAINER */
+        .register-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-card {
+            background: var(--bg-card);
+            /* Adaptif Dark Mode */
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border-top: 5px solid var(--gold);
+            border: 1px solid var(--border);
+            /* Tambahan border biar rapi di dark mode */
+        }
+
+        .reg-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .reg-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        /* FORM */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-family: 'Lato', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-card);
+            /* Jangan putih polos, ikut tema */
+            box-shadow: 0 0 0 3px rgba(157, 27, 27, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 10px rgba(157, 27, 27, 0.2);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .login-link-area {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .login-link {
+            color: var(--primary);
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        /* NOTIFIKASI */
+        .custom-notif {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            min-width: 300px;
+        }
+
+        .custom-notif.active {
+            top: 40px;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .custom-notif.success {
+            border-left: 5px solid var(--success);
+        }
+
+        .custom-notif.error {
+            border-left: 5px solid var(--error);
+        }
+    </style>
+
+</head>
+
+<body>
+    <script src="theme-init.js"></script>
+    <header>
+        <a href="login.html" class="back-btn">←</a>
+        <div class="brand-wrapper">
+            <img src="ALT_LogoMQN.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
+            <div class="brand-text">MQ News Today</div>
+        </div>
+    </header>
+
+    <div class="register-container">
+        <div class="register-card">
+            <h1 class="reg-title">Buat Akun Baru</h1>
+            <p class="reg-desc">Lengkapi data diri Anda</p>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label class="form-label">Nama Lengkap</label>
+                    <input type="text" id="regName" class="form-input" placeholder="Contoh: Fulan bin Fulan" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Alamat Email</label>
+                    <input type="email" id="regEmail" class="form-input" placeholder="email@contoh.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nomor WhatsApp</label>
+                    <input type="tel" id="regPhone" class="form-input" placeholder="08xxxxxxxxxx" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Kata Sandi</label>
+                    <input type="password" id="regPass" class="form-input" placeholder="Minimal 6 karakter" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Konfirmasi Kata Sandi</label>
+                    <input type="password" id="regConfirmPass" class="form-input" placeholder="Ulangi kata sandi"
+                        required>
+                </div>
+
+                <button type="submit" class="btn-primary">DAFTAR SEKARANG</button>
+            </form>
+
+            <div class="login-link-area">
+                Sudah punya akun? <a href="login.html" class="login-link">Masuk disini</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="notifBox" class="custom-notif">
+        <div id="notifIcon"></div>
+        <span id="notifText" style="font-size:0.9rem; font-weight:bold; color:#333;">Pesan notifikasi</span>
+    </div>
+
+    <script type="module">
+        // 1. IMPORT LIBRARY
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // 2. CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMDVcDKxaf3v7iHZYpQ1k6k0G55yW9njQ",
+            authDomain: "mq-news-today.firebaseapp.com",
+            projectId: "mq-news-today",
+            storageBucket: "mq-news-today.firebasestorage.app",
+            messagingSenderId: "310073854630",
+            appId: "1:310073854630:web:25dac91125b3be85f94267",
+            measurementId: "G-0VMCLH4RD5"
+        };
+
+        // 3. INITIALIZE
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- LOGIKA BARU: HANYA GMAIL & YAHOO ---
+        const allowedDomains = [
+            "gmail.com",
+            "yahoo.com",
+            "yahoo.co.id" // Opsional, sering dipakai di Indo
+        ];
+
+        (function () {
+            // Cek apakah user minta Mode Gelap?
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            // Cek apakah user minta Font Besar/Kecil?
+            const font = localStorage.getItem('fontSize');
+            if (font && font !== 'normal') {
+                document.body.classList.add('font-' + font);
+            }
+        })();
+
+        function isAllowedEmail(email) {
+            // Ambil teks setelah tanda @
+            const domain = email.split('@')[1];
+            if (!domain) return false;
+
+            // Cek apakah domain tersebut ada di daftar yang dibolehkan
+            return allowedDomains.includes(domain.toLowerCase());
+        }
+
+        // 4. LOGIKA TOMBOL DAFTAR
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const pass = document.getElementById('regPass').value;
+            const confirmPass = document.getElementById('regConfirmPass').value;
+            const btn = document.querySelector('.btn-primary');
+
+            // A. VALIDASI PASSWORD (Wajib 8 Karakter + Kombinasi Huruf Angka)
+            const passRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/;
+
+            if (pass !== confirmPass) { showNotif("Kata sandi tidak cocok!", "error"); return; }
+            if (!passRegex.test(pass)) {
+                showNotif("Kata sandi minimal 8 karakter dengan kombinasi huruf dan angka!", "error");
+                return;
+            }
+
+            // B. VALIDASI DOMAIN (PERISAI UTAMA)
+            if (!isAllowedEmail(email)) {
+                showNotif("Harap gunakan email @gmail.com atau @yahoo.com", "error");
+                return; // STOP DISINI! Gak bakal lanjut ke Firebase.
+            }
+
+            btn.innerText = "MEMPROSES...";
+            btn.style.opacity = "0.7";
+            btn.disabled = true;
+
+            try {
+                // 1. Buat Akun Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                // 2. Update Nama Profil
+                await updateProfile(user, { displayName: name });
+
+                // 3. Simpan ke Database Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    nama: name,
+                    email: email,
+                    no_hp: phone,
+                    role: "user",
+                    bergabung: serverTimestamp(),
+                    // Field profil kosong (siap diisi nanti)
+                    bio: "", twitter: "", youtube: "", instagram: "", tiktok: "", fotoURL: ""
+                });
+
+                // 4. KIRIM EMAIL VERIFIKASI
+                await sendEmailVerification(user);
+
+                // 5. LOGOUT PAKSA (Wajib verifikasi dulu baru bisa login nanti)
+                await signOut(auth);
+
+                // 6. Sukses
+                showNotif("Sukses! Link verifikasi dikirim ke email Anda. Cek Inbox/Spam.", "success");
+
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 3000);
+
+            } catch (error) {
+                console.error("Error Daftar:", error);
+                btn.innerText = "DAFTAR SEKARANG";
+                btn.disabled = false;
+                btn.style.opacity = "1";
+
+                let pesan = error.message;
+                if (error.code === 'auth/email-already-in-use') pesan = "Email ini sudah terdaftar!";
+                else if (error.code === 'auth/weak-password') pesan = "Kata sandi terlalu lemah!";
+                else if (error.code === 'auth/invalid-email') pesan = "Format email salah!";
+                else if (error.code === 'auth/network-request-failed') pesan = "Koneksi internet error!";
+
+                showNotif(pesan, "error");
+            }
+        });
+
+        // FUNGSI NOTIFIKASI
+        function showNotif(message, type) {
+            const box = document.getElementById('notifBox');
+            const text = document.getElementById('notifText');
+            const iconDiv = document.getElementById('notifIcon');
+
+            text.innerText = message;
+            box.className = "custom-notif active";
+
+            if (type === 'success') {
+                box.classList.add('success');
+                iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#2e7d32" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+            } else {
+                box.classList.add('error');
+                iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#d32f2f" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>`;
+            }
+
+            if (type !== 'success') {
+                setTimeout(() => {
+                    box.classList.remove('active');
+                    box.classList.remove('error');
+                }, 3000);
+            }
+        }
+    </script>
+
+
+
+</body>
+<script src="offline.js"></script>
+
+</html>

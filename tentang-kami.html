@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang Kami - MQ News</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="theme.css">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* =========================================
+           VARIABLES (Sama persis dengan Profil.html)
+           ========================================= */
+        :root {
+            --primary: #9d1b1b;       /* Merah Utama */
+            --gold: #c5a059;          /* Emas Elegan */
+            --accent: #80df06;        /* Kuning/Lime Aksen (Sesuai Request) */
+            --bg-body: #f8f9fa;      
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --header-text: #9d1b1b;
+            --border: #e2e8f0;
+            --base-size: 16px;
+        }
+
+        /* DARK MODE */
+        body.dark-mode {
+            --primary: #ff6b6b;
+            --gold: #ffd700;
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #333333;
+            --header-text: #ffffff;
+        }
+
+        /* RESET */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+        }
+
+        /* =========================================
+           HEADER (Layout sama dengan Profil)
+           ========================================= */
+        .profile-header-nav {
+            background: var(--bg-card);
+            padding: 0 15px;
+            height: 70px;
+            position: sticky; top: 0; z-index: 100;
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif; font-size: 1.2rem;
+            color: var(--header-text); font-weight: 700;
+            margin: 0; flex-grow: 1; text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .header-icon-btn {
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; text-decoration: none; border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .header-icon-btn:hover { background: rgba(157, 27, 27, 0.05); }
+
+        .header-icon-btn svg {
+            width: 26px; height: 26px;
+            stroke: var(--primary);
+            stroke-width: 2px; fill: none;
+            stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        /* =========================================
+           CONTENT STYLES
+           ========================================= */
+        .container {
+            flex: 1; padding: 30px 20px;
+            max-width: 800px; margin: 0 auto; width: 100%;
+        }
+
+        /* Kartu Konten */
+        .about-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 40px 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary); /* Aksen Merah di atas */
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Branding Logo Text */
+        .brand-intro {
+            text-align: center; margin-bottom: 30px;
+        }
+        .brand-intro h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem; color: var(--primary);
+            margin-bottom: 5px; font-weight: 700;
+        }
+        .brand-intro span {
+            font-family: 'Lato', sans-serif;
+            color: var(--gold);
+            font-weight: 700; letter-spacing: 2px;
+            font-size: 0.9rem; text-transform: uppercase;
+        }
+
+        /* Typography Teks */
+        .content-section { margin-bottom: 30px; }
+        
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem; color: var(--text-main);
+            margin-bottom: 15px;
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+        
+        /* Garis kecil warna kuning aksen */
+        .accent-line {
+            width: 40px; height: 3px; background-color: var(--accent);
+            border-radius: 2px; display: inline-block;
+        }
+
+        .text-body {
+            line-height: 1.8; color: var(--text-muted);
+            text-align: justify; font-size: 1rem;
+        }
+
+        /* List dengan Bullet Kuning */
+        .feature-list {
+            list-style: none; padding: 0; margin-top: 15px;
+        }
+        .feature-list li {
+            display: flex; align-items: flex-start; gap: 12px;
+            margin-bottom: 12px; color: var(--text-muted);
+        }
+        .feature-list li svg {
+            color: var(--accent); /* Warna Kuning Aksen */
+            flex-shrink: 0; margin-top: 3px;
+        }
+
+        /* Quote Box */
+        .quote-box {
+            background: rgba(157, 27, 27, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 20px; border-radius: 0 8px 8px 0;
+            font-style: italic; color: var(--text-main);
+            margin: 30px 0;
+        }
+
+        /* FOOTER */
+        .main-footer {
+            text-align: center; padding: 30px 20px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+        .copyright {
+            color: var(--text-muted); font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <script src="theme-init.js"></script>
+
+    <header class="profile-header-nav">
+        <a href="index.html" class="header-icon-btn">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        
+        <h1 class="header-title">TENTANG KAMI</h1>
+        
+        <a href="settings.html" class="header-icon-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+            </svg>
+        </a>
+    </header>
+
+    <div class="container">
+        <div class="about-card">
+            
+            <div class="brand-intro">
+                <h2>MQ NEWS TODAY</h2>
+                <span>Truth & Clarity</span>
+            </div>
+
+            <div class="content-section">
+                <p class="text-body">
+                    <strong>MQ News Today</strong> adalah platform independen yang didedikasikan untuk menyajikan informasi aktual, mendalam, dan terpercaya mengenai mimpi-mimpi ilahiah Muhammad Qasim (Al-Mubashirat). Kami hadir di tengah derasnya arus informasi untuk memberikan kejernihan dan konteks yang benar.
+                </p>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">
+                    <span class="accent-line"></span> Dedikasi Kami
+                </h3>
+                <p class="text-body">
+                    Meskipun berawal dari inisiatif pribadi, MQ News Today dikelola dengan semangat profesionalitas yang tinggi. Kami memahami bahwa amanah dalam menyampaikan berita—terutama yang berkaitan dengan peringatan dan kabar gembira akhir zaman—membutuhkan ketelitian yang luar biasa.
+                </p>
+            </div>
+
+            <div class="quote-box">
+                "Menyampaikan kebenaran bukan sekadar profesi, melainkan tanggung jawab hati untuk menjaga kemurnian pesan."
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">
+                    <span class="accent-line"></span> Komitmen Editorial
+                </h3>
+                <ul class="feature-list">
+                    <li>
+                        <i data-lucide="check-circle"></i>
+                        <span>Menjaga orisinalitas pesan mimpi tanpa distorsi.</span>
+                    </li>
+                    <li>
+                        <i data-lucide="check-circle"></i>
+                        <span>Penyajian visual yang nyaman dan mudah diakses.</span>
+                    </li>
+                    <li>
+                        <i data-lucide="check-circle"></i>
+                        <span>Independen, tidak terikat kepentingan politik manapun.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <p class="text-body" style="text-align: center; margin-top: 40px; font-size: 0.9rem;">
+                Terima kasih telah menjadi bagian dari perjalanan kami dalam mencari kebenaran.
+            </p>
+
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="copyright">
+            © 2026 MQ News Today
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

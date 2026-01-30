@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
+    <link rel="shortcut icon" href="ALT_LogoMQN.png" type="image/png">
+    <title>Baca Berita - MQ News Today</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Merriweather:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="LogoMQN144.png" sizes="any">
+    <meta name="theme-color" content="#9d1b1b">
+    <link rel="apple-touch-icon" href="ALT_LogoMQN.png">
+
+    <!-- Open Graph / Social Media Meta Tags (Default) -->
+    <!-- Note: Modifikasi dinamis untuk preview WhatsApp hanya bisa dilakukan dengan Server Side Rendering -->
+    <meta property="og:title" content="Baca Berita - MQ News Today">
+    <meta property="og:description" content="Baca berita selengkapnya di MQ News Today.">
+    <meta property="og:image" content="ALT_LogoMQN.png">
+    <meta property="og:type" content="article">
+</head>
+
+<body>
+    <script src="theme-init.js"></script>
+
+    <header>
+        <div class="brand" onclick="window.location.href='index.html'" style="cursor:pointer">
+            <img src="ALT_LogoMQN.png" alt="Logo MQ" onerror="this.style.display='none'">
+            <div class="brand-text">
+                <h1>MQ News Today</h1>
+                <span>Truth & Clarity</span>
+            </div>
+        </div>
+        <!-- Toggle Menu di sini bisa buat balik ke index atau buka menu sidebar -->
+        <div class="menu-toggle" onclick="window.location.href='index.html'">
+            <!-- Pake icon silang atau panah back? -->
+            <!-- Kita pake icon menu biasa aja, tapi arahin ke home atau sidebar? 
+                 Sesuai request 'beda file', jadi kalau klik menu mending balik ke index atau buka sidebar di sini?
+                 Demi simpel, kita kasih sidebar juga di sini biar konsisten.
+            -->
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <!-- Sidebar juga kita copy biar bisa navigasi -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="search-box" style="visibility: hidden;"> <!-- Search diumpetin aja di halaman baca -->
+
+            </div>
+            <div class="close-sidebar-btn" onclick="toggleSidebar()">×</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="index.html">BERANDA</a> <!-- Link ke index.html -->
+            <a href="https://muhammadqasimpk.org/id" target="_blank">MUHAMMAD QASIM OFFICIAL</a>
+            <a href="https://casereportsinregrowth.com" target="_blank">MUKJIZAT</a>
+            <a href="https://saweria.co/mqnewstoday" target="_blank">SUPPORT ME</a>
+        </div>
+
+        <div class="auth-bottom-wrapper">
+            <a href="login.html" id="auth-link" class="profile-btn">
+                <span id="auth-text">MASUK / DAFTAR</span>
+            </a>
+        </div>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- MODAL BATAS AKSES -->
+    <div id="limitModal" class="custom-modal-overlay" style="display:none;">
+        <div class="custom-modal-box">
+            <h3 class="modal-title" style="color: var(--primary);">Batas Akses Tamu</h3>
+            <p class="modal-desc">Anda telah membaca <strong>3 berita gratis</strong>. Silakan masuk atau daftar untuk
+                akses tanpa batas.</p>
+            <div class="modal-actions">
+                <button onclick="window.location.href='index.html'" class="modal-btn btn-cancel">Kembali</button>
+                <button onclick="window.location.href='login.html'" class="modal-btn btn-yes">Masuk / Daftar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="article-view" style="display: block; min-height: 80vh;">
+        <div class="article-header">
+            <!-- Tombol Back ke Index -->
+            <div class="back-icon-btn" onclick="window.location.href='index.html'" title="Kembali">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </div>
+
+            <span id="art-meta" class="art-meta">LOADING...</span>
+            <h1 id="art-title" class="art-title">Memuat Berita...</h1>
+        </div>
+
+        <img id="art-img" class="art-hero-img" src="" alt="" style="display:none">
+
+        <!-- Video Wrapper -->
+        <div id="art-video-wrap" class="video-container" style="display:none;">
+            <iframe id="art-video-frame" src="" allowfullscreen></iframe>
+        </div>
+
+        <div class="art-content-box">
+            <div id="art-desc" class="art-body"></div>
+        </div>
+
+        <div class="share-article-wrapper">
+            <h4 class="share-title">Bagikan Berita Ini:</h4>
+            <div class="share-buttons-row">
+                <button onclick="shareArticle('wa')" class="share-btn btn-wa">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
+                    </svg>
+                    WhatsApp
+                </button>
+
+                <button onclick="saveCurrentArticle()" class="share-btn btn-fb" style="background:#555; color:white;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Simpan
+                </button>
+
+                <!-- <button onclick="shareArticle('fb')" class="share-btn btn-fb">Facebook</button> -->
+                <!-- Simplified other buttons to save space or keep them -->
+
+                <button onclick="shareArticle('copy')" class="share-btn btn-copy">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Salin Link
+                </button>
+            </div>
+        </div>
+
+        <div class="related-section-wrapper article-mode">
+            <h4 class="share-title">Baca Juga:</h4>
+            <div id="article-related-list" class="related-list">
+                <!-- Related News -->
+            </div>
+        </div>
+
+        <div class="social-share-area">
+            <div class="social-label">Ikuti Kami</div>
+            <div class="social-icons">
+                <div class="social-icons-group article-mode">
+                    <a href="https://x.com/MQNewsToday" target="_blank" class="soc-link" aria-label="X Twitter"><svg
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg></a>
+                    <a href="https://www.instagram.com/mqnews.today?igsh=Z2hlM3pyeno3ZDY2" target="_blank"
+                        class="soc-link" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor"
+                                stroke-width="2"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor"
+                                stroke-width="2"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round"></line>
+                        </svg>
+                    </a>
+                    <a href="https://www.tiktok.com/@mqnews.today?_r=1&_t=ZS-92THjGhQHkD" target="_blank"
+                        class="soc-link" aria-label="TikTok"><svg viewBox="0 0 24 24">
+                            <path
+                                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+                        </svg></a>
+                    <a href="https://www.youtube.com/@MQNewsToday" target="_blank" class="soc-link"
+                        aria-label="YouTube"><svg viewBox="0 0 24 24">
+                            <path
+                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="MQ_LogoSecond.png" alt="Logo White">
+                </div>
+                <p>MQ News Today berdedikasi untuk menyajikan informasi yang sering luput dari media arus utama. Fokus
+                    pada kebenaran dan analisis mendalam.</p>
+            </div>
+            <!-- Links Footer (tetap arahkan ke index.html) -->
+            <div class="footer-col">
+                <h3>Kategori</h3>
+                <div class="footer-links">
+                    <a href="index.html">Beranda</a>
+                    <a href="index.html">Geopolitik</a>
+                    <a href="index.html">Eskatologi</a>
+                    <a href="index.html">Mimpi Qasim</a>
+                    <a href="index.html">Timur Tengah</a>
+                    <a href="index.html">Trending</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Hubungi Kami</h3>
+                <a href="https://wa.me/6285705856030" target="_blank" class="footer-wa-link">(+62) 857-0585-6030</a>
+            </div>
+        </div>
+        <div class="copyright">
+            <a href="tentang-kami.html" style="text-decoration: none; color: inherit;">© 2026 MQ News Today</a>
+        </div>
+    </footer>
+
+    <!-- Notif Box buat Salin Link -->
+    <div id="notifBox" class="custom-notif">
+        <div id="notifIcon"></div>
+        <span id="notifText">Pesan notifikasi...</span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+    <script type="module">
+        // IMPORT VIA CONFIG
+        import { auth } from "./firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        let currentArticle = null; // Store for saving
+
+        // EXPOSE SAVE FUNCTION TO WINDOW
+        window.saveCurrentArticle = function () {
+            if (!currentArticle) return;
+
+            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
+            if (saved.some(x => x.judul === currentArticle.judul)) {
+                showCustomNotif('Berita sudah tersimpan!', 'error');
+                return;
+            }
+
+            // Pastikan field ada
+            const judul = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
+            const isi = getVal(currentArticle, 'isi') || getVal(currentArticle, 'content') || "";
+            const gambar = getVal(currentArticle, 'gambar') || getVal(currentArticle, 'image') || "";
+            const tanggal = getVal(currentArticle, 'tanggal') || getVal(currentArticle, 'date') || "";
+
+            saved.push({
+                judul: judul,
+                isi: isi,
+                gambar: gambar,
+                url: window.location.href,
+                tanggal: tanggal,
+                dateAdded: new Date().toISOString()
+            });
+            localStorage.setItem('mq_saved_news', JSON.stringify(saved));
+            showCustomNotif('Berita berhasil disimpan!', 'success');
+        };
+
+        // --- KONFIGURASI ---
+        const sheetID = "1FDzhBlVOFlnlQgphN2gsGJUdDeFWonpoJcadY8JqUcM";
+        let allNews = [];
+
+        // --- INIT: AMBIL DATA DAN BACA PARAMETER ---
+        function init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const judulDiUrl = urlParams.get('title');
+
+            if (!judulDiUrl) {
+                document.getElementById('art-title').innerText = "Berita tidak ditemukan.";
+                document.getElementById('art-meta').innerText = "ERROR";
+                return;
+            }
+
+            const url = `https://docs.google.com/spreadsheets/d/${sheetID}/export?format=csv`;
+            Papa.parse(url, {
+                download: true, header: true, skipEmptyLines: true,
+                complete: function (results) {
+                    allNews = results.data;
+                    const judulAsli = decodeURIComponent(judulDiUrl).trim();
+                    console.log("Mencari berita:", judulAsli);
+
+                    // Helper lokal untuk mencari value case-insensitive (mirip getVal)
+                    const getProp = (itm, k) => {
+                        const found = Object.keys(itm).find(key => key.toLowerCase() === k.toLowerCase());
+                        return found ? itm[found] : "";
+                    };
+
+                    const ketemu = allNews.find(i => {
+                        // Cari properti yang namanya 'judul' atau 'title' (case-insensitive)
+                        const t = (getProp(i, 'judul') || getProp(i, 'title') || '').trim();
+                        // Bandingkan dengan URL
+                        return t.toLowerCase() === judulAsli.toLowerCase();
+                    });
+
+                    if (ketemu) {
+                        currentArticle = ketemu;
+                        checkAuthAndRender(ketemu);
+                    } else {
+                        console.error("Berita tidak ditemukan. Total data:", allNews.length);
+                        // Tampilkan detail untuk debug user
+                        const someTitles = allNews.slice(0, 3).map(x => getProp(x, 'judul'));
+                        console.log("Contoh judul di CSV:", someTitles);
+
+                        document.getElementById('art-title').innerText = "Berita tidak ditemukan.";
+                        document.getElementById('art-desc').innerHTML = `<p style='color:red; text-align:center;'>Maaf, artikel tidak dapat ditemukan.<br>ID/Judul di Link: <b>${judulAsli}</b><br>Mohon kembali ke Beranda.</p>`;
+                        document.getElementById('art-meta').innerText = "404 Not Found";
+                    }
+                },
+                error: function () {
+                    alert("Gagal memuat berita. Periksa koneksi.");
+                }
+            });
+        }
+
+        // --- LOGIKA UTAMA: CEK LOGIN & BATAS AKSES ---
+        function checkAuthAndRender(item) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // 1. User Login -> BEBAS
+                    renderArticle(item);
+                    renderRelatedNews('article-related-list', getVal(item, 'judul'));
+                    updateProfileLink(user);
+                } else {
+                    // 2. Tamu -> Cek Limit Harian (3 Berita per Hari)
+                    // GUNAKAN KEY BARU BIAR USER YANG LAMA KE-RESET
+                    const STORAGE_KEY = 'mq_guest_limit_v2';
+                    const today = new Date().toLocaleDateString('id-ID'); // Format: "30/1/2026"
+
+                    let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { count: 0, date: today };
+
+                    // Jika tanggal beda (hari baru), reset hitungan
+                    if (data.date !== today) {
+                        data = { count: 0, date: today };
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    }
+
+                    if (data.count >= 3) {
+                        // BLOCK JIKA SUDAH 3 KALI
+                        document.getElementById('limitModal').style.display = 'flex';
+                        document.getElementById('article-view').style.display = 'none';
+                    } else {
+                        // ALLOW & INCREMENT
+                        // Cek session biar gak nambah kalau refresh halaman yang SAMA
+                        const lastUrl = sessionStorage.getItem('last_read_url');
+
+                        if (lastUrl !== window.location.href) {
+                            data.count++;
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                            sessionStorage.setItem('last_read_url', window.location.href);
+                        }
+
+                        renderArticle(item);
+                        renderRelatedNews('article-related-list', getVal(item, 'judul'));
+                        updateProfileLink(null);
+                    }
+                }
+            });
+        }
+
+        // Update Profile Link di Sidebar
+        function updateProfileLink(user) {
+            const link = document.getElementById('auth-link');
+            const text = document.getElementById('auth-text');
+            if (user) {
+                const name = user.displayName || user.email.split('@')[0];
+                text.innerText = "HALO, " + name.toUpperCase();
+                link.href = "#";
+            } else {
+                text.innerText = "MASUK / DAFTAR";
+                link.href = "login.html";
+            }
+        }
+
+        const getVal = (item, key) => {
+            const foundKey = Object.keys(item).find(k => k.toLowerCase() === key.toLowerCase());
+            return foundKey ? item[foundKey] : "";
+        };
+
+        function renderArticle(item) {
+            document.title = (getVal(item, 'judul') || "Berita") + " - MQ News Today";
+
+            document.getElementById('art-title').innerText = getVal(item, 'judul') || getVal(item, 'title');
+            const content = (getVal(item, 'isi') || getVal(item, 'content')).replace(/\n/g, '<br>');
+            document.getElementById('art-desc').innerHTML = content;
+
+            document.getElementById('art-meta').innerText = (getVal(item, 'kategori') || 'NEWS') + " • " + (getVal(item, 'tanggal') || '');
+
+            const imgUrl = getVal(item, 'gambar') || getVal(item, 'image');
+            if (imgUrl) {
+                const imgEl = document.getElementById('art-img');
+                imgEl.src = imgUrl;
+                imgEl.style.display = 'block';
+            }
+
+            const vType = getVal(item, 'VideoType'); const vID = getVal(item, 'VideoID');
+            const vidWrap = document.getElementById('art-video-wrap'); const vidFrame = document.getElementById('art-video-frame');
+
+            if (vType && vID) {
+                let src = "";
+                if (vType.toLowerCase() === 'youtube') src = `https://www.youtube.com/embed/${extractYouTubeID(vID)}`;
+                else if (vType.toLowerCase() === 'tiktok') src = `https://www.tiktok.com/embed/v2/${extractTikTokID(vID)}`;
+
+                if (src) { vidFrame.src = src; vidWrap.style.display = 'flex'; }
+            }
+        }
+
+        function extractYouTubeID(url) { if (!url) return null; const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/|live\/)([^#&?]*).*/); return (m && m[2].length === 11) ? m[2] : url; }
+        function extractTikTokID(url) { if (!url) return null; const m = url.match(/\/video\/(\d+)/); return m ? m[1] : url; }
+
+        // --- FITUR SHARE SOSMED (FIX COPY LINK) ---
+        // Pindahkan fungsi shareArticle dari global ke window binding kalau perlu, tapi function declaration dalam module tidak global.
+        // Kita bind ke window.
+        window.shareArticle = function (platform) {
+            const targetLink = window.location.href;
+            const rawTitle = document.title;
+            const encodedTitle = encodeURIComponent(rawTitle);
+            const encodedLink = encodeURIComponent(targetLink);
+
+            let shareUrl = "";
+            switch (platform) {
+                case 'wa': shareUrl = `https://wa.me/?text=*${encodedTitle}*%0A${encodedLink}`; break;
+                case 'fb': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`; break;
+                case 'x': shareUrl = `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedLink}`; break;
+                case 'copy':
+                    navigator.clipboard.writeText(targetLink).then(() => {
+                        showCustomNotif("Link tersalin!", "success");
+                    }).catch(() => {
+                        prompt("Salin manual:", targetLink);
+                    });
+                    return;
+            }
+            if (shareUrl) window.open(shareUrl, '_blank');
+        };
+
+        // Custom Notif dari Theme
+        function showCustomNotif(msg, type) {
+            const box = document.getElementById('notifBox');
+            const text = document.getElementById('notifText');
+
+            text.innerText = msg;
+            box.className = `custom-notif active ${type}`;
+            setTimeout(() => {
+                box.className = 'custom-notif';
+            }, 3000);
+        }
+        window.showCustomNotif = showCustomNotif; // Expose
+
+        // --- RENDER REKOMENDASI (Shared Logic) ---
+        function renderRelatedNews(containerID, excludeTitle = null) {
+            const container = document.getElementById(containerID);
+            if (!container) return;
+            container.innerHTML = "";
+
+            let candidates = allNews.filter(item => {
+                const t = getVal(item, 'judul') || getVal(item, 'title');
+                return t !== excludeTitle;
+            });
+
+            candidates.sort(() => 0.5 - Math.random());
+            const selected = candidates.slice(0, 3);
+
+            selected.forEach(item => {
+                const judul = getVal(item, 'judul') || getVal(item, 'title');
+                const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
+                let gambar = getVal(item, 'gambar') || getVal(item, 'image');
+                if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/100x75?text=MQ";
+
+                const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+
+                const html = `
+                 <a href="${targetUrl}" class="related-card">
+                     <div class="rel-img-wrap">
+                         <img src="${gambar}" class="rel-img" loading="lazy">
+                     </div>
+                     <div class="rel-body">
+                         <h4 class="rel-title">${judul}</h4>
+                         <span class="rel-date">${tanggal}</span>
+                     </div>
+                 </a>
+             `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        window.toggleSidebar = function () { // Expose
+            const sb = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const toggleBtn = document.querySelector('.menu-toggle');
+            if (sb.classList.contains('active')) {
+                sb.classList.remove('active'); overlay.classList.remove('active'); if (toggleBtn) toggleBtn.classList.remove('active');
+            } else {
+                sb.classList.add('active'); overlay.classList.add('active'); if (toggleBtn) toggleBtn.classList.add('active');
+            }
+        }
+
+        // Jalankan init
+        init();
+
+    </script>
+</body>
+
+</html>
