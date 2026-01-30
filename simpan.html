@@ -246,14 +246,17 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--white);
+            background: var(--bg-card);
+            /* FIX: Pakai variabel yg ada biar gak transparan */
+            color: var(--text-main);
             padding: 12px 25px;
             border-radius: 50px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             display: flex;
             align-items: center;
             gap: 10px;
-            z-index: 9999;
+            z-index: 99999;
+            /* FIX: Naikkan layer biar gak ketutup header */
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s;
@@ -262,9 +265,82 @@
         }
 
         .custom-notif.active {
-            top: 40px;
+            top: 80px;
+            /* FIX: Turunin posisi biar gak kena garis header */
             opacity: 1;
             visibility: visible;
+        }
+
+        /* MODAL KONFIRMASI SEDERHANA */
+        .confirm-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99998;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s;
+        }
+
+        .confirm-modal-box {
+            background: white;
+            padding: 25px;
+            width: 85%;
+            max-width: 320px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s;
+        }
+
+        .confirm-title {
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn-confirm {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .btn-yes {
+            background: var(--primary);
+            color: white;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .custom-notif.success {
@@ -490,15 +566,36 @@
 
         // --- 4. HAPUS DATA ---
         // --- 4. HAPUS DATA ---
+        // --- 4. HAPUS DATA ---
+        let pendingDelete = null; // Simpan data item yg mau dihapus sementara
+
         window.deleteItem = function (key, index, type) {
-            // Langsung hapus (tanpa confirm browser yg jelek) & kasih notif merah
+            // Simpan info item ke variabel global
+            pendingDelete = { key, index, type };
+            // Tampilkan Modal
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        // Fungsi Eksekusi Hapus (Dipanggil tombol YA)
+        window.executeDelete = function () {
+            if (!pendingDelete) return;
+
+            const { key, index, type } = pendingDelete;
             const data = getSavedData(key);
+
             data.splice(index, 1);
             localStorage.setItem(key, JSON.stringify(data));
 
-            showNotif("Item telah dihapus.", "error"); // Pake tipe error biar MERAH sesuai request
+            showNotif("Item telah dihapus.", "error");
             renderList(type);
             updateCounts();
+
+            closeConfirm();
+        }
+
+        window.closeConfirm = function () {
+            document.getElementById('confirmModal').style.display = 'none';
+            pendingDelete = null;
         }
 
         function showNotif(message, type) {
@@ -531,6 +628,17 @@
         if (window.location.hash === '#audio') openCategory('audio');
 
     </script>
+    <!-- MODAL KONFIRMASI -->
+    <div id="confirmModal" class="confirm-modal-overlay">
+        <div class="confirm-modal-box">
+            <div class="confirm-title">Hapus dari Simpanan?</div>
+            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Anda yakin ingin menghapus item ini?</p>
+            <div class="confirm-actions">
+                <button class="btn-confirm btn-cancel" onclick="closeConfirm()">Batal</button>
+                <button class="btn-confirm btn-yes" onclick="executeDelete()">Hapus</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
