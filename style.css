@@ -1103,33 +1103,38 @@ footer {
 
 .share-buttons-row {
     display: flex;
-    gap: 10px;
+    gap: 8px;
+    /* Lebih rapat */
     flex-wrap: wrap;
-    /* Biar rapi kalau layar kecil */
+    justify-content: flex-start;
+    /* Rata Kiri */
 }
 
 .share-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Center content */
-    gap: 8px;
-    padding: 10px 16px;
-    /* Slightly bigger padding */
+    gap: 6px;
+    /* Jarak ikon-teks lebih rapat */
+    padding: 8px 14px;
+    /* Padding dikecilin biar compact */
     background: #fff;
     border: 1px solid #e2e8f0;
-    border-radius: 50px;
-    font-size: 0.85rem;
+    border-radius: 8px;
+    /* Radius kotak dikit, bukan bulat lonjong */
+    font-size: 0.8rem;
+    /* Font lebih kecil dikit */
     font-weight: 600;
     color: #334155;
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: 'Lato', sans-serif;
-    flex: 1;
-    /* Make buttons expand evenly on mobile */
-    min-width: 120px;
-    /* Prevent being too squished */
+    /* HAPUS FLEX: 1 BIAR GAK MELAR */
+    min-width: unset;
+    /* Hapus min-width */
     text-align: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    /* Shadow tipis biar elegan */
 }
 
 .share-btn svg {
