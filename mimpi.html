@@ -76,6 +76,25 @@
             font-size: 1.1rem;
             margin-right: 40px;
             /* Balance left icon */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Red Line Separator */
+        .header-line {
+            width: 60px;
+            height: 3px;
+            background: var(--primary);
+            margin-top: 5px;
+            border-radius: 2px;
+        }
+
+        /* Action Block at Bottom */
+        .action-block {
+            padding: 0 20px 40px 20px;
         }
 
         /* CONTENT CONTAINER */
@@ -268,7 +287,10 @@
                 <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
         </div>
-        <div class="header-title">MUBASYIRAT</div>
+        <div class="header-title">
+            <span>MUBASYIRAT</span>
+            <div class="header-line"></div>
+        </div>
     </div>
 
     <!-- Konten -->
@@ -293,18 +315,23 @@
                 <div class="audio-title" id="d-title">Memuat Judul...</div>
                 <div class="audio-status" id="audio-status">Audio Narasi</div>
             </div>
-            <div class="btn-save-dream" id="btn-save" onclick="toggleSave()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <span>Simpan</span>
-            </div>
         </div>
+    </div>
 
-        <!-- Teks Narasi -->
-        <div class="dream-text" id="d-text">
-            <p>Sedang memuat narasi mimpi...</p>
+    <!-- Teks Narasi -->
+    <div class="dream-text" id="d-text">
+        <p>Sedang memuat narasi mimpi...</p>
+    </div>
+
+    <!-- Tombol Simpan (Pindah Bawah) -->
+    <div class="action-block">
+        <div class="btn-save-dream" id="btn-save" onclick="toggleSave()" style="width: fit-content;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Simpan</span>
         </div>
+    </div>
     </div>
 
     <!-- Hidden Audio Element -->
