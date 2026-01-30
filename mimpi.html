@@ -318,6 +318,7 @@
 
     <!-- Init Script -->
     <script src="theme-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script type="module">
         import { auth } from './firebase-config.js';
 
@@ -332,62 +333,86 @@
         const urlParams = new URLSearchParams(window.location.search);
         const titleParam = urlParams.get('title');
 
-        // SHEET ID BARU (NANTI DIGANTI USER)
-        // KITA PAKAI PLACEHOLDER DULU ATAU ID LAMA TAPI TAB BARU (KALAU BISA).
-        // TAPI USER BILANG "SHEET YANG BERBEDA".
-        const SHEET_ID_DREAMS = "AKfycbx_PLACEHOLDER_SHEET_ID_HERE"; // User harus ganti ini nanti
-        // KARENA BLM ADA, KITA PAKE LOGIKA: "Kalau script gagal fetch, tampilkan dummy".
-        // TAPI USER BILANG DIA AKAN BIKIN SHEETNYA NANTI.
-        // SAYA AKAN PAKE ID SEMENTARA ATAU DUMMY LOGIC.
-
-        // SAYA AKAN GUNAKAN SHEET SAMA TAPI MUNGKIN LOGIKANYA NANTI DI GANTI
-        // UNTUK SEKARANG SAYA HARDCODE DULU BEBERAPA DATA BIAR BISA DITEST TAMPILANNYA
-        // JIKA USER SUDAH KASIH SHEET BARU, TINGGAL GANTI URL FETCH.
+        // URL CSV DARI USER
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=703095600&single=true&output=csv";
 
         // FUNGSI FETCH
-        async function fetchDream() {
-            if (!titleParam) return;
+        function fetchDream() {
+            if (!titleParam) {
+                document.getElementById('d-title').innerText = "Judul Tidak Ditemukan";
+                return;
+            }
 
-            // LOGIKA FETCH CSV (SAMA KAYAK BACA.HTML TAPI BEDA SHEET)
-            // SEMENTARA KITA PAKE DATA DUMMY DULU KARENA SHEETNYA BELUM ADA
-            // NANTI SAYA KASIH LIST APA AJA YG PERLU DIISI DI SHEET.
+            Papa.parse(CSV_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    const data = results.data;
 
-            // === DUMMY DATA MODE (UNTUK DEMO) ===
-            const dummyDreams = [
-                {
-                    judul: "Mimpi Bertemu Rasulullah SAW",
-                    gambar: "https://source.unsplash.com/random/800x600/?mosque,night",
-                    audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-                    narasi: "<p>Dalam mimpi ini, saya melihat cahaya yang sangat terang benderang...</p><p>Rasulullah SAW bersabda bahwa masa kebangkitan Islam sudah sangat dekat...</p>"
+                    // FUNGSI HELPER UNTUK CARI DATA (CASE INSENSITIVE KEY)
+                    const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
+
+                    // CARI ITEM YANG JUDULNYA COCOK
+                    const item = data.find(i => getK(i, 'judul').trim().toLowerCase() === titleParam.trim().toLowerCase());
+
+                    if (item) {
+                        renderData(item);
+                    } else {
+                        document.getElementById('d-title').innerText = "Mimpi Tidak Ditemukan";
+                        document.getElementById('d-text').innerText = "Maaf, data mimpi ini tidak ditemukan di database.";
+                    }
+                },
+                error: function (err) {
+                    console.error('Error fetching CSV:', err);
+                    document.getElementById('d-title').innerText = "Gagal Memuat Data";
                 }
-            ];
+            });
+        }
 
-            // Coba cari di dummy (karena blm ada sheet)
-            // Kalo titleParam ada, kita anggep ketemu dummy pertama dulu buat visual
-            const data = dummyDreams[0];
-            // REALNYA NANTI FETCH CSV DISINI.
+        function renderData(item) {
+            const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
 
-            // SET UI
+            // MAPPING DATA
             currentData = {
-                title: titleParam || data.judul, // Pakai title dari URL kalo ada
-                image: data.gambar,
-                audio: data.audio,
-                narasi: data.narasi
+                title: getK(item, 'judul') || titleParam,
+                image: getK(item, 'gambar') || getK(item, 'thumbnail') || "https://placehold.co/600x900?text=No+Image",
+                audio: getK(item, 'audio') || "",
+                // Narasi support HTML
+                narasi: getK(item, 'narasi') || "<p>Tidak ada narasi.</p>"
             };
 
+            // RENDER KE ELEMENT HTML
             document.getElementById('d-title').innerText = currentData.title;
-            document.getElementById('d-img').src = currentData.image;
-            // Set background for blur effect
+
+            // Set Gambar (handle error via onerror di HTML)
+            const imgEl = document.getElementById('d-img');
+            imgEl.src = currentData.image;
+
+            // Set Background Blur
             document.querySelector('.dream-hero').style.setProperty('--bg-img', `url('${currentData.image}')`);
 
+            // Set Narasi
             document.getElementById('d-text').innerHTML = currentData.narasi;
-            player.src = currentData.audio;
+
+            // Set Audio
+            if (currentData.audio && currentData.audio.length > 5) {
+                player.src = currentData.audio;
+                document.querySelector('.audio-block').style.display = 'flex';
+            } else {
+                // Sembunyikan player jika tidak ada audio, tapi tetap tampilkan tombol simpan?
+                // Lebih baik sembunyikan tombol play-nya saja, info dan save tetap ada.
+                btnPlay.style.display = 'none';
+                statusText.innerText = "Audio Tidak Tersedia";
+            }
 
             checkSavedStatus();
         }
 
         // AUDIO CONTROLS
         window.toggleAudio = function () {
+            if (!player.src) return;
+
             if (player.paused) {
                 player.play();
                 iconPlay.style.display = 'none';
@@ -413,6 +438,7 @@
         const SAVE_KEY = 'mq_saved_mimpi';
 
         function checkSavedStatus() {
+            if (!currentData) return;
             const saved = JSON.parse(localStorage.getItem(SAVE_KEY)) || [];
             const isSaved = saved.some(item => item.title === currentData.title);
             updateSaveBtn(isSaved);
@@ -430,6 +456,8 @@
         }
 
         window.toggleSave = function () {
+            if (!currentData) return;
+
             let saved = JSON.parse(localStorage.getItem(SAVE_KEY)) || [];
             const index = saved.findIndex(item => item.title === currentData.title);
 
@@ -439,10 +467,9 @@
                 showNotif("Mimpi berhasil disimpan!", "success");
                 updateSaveBtn(true);
             } else {
-                // REMOVE (Optional: atau prevent duplicate?)
-                // Usually toggle remove is good UX
+                // REMOVE
                 saved.splice(index, 1);
-                showNotif("Dihapus dari simpanan.", "error"); // Pake error style merah
+                showNotif("Dihapus dari simpanan.", "error");
                 updateSaveBtn(false);
             }
             localStorage.setItem(SAVE_KEY, JSON.stringify(saved));
