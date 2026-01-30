@@ -60,36 +60,47 @@ export default async (request, context) => {
         const response = await context.next();
         const pageToModify = await response.text();
 
-        // Gunakan Regex Replace untuk menyuntikkan Meta Tag
-        // Kita ganti meta tag default dengan data artikel
+        // Regex yang lebih aman (case insensitive & flexible spacing)
         let updatedPage = pageToModify;
 
-        // Ganti Title Page
+        // A. Ganti Title
         updatedPage = updatedPage.replace(
-            /<title>.*?<\/title>/,
-            `<title>${foundArticle.title} - MQ News Today</title>`
+            /<title>[\s\S]*?<\/title>/i,
+            `<title>${foundArticle.title} - MQ News</title>`
         );
 
-        // Ganti OG:Title
+        // B. Ganti OG:Title
         updatedPage = updatedPage.replace(
-            /<meta property="og:title" content=".*?"/g,
-            `<meta property="og:title" content="${foundArticle.title}"`
+            /<meta\s+property=["']og:title["']\s+content=["'].*?["']\s*\/?>/i,
+            `<meta property="og:title" content="${foundArticle.title}">`
         );
 
-        // Ganti OG:Image
-        // Fallback jika tidak ada gambar
-        const imgUrl = foundArticle.image.length > 5 ? foundArticle.image : "https://mqnews-today.netlify.app/ALT_LogoMQN.png";
+        // C. Ganti OG:Image (Pastikan URL Absolute)
+        // Fallback logo jika gambar kosong atau invalid
+        let imgUrl = foundArticle.image && foundArticle.image.length > 5 ? foundArticle.image : "https://mqnews-today.netlify.app/ALT_LogoMQN.png";
+
+        // Facebook butuh URL absolute, jadi kalau di CSV cuma 'gambar.jpg', kita harus fix (tapi biasanya di CSV udah full url sih)
+
         updatedPage = updatedPage.replace(
-            /<meta property="og:image" content=".*?"/g,
-            `<meta property="og:image" content="${imgUrl}"`
+            /<meta\s+property=["']og:image["']\s+content=["'].*?["']\s*\/?>/i,
+            `<meta property="og:image" content="${imgUrl}">`
         );
 
-        // Ganti OG:Description (Kita pakai Tanggal/Judul karena deskripsi panjang di CSV susah diparse tanpa library)
-        const desc = `Baca berita terbaru: ${foundArticle.title}. Dipublikasikan pada ${foundArticle.date}`;
+        // D. Ganti OG:Description
+        const desc = `Baca selengkapnya tentang ${foundArticle.title}. Diposting pada ${foundArticle.date}`;
         updatedPage = updatedPage.replace(
-            /<meta property="og:description" content=".*?"/g,
-            `<meta property="og:description" content="${desc}"`
+            /<meta\s+property=["']og:description["']\s+content=["'].*?["']\s*\/?>/i,
+            `<meta property="og:description" content="${desc}">`
         );
+
+        // Update juga Twitter Card
+        updatedPage = updatedPage.replace(
+            /<meta\s+name=["']twitter:image["']\s+content=["'].*?["']\s*\/?>/i,
+            `<meta name="twitter:image" content="${imgUrl}">`
+        );
+
+        // DEBUGGING: Tambah komentar di HTML biar tau ini hasil proses Edge Function
+        updatedPage += "\n<!-- Processed by Netlify Edge Function -->";
 
         // Return HTML yang sudah dimodifikasi
         return new Response(updatedPage, response);
