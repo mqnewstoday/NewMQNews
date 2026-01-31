@@ -1021,47 +1021,48 @@
         // Jalankan init
         init();
 
-    </script>
-    // Fungsi Render PILIHAN EDITOR
-    window.renderEditorPicks = function() {
-    const container = document.getElementById('editor-picks-container');
-    if (!container) return;
-    container.innerHTML = "";
+        // Fungsi Render PILIHAN EDITOR (Global Scope)
+        window.renderEditorPicks = function () {
+            const container = document.getElementById('editor-picks-container');
+            if (!container) return;
+            container.innerHTML = "";
 
-    // Ambil data terbaru (reverse)
-    // Pastikan allNews ada.
-    if (!window.allNews) return;
+            // Ambil data terbaru (reverse)
+            // Pastikan allNews ada.
+            if (!window.allNews) return;
 
-    let source = window.allNews.slice().reverse();
+            // Clone biar gak ngerusak urutan asli kalo perlu, tapi slice() udah cukup.
+            // Default activeData atau allNews. 
+            let source = window.allNews.slice().reverse();
 
-    // Filter yang punya gambar valid
-    let candidates = source.filter(i => {
-    let img = getVal(i, 'gambar') || getVal(i, 'image');
-    return img && img.length > 5; // Minimal panjang URL
-    });
+            // Filter yang punya gambar valid
+            let candidates = source.filter(i => {
+                let img = getVal(i, 'gambar') || getVal(i, 'image');
+                return img && img.length > 5; // Minimal panjang URL
+            });
 
-    const selected = candidates.slice(0, 3); // Ambil 3 teratas
+            const selected = candidates.slice(0, 3); // Ambil 3 teratas
 
-    selected.forEach(item => {
-    const judul = getVal(item, 'judul') || getVal(item, 'title');
-    const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
-    let gambar = getVal(item, 'gambar') || getVal(item, 'image');
-    const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+            selected.forEach(item => {
+                const judul = getVal(item, 'judul') || getVal(item, 'title');
+                const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
+                let gambar = getVal(item, 'gambar') || getVal(item, 'image');
+                const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
 
-    const html = `
-    <a href="${targetUrl}" class="editor-card">
-        <div class="editor-thumb">
-            <img src="${gambar}" loading="lazy" alt="thumb" onerror="this.src='https://placehold.co/100x100?text=News'">
-        </div>
-        <div class="editor-info">
-            <h4 class="editor-title">${judul}</h4>
-            <span class="editor-date">${tanggal}</span>
-        </div>
-    </a>
-    `;
-    container.insertAdjacentHTML('beforeend', html);
-    });
-    };
+                const html = `
+                <a href="${targetUrl}" class="editor-card">
+                    <div class="editor-thumb">
+                        <img src="${gambar}" loading="lazy" alt="thumb" onerror="this.src='https://placehold.co/100x100?text=News'">
+                    </div>
+                    <div class="editor-info">
+                        <h4 class="editor-title">${judul}</h4>
+                        <span class="editor-date">${tanggal}</span>
+                    </div>
+                </a>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        };
     </script>
 </body>
 

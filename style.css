@@ -1627,6 +1627,8 @@ body.dark-mode .pramimpi-title {
    ========================================= */
 .editor-section {
     margin-bottom: 40px;
+    margin-top: 60px;
+    /* Tambah jarak atas agar tidak terlalu rapat */
 }
 
 .editor-list {
