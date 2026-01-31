@@ -502,26 +502,44 @@
         const BATCH_SIZE = 9;     // Jumlah berita per load (9 berita)
 
         // --- 1. INIT: AMBIL DATA ---
-        function init() {
-            // Updated to use the specific published CSV link provided by the user
-            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
-            Papa.parse(url, {
-                download: true, header: true, skipEmptyLines: true,
-                complete: function (results) {
-                    allNews = results.data;
-                    activeData = allNews.slice().reverse();
-                    resetRender();
+        async function init() {
+            const rawUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
+            const url = rawUrl + "&t=" + Date.now(); // Cache Buster
 
-                    if (typeof updateClock === 'function') updateClock();
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Gagal mengambil data");
+                const text = await response.text();
 
-                    // Render Pilihan Editor
-                    if (typeof renderEditorPicks === 'function') renderEditorPicks();
-                },
+                Papa.parse(text, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function (results) {
+                        allNews = results.data;
+                        if (!allNews || allNews.length === 0) {
+                            document.getElementById('news-container').innerHTML = "<div class='no-data'>Data berita kosong.</div>";
+                            return;
+                        }
 
-                error: function () {
-                    document.getElementById('news-container').innerHTML = "<div class='no-data'>Gagal koneksi. Cek internet Anda.</div>";
-                }
-            });
+                        // Debug Check
+                        // console.log("Data loaded:", allNews.length);
+
+                        activeData = allNews.slice().reverse();
+                        resetRender();
+
+                        if (typeof updateClock === 'function') updateClock();
+
+                        // Render Pilihan Editor
+                        if (typeof renderEditorPicks === 'function') renderEditorPicks();
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+                document.getElementById('news-container').innerHTML = "<div class='no-data'>Gagal memuat berita. Cek koneksi.</div>";
+                // Show error in editor picks too
+                const edContainer = document.getElementById('editor-picks-container');
+                if (edContainer) edContainer.innerHTML = "<div class='loader'>Gagal memuat.</div>";
+            }
         }
         // --- SCRIPT JAM REDAKSI ---
         function updateClock() {

@@ -271,8 +271,8 @@
         const sheetID = "1FDzhBlVOFlnlQgphN2gsGJUdDeFWonpoJcadY8JqUcM";
         let allNews = [];
 
-        // --- INIT: AMBIL DATA DAN BACA PARAMETER ---
-        function init() {
+        // --- 1. INIT: AMBIL DATA ---
+        async function init() {
             const urlParams = new URLSearchParams(window.location.search);
             const judulDiUrl = urlParams.get('title');
 
@@ -282,46 +282,45 @@
                 return;
             }
 
-            // URL CSV Baru (Published)
-            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
-            Papa.parse(url, {
-                download: true, header: true, skipEmptyLines: true,
-                complete: function (results) {
-                    allNews = results.data;
-                    const judulAsli = decodeURIComponent(judulDiUrl).trim();
-                    console.log("Mencari berita:", judulAsli);
+            const rawUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
+            const url = rawUrl + "&t=" + Date.now();
 
-                    // Helper lokal untuk mencari value case-insensitive (mirip getVal)
-                    const getProp = (itm, k) => {
-                        const found = Object.keys(itm).find(key => key.toLowerCase() === k.toLowerCase());
-                        return found ? itm[found] : "";
-                    };
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Network response was not ok");
+                const text = await response.text();
 
-                    const ketemu = allNews.find(i => {
-                        // Cari properti yang namanya 'judul' atau 'title' (case-insensitive)
-                        const t = (getProp(i, 'judul') || getProp(i, 'title') || '').trim();
-                        // Bandingkan dengan URL
-                        return t.toLowerCase() === judulAsli.toLowerCase();
-                    });
+                Papa.parse(text, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function (results) {
+                        allNews = results.data;
+                        const judulAsli = decodeURIComponent(judulDiUrl).trim();
 
-                    if (ketemu) {
-                        currentArticle = ketemu;
-                        checkAuthAndRender(ketemu);
-                    } else {
-                        console.error("Berita tidak ditemukan. Total data:", allNews.length);
-                        // Tampilkan detail untuk debug user
-                        const someTitles = allNews.slice(0, 3).map(x => getProp(x, 'judul'));
-                        console.log("Contoh judul di CSV:", someTitles);
+                        // Helper lokal (karena getVal definisinya di tempat lain/bawah, kita buat local biar aman)
+                        const getProp = (itm, k) => {
+                            if (!itm) return "";
+                            const found = Object.keys(itm).find(key => key.toLowerCase() === k.toLowerCase());
+                            return found ? itm[found] : "";
+                        };
 
-                        document.getElementById('art-title').innerText = "Berita tidak ditemukan.";
-                        document.getElementById('art-desc').innerHTML = `<p style='color:red; text-align:center;'>Maaf, artikel tidak dapat ditemukan.<br>ID/Judul di Link: <b>${judulAsli}</b><br>Mohon kembali ke Beranda.</p>`;
-                        document.getElementById('art-meta').innerText = "404 Not Found";
+                        const ketemu = allNews.find(i => {
+                            const t = (getProp(i, 'judul') || getProp(i, 'title') || '').trim();
+                            return t.toLowerCase() === judulAsli.toLowerCase();
+                        });
+
+                        if (ketemu) {
+                            checkAuthAndRender(ketemu);
+                        } else {
+                            document.getElementById('art-title').innerText = "Berita tidak ditemukan.";
+                            document.getElementById('art-desc').innerHTML = `<p style='color:red; text-align:center;'>Maaf, artikel tidak dapat ditemukan.<br>Judul: <b>${judulAsli}</b></p>`;
+                        }
                     }
-                },
-                error: function () {
-                    alert("Gagal memuat berita. Periksa koneksi.");
-                }
-            });
+                });
+            } catch (error) {
+                alert("Gagal memuat berita. Periksa koneksi.");
+                console.error(error);
+            }
         }
 
         // --- LOGIKA UTAMA: CEK LOGIN & BATAS AKSES ---
