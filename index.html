@@ -147,6 +147,7 @@
                 <span class="menu-label">AUDIO</span>
             </a>
 
+
             <button class="menu-item" onclick="toggleMoreMenu()" id="btnMore">
                 <div class="icon-box">
                     <svg id="iconMore" viewBox="0 0 24 24">
@@ -166,6 +167,18 @@
                     </svg>
                 </div>
                 <span class="menu-label">TERSIMPAN</span>
+            </a>
+
+            <!-- MUBASYIRAT (Pindah ke Hidden Row) -->
+            <a href="pramimpi.html" class="menu-item hidden-row">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                        </path>
+                    </svg>
+                </div>
+                <span class="menu-label">MUBASYIRAT</span>
             </a>
 
             <a href="https://chat.whatsapp.com/Cb6nVjlAtj06JRdeFzRpKw" class="menu-item hidden-row">
@@ -914,8 +927,8 @@
             // 2. Acak Urutan (Shuffle) biar yang muncul beda-beda
             candidates.sort(() => 0.5 - Math.random());
 
-            // 3. Ambil 5 Berita Saja
-            const selected = candidates.slice(0, 3);
+            // 3. Ambil 5 Berita Saja (Terbaru)
+            const selected = candidates.slice(0, 5);
 
             // 4. Render ke HTML
             selected.forEach(item => {
@@ -926,21 +939,35 @@
                 let gambar = getVal(item, 'gambar') || getVal(item, 'image');
                 if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/100x75?text=MQ";
 
-                const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+                const targetUrl = 'mimpi.html?title=' + encodeURIComponent(judul);
 
                 const html = `
-                 <a href="${targetUrl}" class="related-card">
-                     <div class="rel-img-wrap">
-                         <img src="${gambar}" class="rel-img" loading="lazy">
+                 <a href="${targetUrl}" class="dream-card">
+                     <div class="dream-thumb">
+                         <img src="${gambar}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
+                         <div class="play-overlay">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                         </div>
                      </div>
-                     <div class="rel-body">
-                         <h4 class="rel-title">${judul}</h4>
-                         <span class="rel-date">${tanggal}</span>
+                     <div class="dream-info">
+                         <h4 class="dream-title">${judul}</h4>
+                         <span class="dream-date">${tanggal}</span>
                      </div>
                  </a>
              `;
                 container.insertAdjacentHTML('beforeend', html);
             });
+
+            // 5. Tambahkan Tombol "LIHAT SEMUA" di Akhir
+            const viewAllHtml = `
+                <a href="pramimpi.html" class="view-all-card">
+                    <svg class="view-all-icon" viewBox="0 0 24 24">
+                        <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="view-all-text">LIHAT<br>SEMUA</span>
+                </a>
+            `;
+            container.insertAdjacentHTML('beforeend', viewAllHtml);
         }
 
         // Fungsi Toggle More (Menu 4 Kotak)
