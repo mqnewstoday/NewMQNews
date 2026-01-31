@@ -243,6 +243,17 @@
             </div>
             <!-- <div id="news-container" class="news-grid"></div> -->
 
+            <!-- PILIHAN EDITOR SECTION -->
+            <div class="editor-section">
+                <div class="section-label">
+                    <span>Pilihan Editor</span>
+                    <div class="section-line"></div>
+                </div>
+                <div id="editor-picks-container" class="editor-list">
+                    <div class="loader">Memuat rekomendasi...</div>
+                </div>
+            </div>
+
 
             <!-- MUBASYIRAT SECTION (NEW) -->
             <div class="mubasyirat-section">
@@ -501,7 +512,9 @@
                     resetRender();
 
                     if (typeof updateClock === 'function') updateClock();
-                    // Render Rekomendasi di Footer kalo perlu
+
+                    // Render Pilihan Editor
+                    if (typeof renderEditorPicks === 'function') renderEditorPicks();
                 },
 
                 error: function () {
@@ -1008,6 +1021,47 @@
         // Jalankan init
         init();
 
+    </script>
+    // Fungsi Render PILIHAN EDITOR
+    window.renderEditorPicks = function() {
+    const container = document.getElementById('editor-picks-container');
+    if (!container) return;
+    container.innerHTML = "";
+
+    // Ambil data terbaru (reverse)
+    // Pastikan allNews ada.
+    if (!window.allNews) return;
+
+    let source = window.allNews.slice().reverse();
+
+    // Filter yang punya gambar valid
+    let candidates = source.filter(i => {
+    let img = getVal(i, 'gambar') || getVal(i, 'image');
+    return img && img.length > 5; // Minimal panjang URL
+    });
+
+    const selected = candidates.slice(0, 3); // Ambil 3 teratas
+
+    selected.forEach(item => {
+    const judul = getVal(item, 'judul') || getVal(item, 'title');
+    const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
+    let gambar = getVal(item, 'gambar') || getVal(item, 'image');
+    const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+
+    const html = `
+    <a href="${targetUrl}" class="editor-card">
+        <div class="editor-thumb">
+            <img src="${gambar}" loading="lazy" alt="thumb" onerror="this.src='https://placehold.co/100x100?text=News'">
+        </div>
+        <div class="editor-info">
+            <h4 class="editor-title">${judul}</h4>
+            <span class="editor-date">${tanggal}</span>
+        </div>
+    </a>
+    `;
+    container.insertAdjacentHTML('beforeend', html);
+    });
+    };
     </script>
 </body>
 
