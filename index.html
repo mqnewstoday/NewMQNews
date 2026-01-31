@@ -503,7 +503,8 @@
 
         // --- 1. INIT: AMBIL DATA ---
         function init() {
-            const url = `https://docs.google.com/spreadsheets/d/${sheetID}/export?format=csv`;
+            // Updated to use the specific published CSV link provided by the user
+            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
             Papa.parse(url, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function (results) {
