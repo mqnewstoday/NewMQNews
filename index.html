@@ -243,11 +243,6 @@
             </div>
             <!-- <div id="news-container" class="news-grid"></div> -->
 
-            <div class="related-section-wrapper">
-                <div class="section-label small-label"><span>Pilihan Editor</span></div>
-                <div id="home-related-list" class="related-list">
-                </div>
-            </div>
 
             <!-- MUBASYIRAT SECTION (NEW) -->
             <div class="mubasyirat-section">
@@ -507,7 +502,6 @@
 
                     if (typeof updateClock === 'function') updateClock();
                     // Render Rekomendasi di Footer kalo perlu
-                    if (typeof renderRelatedNews === 'function') setTimeout(() => renderRelatedNews('home-related-list'), 500);
                 },
 
                 error: function () {
@@ -1018,23 +1012,3 @@
 </body>
 
 </html>
-<script>
-    // Fungsi renderRelatedNews untuk Pilihan Editor
-    window.renderRelatedNews = function(containerId) {
-        const container = document.getElementById(containerId);
-        if(!container) return;
-        container.innerHTML = '';
-        let candidates = allNews.slice();
-        candidates = candidates.filter(i => (getVal(i, 'gambar') || '').length > 5);
-        candidates.sort(() => 0.5 - Math.random());
-        const selected = candidates.slice(0, 3);
-        selected.forEach(item => {
-            const judul = getVal(item, 'judul') || getVal(item, 'title');
-            const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
-            const gambar = getVal(item, 'gambar') || 'https://via.placeholder.com/100x75?text=MQ';
-            const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
-            const html = \<a href='\' class='related-card'><div class='rel-img-wrap'><img src='\' class='rel-img' loading='lazy'></div><div class='rel-body'><h4 class='rel-title'>\</h4><span class='rel-date'>\</span></div></a>\;
-            container.insertAdjacentHTML('beforeend', html);
-        });
-    }
-</script>
