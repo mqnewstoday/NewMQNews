@@ -903,11 +903,7 @@
         }
         window.toggleSidebar = toggleSidebar;
 
-
-        const getVal = (item, key) => {
-            const foundKey = Object.keys(item).find(k => k.toLowerCase() === key.toLowerCase());
-            return foundKey ? item[foundKey] : "";
-        };
+        // getVal sudah didefinisikan di atas (line 565)
 
         function handleEnterKey(e) { if (e.key === 'Enter') { e.preventDefault(); executeSearch(); } }
 
