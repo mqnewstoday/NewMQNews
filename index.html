@@ -265,7 +265,11 @@
                     function renderDreams(data) {
                         const container = document.getElementById('dream-container-scroll');
                         container.innerHTML = "";
-                        data.forEach(item => {
+
+                        // LIMIT 5 ITEM
+                        const limited = data.slice(0, 5);
+
+                        limited.forEach(item => {
                             // Support berbagai variasi key safe
                             const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
 
@@ -294,6 +298,17 @@
                         `;
                             container.insertAdjacentHTML('beforeend', html);
                         });
+
+                        // TAMBAH KARTU VIEW ALL
+                        const viewAllHtml = `
+                            <div class="view-all-card" onclick="window.location.href='pramimpi.html'">
+                                <svg class="view-all-icon" viewBox="0 0 24 24">
+                                    <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <span class="view-all-text">LIHAT<br>SEMUA</span>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', viewAllHtml);
                     }
 
                     if (window.Papa) {
@@ -1003,3 +1018,23 @@
 </body>
 
 </html>
+<script>
+    // Fungsi renderRelatedNews untuk Pilihan Editor
+    window.renderRelatedNews = function(containerId) {
+        const container = document.getElementById(containerId);
+        if(!container) return;
+        container.innerHTML = '';
+        let candidates = allNews.slice();
+        candidates = candidates.filter(i => (getVal(i, 'gambar') || '').length > 5);
+        candidates.sort(() => 0.5 - Math.random());
+        const selected = candidates.slice(0, 3);
+        selected.forEach(item => {
+            const judul = getVal(item, 'judul') || getVal(item, 'title');
+            const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
+            const gambar = getVal(item, 'gambar') || 'https://via.placeholder.com/100x75?text=MQ';
+            const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+            const html = \<a href='\' class='related-card'><div class='rel-img-wrap'><img src='\' class='rel-img' loading='lazy'></div><div class='rel-body'><h4 class='rel-title'>\</h4><span class='rel-date'>\</span></div></a>\;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+    }
+</script>

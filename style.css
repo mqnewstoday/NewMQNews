@@ -1492,30 +1492,162 @@ body.dark-mode .dream-card {
     background: #000;
     /* Hitam pekat for cinematic look */
     border-color: #222;
-}.  
- /* =========================================
+}
+
+.     
+
+/* =========================================
 PRAMIMPI.HTML STYLE (GALLERY GRID)
 ========================================= */
-.pramimpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding-bottom: 50px; }
-.pramimpi-card { background: var(--bg-card); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; border: 1px solid var(--border); display: flex; flex-direction: column; text-decoration: none; color: var(--text-main); position: relative; height: 100%; }
-.pramimpi-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); border-color: var(--primary); }
-.pramimpi-thumb { width: 100%; aspect-ratio: 16/9; background: #eee; overflow: hidden; position: relative; }
-.pramimpi-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-.pramimpi-card:hover .pramimpi-thumb img { transform: scale(1.1); }
-.pramimpi-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); width: 40px; height: 40px; background: rgba(157, 27, 27, 0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; opacity: 0; transition: 0.3s; }
-.pramimpi-card:hover .pramimpi-play { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-.pramimpi-body { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; }
-.pramimpi-title { font-size: 0.9rem; font-weight: 700; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 5px; line-height: 1.4; }
-.pramimpi-date { font-size: 0.7rem; color: var(--text-muted); margin-top: auto; }
-body.dark-mode .pramimpi-card { background: #1e1e1e; border-color: #333; }
-body.dark-mode .pramimpi-title { color: #eee; }
+.pramimpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    padding-bottom: 50px;
+}
+
+.pramimpi-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: var(--text-main);
+    position: relative;
+    height: 100%;
+}
+
+.pramimpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary);
+}
+
+.pramimpi-thumb {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #eee;
+    overflow: hidden;
+    position: relative;
+}
+
+.pramimpi-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.pramimpi-card:hover .pramimpi-thumb img {
+    transform: scale(1.1);
+}
+
+.pramimpi-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 40px;
+    height: 40px;
+    background: rgba(157, 27, 27, 0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.pramimpi-card:hover .pramimpi-play {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.pramimpi-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.pramimpi-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+.pramimpi-date {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: auto;
+}
+
+body.dark-mode .pramimpi-card {
+    background: #1e1e1e;
+    border-color: #333;
+}
+
+body.dark-mode .pramimpi-title {
+    color: #eee;
+}
+
 /* =========================================
-   COMPACT DREAM CARD & VIEW ALL LINK
+   VIEW ALL LINK (MATCHING ORIGINAL DREAM CARD)
    ========================================= */
-.dream-card { min-width: 140px !important; width: 140px !important; height: 250px !important; border-radius: 8px !important; }
-.dream-title { font-size: 0.8rem !important; -webkit-line-clamp: 3 !important; line-clamp: 3 !important; }
-.view-all-card { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg-card); color: var(--primary); text-align: center; border: 2px dashed var(--primary); min-width: 140px; width: 140px; height: 250px; border-radius: 8px; scroll-snap-align: start; flex-shrink: 0; cursor: pointer; text-decoration: none; transition: 0.3s; }
-.view-all-card:hover { background: var(--primary); color: white !important; }
-.view-all-icon { width: 40px; height: 40px; margin-bottom: 10px; fill: currentColor; transition: transform 0.3s; }
-.view-all-card:hover .view-all-icon { transform: scale(1.2); }
-.view-all-text { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; font-family: 'Cinzel', serif; }
+.view-all-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    color: var(--primary);
+    text-align: center;
+    border: 2px dashed var(--primary);
+
+    /* Matches original dream card size */
+    min-width: 220px;
+    width: 220px;
+    height: 391px;
+    border-radius: 12px;
+
+    scroll-snap-align: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.view-all-card:hover {
+    background: var(--primary);
+    color: white !important;
+}
+
+.view-all-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 15px;
+    fill: currentColor;
+    transition: transform 0.3s;
+}
+
+.view-all-card:hover .view-all-icon {
+    transform: scale(1.2);
+}
+
+.view-all-text {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+}
