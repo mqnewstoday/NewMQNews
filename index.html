@@ -502,44 +502,63 @@
         const BATCH_SIZE = 9;     // Jumlah berita per load (9 berita)
 
         // --- 1. INIT: AMBIL DATA ---
+        // --- 1. INIT: AMBIL DATA ---
         async function init() {
+            // Updated to use the specific published CSV link provided by the user
             const rawUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
             const url = rawUrl + "&t=" + Date.now(); // Cache Buster
 
             try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Gagal mengambil data");
+                // Fetch with explicit cache control
+                const response = await fetch(url, { cache: "no-store" });
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
                 const text = await response.text();
 
                 Papa.parse(text, {
                     header: true,
                     skipEmptyLines: true,
                     complete: function (results) {
-                        allNews = results.data;
-                        if (!allNews || allNews.length === 0) {
-                            document.getElementById('news-container').innerHTML = "<div class='no-data'>Data berita kosong.</div>";
-                            return;
+                        try {
+                            allNews = results.data;
+                            if (!allNews || allNews.length === 0) {
+                                throw new Error("Data CSV Kosong / Format Salah");
+                            }
+
+                            // Debug Check
+                            // console.log("Data loaded:", allNews.length);
+
+                            activeData = allNews.slice().reverse();
+
+                            // Render Utama with protection
+                            try { resetRender(); } catch (e) { console.error("Render Error:", e); }
+
+                            if (typeof updateClock === 'function') updateClock();
+
+                            // Render Pilihan Editor with protection
+                            if (typeof renderEditorPicks === 'function') {
+                                renderEditorPicks();
+                            } else {
+                                console.error("renderEditorPicks function missing");
+                            }
+                        } catch (parseLogicErr) {
+                            showError("Data Error: " + parseLogicErr.message);
                         }
-
-                        // Debug Check
-                        // console.log("Data loaded:", allNews.length);
-
-                        activeData = allNews.slice().reverse();
-                        resetRender();
-
-                        if (typeof updateClock === 'function') updateClock();
-
-                        // Render Pilihan Editor
-                        if (typeof renderEditorPicks === 'function') renderEditorPicks();
+                    },
+                    error: function (err) {
+                        showError("Papa Parse Error: " + err.message);
                     }
                 });
             } catch (err) {
                 console.error(err);
-                document.getElementById('news-container').innerHTML = "<div class='no-data'>Gagal memuat berita. Cek koneksi.</div>";
-                // Show error in editor picks too
-                const edContainer = document.getElementById('editor-picks-container');
-                if (edContainer) edContainer.innerHTML = "<div class='loader'>Gagal memuat.</div>";
+                showError("Koneksi Gagal: " + err.message);
             }
+        }
+
+        function showError(msg) {
+            const nc = document.getElementById('news-container');
+            if (nc) nc.innerHTML = `<div class='no-data' style='color:red;'>${msg}</div>`;
+            const ep = document.getElementById('editor-picks-container');
+            if (ep) ep.innerHTML = `<div class='loader' style='color:red;'>${msg}</div>`;
         }
         // --- SCRIPT JAM REDAKSI ---
         function updateClock() {
