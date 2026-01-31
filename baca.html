@@ -282,7 +282,8 @@
                 return;
             }
 
-            const url = `https://docs.google.com/spreadsheets/d/${sheetID}/export?format=csv`;
+            // URL CSV Baru (Published)
+            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
             Papa.parse(url, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function (results) {
@@ -396,7 +397,7 @@
 
             document.getElementById('art-meta').innerText = (getVal(item, 'kategori') || 'NEWS') + " • " + (getVal(item, 'tanggal') || '');
 
-            const imgUrl = getVal(item, 'gambar') || getVal(item, 'image');
+            const imgUrl = getVal(item, 'gambar') || getVal(item, 'image') || getVal(item, 'thumbnail');
             if (imgUrl) {
                 const imgEl = document.getElementById('art-img');
                 imgEl.src = imgUrl;
@@ -473,7 +474,7 @@
             selected.forEach(item => {
                 const judul = getVal(item, 'judul') || getVal(item, 'title');
                 const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
-                let gambar = getVal(item, 'gambar') || getVal(item, 'image');
+                let gambar = getVal(item, 'gambar') || getVal(item, 'image') || getVal(item, 'thumbnail');
                 if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/100x75?text=MQ";
 
                 const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
