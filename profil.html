@@ -1,183 +1,348 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
+    <link rel="shortcut icon" href="ALT_LogoMQN.png" type="image/png">
+    <link rel="apple-touch-icon" href="ALT_LogoMQN.png">
     <title>Profil Saya - MQ News</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="theme.css">
-    
-    
+
+
     <style>
         /* =========================================
            1. UNIVERSAL THEME (WAJIB SAMA DI SEMUA HALAMAN)
            ========================================= */
         :root {
             /* TEMA TERANG (DEFAULT) */
-            --primary: #9d1b1b;      /* Merah MQ */
-            --gold: #c5a059;         /* Emas MQ */
-            --bg-body: #f8f9fa;      /* Background Halaman */
-            --bg-card: #ffffff;      /* Background Kotak/Card */
-            --text-main: #334155;    /* Teks Utama */
-            --text-muted: #64748b;   /* Teks Pudar */
-            --border: #e2e8f0;       /* Garis Pinggir */
-            --input-bg: #f1f5f9;     /* Background Input/Box Data */
-            --header-text: #9d1b1b;  /* Judul Header Merah */
-            
+            --primary: #9d1b1b;
+            /* Merah MQ */
+            --gold: #c5a059;
+            /* Emas MQ */
+            --bg-body: #f8f9fa;
+            /* Background Halaman */
+            --bg-card: #ffffff;
+            /* Background Kotak/Card */
+            --text-main: #334155;
+            /* Teks Utama */
+            --text-muted: #64748b;
+            /* Teks Pudar */
+            --border: #e2e8f0;
+            /* Garis Pinggir */
+            --input-bg: #f1f5f9;
+            /* Background Input/Box Data */
+            --header-text: #9d1b1b;
+            /* Judul Header Merah */
+
             /* UKURAN FONT BASE */
             --base-size: 16px;
         }
 
         /* TEMA GELAP (ELEGAN) */
         body.dark-mode {
-            --primary: #ff6b6b;      /* Merah Muda Terang */
-            --gold: #ffd700;         /* Emas Terang */
-            --bg-body: #121212;      /* Hitam Pekat */
-            --bg-card: #1e1e1e;      /* Abu Gelap Premium */
-            --text-main: #e2e8f0;    /* Putih Tulang */
-            --text-muted: #94a3b8;   /* Abu Terang */
-            --border: #333333;       /* Garis Gelap */
-            --input-bg: #2d2d2d;     /* Box Data Gelap */
-            --header-text: #ffffff;  /* Judul Header Putih */
+            --primary: #ff6b6b;
+            /* Merah Muda Terang */
+            --gold: #ffd700;
+            /* Emas Terang */
+            --bg-body: #121212;
+            /* Hitam Pekat */
+            --bg-card: #1e1e1e;
+            /* Abu Gelap Premium */
+            --text-main: #e2e8f0;
+            /* Putih Tulang */
+            --text-muted: #94a3b8;
+            /* Abu Terang */
+            --border: #333333;
+            /* Garis Gelap */
+            --input-bg: #2d2d2d;
+            /* Box Data Gelap */
+            --header-text: #ffffff;
+            /* Judul Header Putih */
         }
 
         /* LOGIKA UKURAN FONT */
-        body.font-small { --base-size: 14px; }
-        body.font-large { --base-size: 19px; }
+        body.font-small {
+            --base-size: 14px;
+        }
+
+        body.font-large {
+            --base-size: 19px;
+        }
 
         /* RESET & BASE */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Lato', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
-            font-size: var(--base-size); /* Integrasi Font Size */
+            font-size: var(--base-size);
+            /* Integrasi Font Size */
             transition: background 0.3s, color 0.3s;
             min-height: 100vh;
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
         }
 
         /* =========================================
            2. KOMPONEN SPESIFIK PROFIL
            ========================================= */
-        
+
         /* HEADER (LAYOUT FLEX 3 KOLOM) */
         .profile-header-nav {
             background: var(--bg-card);
             padding: 0 20px;
             height: 70px;
-            position: sticky; top: 0; z-index: 100;
+            position: sticky;
+            top: 0;
+            z-index: 100;
             border-bottom: 3px solid var(--primary);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .header-title {
-            font-family: 'Cinzel', serif; font-size: 1.2rem;
-            color: var(--header-text); font-weight: 700;
-            margin: 0; flex-grow: 1; text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--header-text);
+            font-weight: 700;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
         }
 
         .header-icon-btn {
-            width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; text-decoration: none; border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 50%;
             transition: background 0.2s;
         }
-        .header-icon-btn:hover { background: rgba(0,0,0,0.05); }
+
+        .header-icon-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
 
         .header-icon-btn svg {
-            width: 26px; height: 26px;
+            width: 26px;
+            height: 26px;
             fill: none !important;
-            stroke: var(--primary); /* Ikut Merah/Merah Muda */
-            stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round;
+            stroke: var(--primary);
+            /* Ikut Merah/Merah Muda */
+            stroke-width: 2px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         /* CONTAINER UTAMA */
-        .container { flex: 1; padding: 30px 20px; max-width: 600px; margin: 0 auto; width: 100%; }
-        
+        .container {
+            flex: 1;
+            padding: 30px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
         /* KARTU PROFIL */
         .profile-card {
             background: var(--bg-card);
-            border-radius: 12px; padding: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
             border-top: 5px solid var(--gold);
-            border: 1px solid var(--border); /* Tambahan border tipis */
+            border: 1px solid var(--border);
+            /* Tambahan border tipis */
         }
 
         /* BAGIAN ATAS (FOTO & NAMA) */
-        .profile-top-section { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 30px; }
-        
+        .profile-top-section {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
         .profile-img-box {
-            width: 100px; height: 100px; flex-shrink: 0;
-            background: var(--input-bg); border-radius: 15px;
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+            background: var(--input-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border: 2px solid var(--border);
         }
-        .profile-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .no-pic-text { font-size: 0.7rem; color: var(--text-muted); text-align: center; font-weight: bold; text-transform: uppercase; }
 
-        .profile-name-area { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-top: 5px; }
-        
+        .profile-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-pic-text {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .profile-name-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 5px;
+        }
+
         .user-name {
-            font-family: 'Cinzel', serif; font-size: 1.3rem;
-            color: var(--primary); font-weight: 700; line-height: 1.2; margin-bottom: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 8px;
         }
-        
+
         .edit-link {
-            font-size: 0.85rem; color: var(--gold); text-decoration: none;
-            font-weight: bold; border: 1px solid var(--gold); border-radius: 50px;
-            padding: 5px 15px; width: fit-content; transition: 0.3s;
+            font-size: 0.85rem;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: bold;
+            border: 1px solid var(--gold);
+            border-radius: 50px;
+            padding: 5px 15px;
+            width: fit-content;
+            transition: 0.3s;
         }
-        .edit-link:hover { background: var(--gold); color: white; }
+
+        .edit-link:hover {
+            background: var(--gold);
+            color: white;
+        }
 
         /* DATA INFO (BIO, EMAIL, DLL) */
         .data-label {
-            font-size: 0.75rem; font-weight: bold; color: var(--text-muted);
-            margin-bottom: 5px; display: block; letter-spacing: 1px; text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            display: block;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
-        
+
         .data-box {
             background: var(--input-bg);
-            border: 1px solid var(--border); border-radius: 8px;
-            padding: 12px 15px; width: 100%; margin-bottom: 20px;
-            font-size: 1rem; color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 15px;
+            width: 100%;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            color: var(--text-main);
         }
-        
-        .bio-box { min-height: 80px; line-height: 1.6; white-space: pre-wrap; font-style: italic; }
+
+        .bio-box {
+            min-height: 80px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-style: italic;
+        }
 
         /* SOSMED ICONS */
-        .sosmed-row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .sosmed-item {
-            display: flex; align-items: center; gap: 8px; font-size: 0.85rem;
-            color: var(--primary); text-decoration: none; font-weight: bold;
-            background: rgba(157, 27, 27, 0.1); /* Merah transparan */
-            padding: 8px 15px; border-radius: 50px;
-            transition: 0.2s; border: 1px solid transparent;
+        .sosmed-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
         }
-        body.dark-mode .sosmed-item { background: rgba(255, 107, 107, 0.1); } /* Dark mode friendly */
-        
-        .sosmed-item:hover { border-color: var(--primary); transform: translateY(-2px); }
-        .sosmed-item.disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(100%); background: var(--input-bg); color: var(--text-muted); }
+
+        .sosmed-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(157, 27, 27, 0.1);
+            /* Merah transparan */
+            padding: 8px 15px;
+            border-radius: 50px;
+            transition: 0.2s;
+            border: 1px solid transparent;
+        }
+
+        body.dark-mode .sosmed-item {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* Dark mode friendly */
+
+        .sosmed-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .sosmed-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(100%);
+            background: var(--input-bg);
+            color: var(--text-muted);
+        }
 
         /* LOADING SKELETON */
-        .skeleton { background: var(--input-bg); color: transparent !important; border-radius: 4px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        .skeleton {
+            background: var(--input-bg);
+            color: transparent !important;
+            border-radius: 4px;
+            animation: pulse 1.5s infinite;
+        }
 
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.6;
+            }
+        }
     </style>
 </head>
+
 <body>
-<script src="theme-init.js"></script>
+    <script src="theme-init.js"></script>
     <script>
-        (function() {
+        (function () {
             const t = localStorage.getItem('theme');
             if (t === 'dark') document.body.classList.add('dark-mode');
-            
+
             const f = localStorage.getItem('fontSize');
             if (f && f !== 'normal') document.body.classList.add('font-' + f);
         })();
@@ -185,22 +350,25 @@
 
     <header class="profile-header-nav">
         <a href="index.html" class="header-icon-btn">
-            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
         </a>
-        
+
         <h1 class="header-title">PROFIL SAYA</h1>
-        
+
         <a href="settings.html" class="header-icon-btn">
             <svg viewBox="0 0 24 24">
-                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
             </svg>
         </a>
     </header>
 
     <div class="container">
         <div class="profile-card">
-            
+
             <div class="profile-top-section">
                 <div class="profile-img-box" id="profileImgBox">
                     <span class="no-pic-text skeleton">LOADING</span>
@@ -224,7 +392,7 @@
             <div class="sosmed-row" id="sosmedContainer">
                 <span style="font-size:0.8rem; color:var(--text-muted);">Tidak ada sosial media terhubung.</span>
             </div>
-            
+
         </div>
     </div>
 
@@ -234,13 +402,13 @@
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyCMDVcDKxaf3v7iHZYpQ1k6k0G55yW9njQ",
-          authDomain: "mq-news-today.firebaseapp.com",
-          projectId: "mq-news-today",
-          storageBucket: "mq-news-today.firebasestorage.app",
-          messagingSenderId: "310073854630",
-          appId: "1:310073854630:web:25dac91125b3be85f94267",
-          measurementId: "G-0VMCLH4RD5"
+            apiKey: "AIzaSyCMDVcDKxaf3v7iHZYpQ1k6k0G55yW9njQ",
+            authDomain: "mq-news-today.firebaseapp.com",
+            projectId: "mq-news-today",
+            storageBucket: "mq-news-today.firebasestorage.app",
+            messagingSenderId: "310073854630",
+            appId: "1:310073854630:web:25dac91125b3be85f94267",
+            measurementId: "G-0VMCLH4RD5"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -277,7 +445,7 @@
                         els.phone.innerText = data.no_hp || "-";
 
                         // FOTO PROFIL
-                        if(data.fotoURL) {
+                        if (data.fotoURL) {
                             els.imgBox.innerHTML = `<img src="${data.fotoURL}" alt="Foto Profil">`;
                         } else {
                             els.imgBox.innerHTML = `<span class="no-pic-text">NO IMAGE</span>`;
@@ -299,16 +467,16 @@
                                 // Cek kalau user cuma input username (bukan link lengkap)
                                 let finalUrl = link.url;
                                 if (!finalUrl.startsWith('http')) {
-                                    if(link.key === 'twitter') finalUrl = `https://twitter.com/${finalUrl}`;
-                                    if(link.key === 'instagram') finalUrl = `https://instagram.com/${finalUrl}`;
-                                    if(link.key === 'tiktok') finalUrl = `https://tiktok.com/@${finalUrl}`;
-                                    if(link.key === 'youtube') finalUrl = `https://youtube.com/@${finalUrl}`;
+                                    if (link.key === 'twitter') finalUrl = `https://twitter.com/${finalUrl}`;
+                                    if (link.key === 'instagram') finalUrl = `https://instagram.com/${finalUrl}`;
+                                    if (link.key === 'tiktok') finalUrl = `https://tiktok.com/@${finalUrl}`;
+                                    if (link.key === 'youtube') finalUrl = `https://youtube.com/@${finalUrl}`;
                                 }
                                 sosmedHTML += `<a href="${finalUrl}" target="_blank" class="sosmed-item">${link.label} ↗</a>`;
                             }
                         });
 
-                        if(hasLink) els.sosmed.innerHTML = sosmedHTML;
+                        if (hasLink) els.sosmed.innerHTML = sosmedHTML;
 
                     } else {
                         els.name.innerText = "User Data Not Found";
@@ -325,4 +493,5 @@
     </script>
 </body>
 <script src="offline.js"></script>
+
 </html>

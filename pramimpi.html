@@ -457,6 +457,40 @@
                 container.appendChild(el);
             });
         }
+
+        // === RENDER FEATURED (Top 7, 4:5 Ratio) ===
+        function renderFeatured(data) {
+            const container = document.getElementById('featured-list');
+            const wrapper = document.getElementById('featured-container');
+
+            if (!data || data.length === 0) return;
+
+            // Safe Key Getter
+            const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
+
+            const top7 = data.slice(0, 7);
+            if (top7.length > 0) wrapper.style.display = 'block';
+
+            container.innerHTML = "";
+
+            top7.forEach(item => {
+                const title = getK(item, 'judul') || "Tanpa Judul";
+                const thumb = getK(item, 'thumbnail') || "https://placehold.co/400x500?text=No+Image";
+
+                const html = `
+                <a href="mimpi.html?title=${encodeURIComponent(title)}" class="featured-card">
+                    <img src="${thumb}" class="featured-img" loading="lazy" alt="cover" onerror="this.src='https://placehold.co/400x500?text=Err'">
+                    <div class="f-play">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                    <div class="featured-overlay">
+                        <div class="featured-title">${title}</div>
+                    </div>
+                </a>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
     </script>
 </body>
 
