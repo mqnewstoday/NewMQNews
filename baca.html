@@ -128,11 +128,12 @@
                     WhatsApp
                 </button>
 
-                <button onclick="saveCurrentArticle()" class="share-btn btn-fb" style="background:#555; color:white;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button id="btn-save-main" onclick="saveCurrentArticle()" class="share-btn btn-fb"
+                    style="background:var(--bg-card); color:var(--text-main); border:1px solid var(--border); transition:0.3s;">
+                    <svg id="icon-save-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
                     </svg>
-                    Simpan
+                    <span id="text-save-main">Simpan</span>
                 </button>
 
                 <!-- <button onclick="shareArticle('fb')" class="share-btn btn-fb">Facebook</button> -->
@@ -239,32 +240,66 @@
         let currentArticle = null; // Store for saving
 
         // EXPOSE SAVE FUNCTION TO WINDOW
+        // EXPOSE SAVE FUNCTION TO WINDOW
         window.saveCurrentArticle = function () {
             if (!currentArticle) return;
 
             let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
-            if (saved.some(x => x.judul === currentArticle.judul)) {
-                showCustomNotif('Berita sudah tersimpan!', 'error');
-                return;
+            const index = saved.findIndex(x => x.judul === currentArticle.judul);
+
+            if (index !== -1) {
+                // HAPUS
+                saved.splice(index, 1);
+                localStorage.setItem('mq_saved_news', JSON.stringify(saved));
+                showCustomNotif('Berita dihapus!', 'error'); // Use red color (error style) for delete
+            } else {
+                // SIMPAN
+                const judul = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
+                const isi = getVal(currentArticle, 'isi') || getVal(currentArticle, 'content') || "";
+                const gambar = getVal(currentArticle, 'gambar') || getVal(currentArticle, 'image') || "";
+                const tanggal = getVal(currentArticle, 'tanggal') || getVal(currentArticle, 'date') || "";
+
+                saved.push({
+                    judul: judul,
+                    isi: isi,
+                    gambar: gambar,
+                    url: window.location.href,
+                    tanggal: tanggal,
+                    dateAdded: new Date().toISOString()
+                });
+                localStorage.setItem('mq_saved_news', JSON.stringify(saved));
+                showCustomNotif('Berita berhasil disimpan!', 'success');
             }
-
-            // Pastikan field ada
-            const judul = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
-            const isi = getVal(currentArticle, 'isi') || getVal(currentArticle, 'content') || "";
-            const gambar = getVal(currentArticle, 'gambar') || getVal(currentArticle, 'image') || "";
-            const tanggal = getVal(currentArticle, 'tanggal') || getVal(currentArticle, 'date') || "";
-
-            saved.push({
-                judul: judul,
-                isi: isi,
-                gambar: gambar,
-                url: window.location.href,
-                tanggal: tanggal,
-                dateAdded: new Date().toISOString()
-            });
-            localStorage.setItem('mq_saved_news', JSON.stringify(saved));
-            showCustomNotif('Berita berhasil disimpan!', 'success');
+            updateSaveButtonUI();
         };
+
+        function updateSaveButtonUI() {
+            if (!currentArticle) return;
+            const btn = document.getElementById('btn-save-main');
+            const icon = document.getElementById('icon-save-main');
+            const txt = document.getElementById('text-save-main');
+
+            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
+            const isSaved = saved.some(x => x.judul === currentArticle.judul);
+
+            if (isSaved) {
+                // SAVED STATE
+                btn.style.background = "#e53935"; // Red
+                btn.style.color = "white";
+                btn.style.borderColor = "#e53935";
+                icon.setAttribute('fill', 'white');
+                icon.setAttribute('stroke', 'white');
+                txt.innerText = "Disimpan";
+            } else {
+                // UNSAVED STATE
+                btn.style.background = "var(--bg-card)";
+                btn.style.color = "var(--text-main)";
+                btn.style.borderColor = "var(--border)";
+                icon.setAttribute('fill', 'none');
+                icon.setAttribute('stroke', 'currentColor');
+                txt.innerText = "Simpan";
+            }
+        }
 
         // --- KONFIGURASI ---
         const sheetID = "1FDzhBlVOFlnlQgphN2gsGJUdDeFWonpoJcadY8JqUcM";
@@ -388,6 +423,8 @@
         };
 
         function renderArticle(item) {
+            currentArticle = item; // Set for saving
+            updateSaveButtonUI();  // Update initial UI state
             document.title = (getVal(item, 'judul') || "Berita") + " - MQ News Today";
 
             document.getElementById('art-title').innerText = getVal(item, 'judul') || getVal(item, 'title');

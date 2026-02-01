@@ -580,6 +580,10 @@
                 return;
             }
 
+            // Load Saved Data for checking
+            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
+            const isSaved = (t) => saved.some(x => x.judul === t);
+
             // Ambil 3 Berita Terbaru
             let source = allNews.slice().reverse();
 
@@ -595,11 +599,18 @@
                 if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/150x100?text=MQ";
 
                 const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+                const savedClass = isSaved(judul) ? 'saved' : '';
 
                 const html = `
                 <a href="${targetUrl}" class="editor-card">
                     <div class="editor-thumb">
                         <img src="${gambar}" loading="lazy" alt="thumb" onerror="this.src='https://via.placeholder.com/150x100?text=Err'">
+                        <!-- SAVE BUTTON EDITOR PICK -->
+                            <div class="btn-save-news ${savedClass}" onclick="toggleSaveIndex(this, '${encodeURIComponent(judul)}')" title="Simpan Berita">
+                                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </div>
                     </div>
                     <div class="editor-info">
                         <h4 class="editor-title">${judul}</h4>
