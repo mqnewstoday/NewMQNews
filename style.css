@@ -1527,16 +1527,18 @@ body.dark-mode .btn-save-news.saved svg {
     stroke: white;
 }
 
-overflow: hidden;
-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-transition: transform 0.2s;
-border: 1px solid var(--border);
-display: flex;
-flex-direction: column;
-text-decoration: none;
-color: var(--text-main);
-position: relative;
-height: 100%;
+/* REST OF PRAMIMPI CARD */
+.pramimpi-card {
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: var(--text-main);
+    position: relative;
+    height: 100%;
 }
 
 .pramimpi-card:hover {
