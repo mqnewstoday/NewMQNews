@@ -413,19 +413,36 @@
             });
         });
 
-        function renderDreams(data) {
-            const container = document.getElementById('dream-list-container');
-            container.innerHTML = "";
+        // Global variables for pagination
+        let currentPramimpiPage = 1;      // Halaman aktif sekarang
+        const PRAMIMPI_BATCH_SIZE = 10;   // Jumlah mimpi per halaman (10 items)
+        let pramimpiData = [];            // Data mentah mimpi
 
-            if (!data || data.length === 0) {
+        function renderDreams(data) {
+            pramimpiData = data || []; // Simpan data ke global
+            currentPramimpiPage = 1;   // Reset ke halaman 1
+            renderPramimpiPage(currentPramimpiPage);
+        }
+
+        // Render Halaman Tertentu
+        function renderPramimpiPage(page) {
+            const container = document.getElementById('dream-list-container');
+            container.innerHTML = ""; // Bersihkan layar
+
+            if (!pramimpiData || pramimpiData.length === 0) {
                 container.innerHTML = '<div class="status-msg">Tidak ada data mimpi ditemukan.</div>';
                 return;
             }
 
+            // Hitung Index Start & End
+            const start = (page - 1) * PRAMIMPI_BATCH_SIZE;
+            const end = start + PRAMIMPI_BATCH_SIZE;
+            const batch = pramimpiData.slice(start, end);
+
             // Utilitas Extract Value Case Insensitive
             const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
 
-            data.forEach((item, index) => {
+            batch.forEach((item, index) => {
                 const title = getK(item, 'judul');
                 if (!title) return; // Skip empty rows
 
@@ -456,7 +473,57 @@
                 `;
                 container.appendChild(el);
             });
+
+            // Render Pagination Control
+            renderPramimpiPagination(page);
         }
+
+        // Render Tombol Pagination (1, 2, 3...)
+        function renderPramimpiPagination(page) {
+            const container = document.getElementById('dream-list-container');
+            const totalPages = Math.ceil(pramimpiData.length / PRAMIMPI_BATCH_SIZE);
+
+            if (totalPages <= 1) return; // Kalau cuma 1 halaman, gak perlu tombol
+
+            let buttonsHTML = '';
+
+            // Tombol Prev
+            if (page > 1) {
+                buttonsHTML += `<button onclick="goToPramimpiPage(${page - 1})" class="page-btn" aria-label="Previous">‹</button>`;
+            }
+
+            // Untuk sekarang kita loop semua jika < 10 halaman. Jika > 10 kita slicing.
+            let startPage = 1;
+            let endPage = totalPages;
+
+            // Render Buttons
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === page ? 'active' : '';
+                buttonsHTML += `<button onclick="goToPramimpiPage(${i})" class="page-btn ${activeClass}">${i}</button>`;
+            }
+
+            // Tombol Next
+            if (page < totalPages) {
+                buttonsHTML += `<button onclick="goToPramimpiPage(${page + 1})" class="page-btn" aria-label="Next">›</button>`;
+            }
+
+            // Wrapper perlu di append sebagai string atau element
+            const wrapper = document.createElement('div');
+            wrapper.className = 'pagination-wrapper';
+            wrapper.innerHTML = buttonsHTML;
+
+            container.appendChild(wrapper);
+        }
+
+        // Fungsi Pindah Halaman
+        window.goToPramimpiPage = function (page) {
+            currentPramimpiPage = page;
+            renderPramimpiPage(page);
+
+            // Scroll ke atas list biar UX enak
+            const header = document.querySelector('.page-desc');
+            if (header) header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
 
         // === RENDER FEATURED (Top 7, 4:5 Ratio) ===
         function renderFeatured(data) {
