@@ -94,7 +94,7 @@
     <div id="article-view" style="display: block; min-height: 80vh;">
         <div class="article-header">
             <!-- Tombol Back ke Index -->
-            <div class="back-icon-btn" onclick="window.location.href='index.html'" title="Kembali">
+            <div class="back-icon-btn" onclick="goBack()" title="Kembali">
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -517,6 +517,15 @@
         // Jalankan init
         init();
 
+    </script>
+    <script>
+        function goBack() {
+            if (window.history.length > 1 && document.referrer.toLowerCase().indexOf(window.location.hostname.toLowerCase()) !== -1) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
     </script>
 </body>
 
