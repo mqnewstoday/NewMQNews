@@ -1478,16 +1478,65 @@ PRAMIMPI.HTML STYLE (GALLERY GRID)
 .pramimpi-card {
     background: var(--bg-card);
     border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
-    border: 1px solid var(--border);
+}
+
+/* SAVE BUTTON ON NEWS CARD */
+.btn-save-news {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
     display: flex;
-    flex-direction: column;
-    text-decoration: none;
-    color: var(--text-main);
-    position: relative;
-    height: 100%;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 5;
+    transition: all 0.2s;
+}
+
+.btn-save-news svg {
+    width: 20px;
+    height: 20px;
+    stroke: #555;
+    fill: none;
+    transition: all 0.2s;
+}
+
+/* STATE: SAVED (Light Mode -> Red Fill) */
+.btn-save-news.saved svg {
+    fill: var(--primary);
+    stroke: var(--primary);
+}
+
+/* STATE: DARK MODE */
+body.dark-mode .btn-save-news {
+    background: rgba(30, 30, 30, 0.8);
+}
+
+body.dark-mode .btn-save-news svg {
+    stroke: #eee;
+}
+
+/* STATE: SAVED (Dark Mode -> White Fill) */
+body.dark-mode .btn-save-news.saved svg {
+    fill: white;
+    stroke: white;
+}
+
+overflow: hidden;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+transition: transform 0.2s;
+border: 1px solid var(--border);
+display: flex;
+flex-direction: column;
+text-decoration: none;
+color: var(--text-main);
+position: relative;
+height: 100%;
 }
 
 .pramimpi-card:hover {
