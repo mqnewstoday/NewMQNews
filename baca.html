@@ -150,6 +150,12 @@
             </div>
         </div>
 
+        <!-- BACA JUGA SECTION (NEW) -->
+        <div class="related-section" style="max-width:800px; margin:0 auto; padding:0 20px 20px;">
+            <h4 class="share-title" style="margin-bottom:15px;">BACA JUGA</h4>
+            <div id="related-news-container"></div>
+        </div>
+
         <div class="social-share-area">
             <div class="social-label">Ikuti Kami</div>
             <div class="social-icons">
@@ -322,7 +328,7 @@
                 if (user) {
                     // 1. User Login -> BEBAS
                     renderArticle(item);
-                    // renderRelatedNews removed
+                    renderRelatedNews(item); // Restore
                     updateProfileLink(user);
                 } else {
                     // 2. Tamu -> Cek Limit Harian (3 Berita per Hari)
@@ -411,6 +417,53 @@
 
         function extractYouTubeID(url) { if (!url) return null; const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/|live\/)([^#&?]*).*/); return (m && m[2].length === 11) ? m[2] : url; }
         function extractTikTokID(url) { if (!url) return null; const m = url.match(/\/video\/(\d+)/); return m ? m[1] : url; }
+
+        // --- FUNGSI RENDERING BACA JUGA (Limit 3) ---
+        function renderRelatedNews(currentItem) {
+            const container = document.getElementById('related-news-container');
+            if (!container) return;
+            container.innerHTML = "";
+
+            if (!allNews || allNews.length === 0) return;
+
+            // 1. Filter (exclude current)
+            const currentTitle = getVal(currentItem, 'judul') || getVal(currentItem, 'title');
+
+            let candidates = allNews.filter(item => {
+                const t = getVal(item, 'judul') || getVal(item, 'title');
+                return t !== currentTitle;
+            });
+
+            // 2. Shuffle
+            candidates.sort(() => 0.5 - Math.random());
+
+            // 3. Limit 3 (Sesuai Request)
+            const selected = candidates.slice(0, 3);
+
+            selected.forEach(item => {
+                const judul = getVal(item, 'judul') || getVal(item, 'title');
+                const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
+                let gambar = getVal(item, 'gambar') || getVal(item, 'image') || getVal(item, 'thumbnail');
+
+                if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/150x100?text=MQ";
+
+                const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+
+                // REUSE .editor-card classes from style.css
+                const html = `
+                <a href="${targetUrl}" class="editor-card" style="background:white; border:1px solid #eee;">
+                    <div class="editor-thumb">
+                        <img src="${gambar}" loading="lazy" alt="thumb" onerror="this.src='https://via.placeholder.com/150x100?text=Err'">
+                    </div>
+                    <div class="editor-info">
+                        <h4 class="editor-title" style="font-size:0.95rem;">${judul}</h4>
+                        <span class="editor-date">${tanggal}</span>
+                    </div>
+                </a>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
 
         // --- FITUR SHARE SOSMED (FIX COPY LINK) ---
         // Pindahkan fungsi shareArticle dari global ke window binding kalau perlu, tapi function declaration dalam module tidak global.
