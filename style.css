@@ -452,7 +452,8 @@ header {
 .card-excerpt {
     font-family: 'Lato', sans-serif;
     font-size: 0.95rem;
-    color: #64748b;
+    color: #64748b !important;
+    /* Paksa warna seragam */
     margin-bottom: 20px;
     line-height: 1.6;
     display: -webkit-box;
