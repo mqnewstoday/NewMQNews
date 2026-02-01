@@ -27,6 +27,58 @@
     <!-- PENTING: Facebook butuh Absolute URL (pake domain asli) jangan relative path -->
     <meta property="og:image" content="https://peppy-unicorn-93006b.netlify.app/ALT_LogoMQN.png">
     <meta property="og:type" content="article">
+    <style>
+        /* AUDIO PLAYER BLOCK (From Mimpi.html) */
+        .audio-block {
+            padding: 15px 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            /* Slightly different from sticky to fit content flow */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 10px rgba(157, 27, 27, 0.4);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: 0.2s;
+        }
+
+        .play-btn:active {
+            transform: scale(0.9);
+        }
+
+        .audio-info {
+            flex: 1;
+        }
+
+        .audio-title-lbl {
+            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .audio-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+    </style>
 </head>
 
 <body>
@@ -111,6 +163,24 @@
         <!-- Video Wrapper -->
         <div id="art-video-wrap" class="video-container" style="display:none;">
             <iframe id="art-video-frame" src="" allowfullscreen></iframe>
+        </div>
+
+        <!-- AUDIO PLAYER WRAPPER (NEW) -->
+        <div id="audio-container" class="audio-block" style="display:none;">
+            <div id="btn-play-audio" class="play-btn" onclick="toggleAudio()">
+                <svg id="icon-play" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+                <svg id="icon-pause" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"
+                    style="display:none;">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                </svg>
+            </div>
+            <div class="audio-info">
+                <div class="audio-title-lbl">Dengarkan Berita</div>
+                <div id="audio-status" class="audio-status">Klik untuk memutar</div>
+            </div>
+            <audio id="news-player" src=""></audio>
         </div>
 
         <div class="art-content-box">
@@ -450,7 +520,52 @@
 
                 if (src) { vidFrame.src = src; vidWrap.style.display = 'flex'; }
             }
+
+            // AUDIO SETUP (NEW)
+            const audioUrl = getVal(item, 'audio') || getVal(item, 'Audio');
+            const audioBox = document.getElementById('audio-container');
+            const player = document.getElementById('news-player');
+
+            if (audioUrl && audioUrl.length > 5) {
+                player.src = audioUrl;
+                audioBox.style.display = 'flex';
+                // Reset Player UI
+                document.getElementById('icon-play').style.display = 'block';
+                document.getElementById('icon-pause').style.display = 'none';
+                document.getElementById('audio-status').innerText = "Klik untuk memutar";
+            } else {
+                audioBox.style.display = 'none';
+                player.src = "";
+            }
         }
+
+        // AUDIO TOGGLE LOGIC
+        window.toggleAudio = function () {
+            const player = document.getElementById('news-player');
+            const iconPlay = document.getElementById('icon-play');
+            const iconPause = document.getElementById('icon-pause');
+            const statusText = document.getElementById('audio-status');
+
+            if (!player.src) return;
+
+            if (player.paused) {
+                player.play();
+                iconPlay.style.display = 'none';
+                iconPause.style.display = 'block';
+                statusText.innerText = "Sedang Memutar...";
+            } else {
+                player.pause();
+                iconPlay.style.display = 'block';
+                iconPause.style.display = 'none';
+                statusText.innerText = "Audio Jeda";
+            }
+
+            player.onended = function () {
+                iconPlay.style.display = 'block';
+                iconPause.style.display = 'none';
+                statusText.innerText = "Selesai Diputar";
+            };
+        };
 
         function extractYouTubeID(url) { if (!url) return null; const m = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/|live\/)([^#&?]*).*/); return (m && m[2].length === 11) ? m[2] : url; }
         function extractTikTokID(url) { if (!url) return null; const m = url.match(/\/video\/(\d+)/); return m ? m[1] : url; }
