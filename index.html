@@ -496,7 +496,7 @@
         const sheetID = "1FDzhBlVOFlnlQgphN2gsGJUdDeFWonpoJcadY8JqUcM";
 
         // Variabel Global
-        let allNews = [];         // Semua berita mentah dari CSV
+        var allNews = [];         // Semua berita mentah dari CSV
         let activeData = [];      // Berita yang sedang aktif (bisa hasil search/filter)
         let currentIndex = 0;     // Posisi load berita sekarang
         const BATCH_SIZE = 9;     // Jumlah berita per load (9 berita)
@@ -572,13 +572,13 @@
             container.innerHTML = "";
 
             // Pastikan allNews ada
-            if (!window.allNews || window.allNews.length === 0) {
+            if (!allNews || allNews.length === 0) {
                 container.innerHTML = '<div class="loader" style="color:red;">Menunggu data...</div>';
                 return;
             }
 
             // Ambil 3 Berita Terbaru
-            let source = window.allNews.slice().reverse();
+            let source = allNews.slice().reverse();
 
             // Filter yang punya gambar valid (Opsional, tapi diminta "Pilihan Editor")
             // Kita ambil saja 3 teratas agar konsisten dengan "Berita Terkini"
