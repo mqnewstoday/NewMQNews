@@ -1786,3 +1786,57 @@ body.dark-mode .editor-title {
     font-size: 0.75rem;
     color: var(--text-muted);
 }
+
+/* =========================================
+   PAGINATION STYLES
+   ========================================= */
+.pagination-wrapper {
+    grid-column: 1 / -1;
+    /* Span full width in grid */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    padding-bottom: 20px;
+}
+
+.page-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 5px;
+    border-radius: 50%;
+    /* Circle looks modern */
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Lato', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.page-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.page-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(157, 27, 27, 0.3);
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
