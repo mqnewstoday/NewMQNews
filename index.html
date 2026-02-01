@@ -501,8 +501,8 @@
         // Variabel Global
         var allNews = [];         // Semua berita mentah dari CSV
         let activeData = [];      // Berita yang sedang aktif (bisa hasil search/filter)
-        let currentIndex = 0;     // Posisi load berita sekarang
-        const BATCH_SIZE = 9;     // Jumlah berita per load (9 berita)
+        let currentPage = 1;      // Halaman aktif sekarang
+        const BATCH_SIZE = 5;     // Jumlah berita per halaman (5 berita)
 
         // --- 1. INIT: AMBIL DATA ---
         // --- 1. INIT: AMBIL DATA ---
@@ -731,60 +731,89 @@
 
 
 
-        // --- 2. SISTEM RENDER & LOAD MORE (INTI BARU) ---
+        // --- 2. SISTEM RENDER & PAGINATION (INTI BARU) ---
 
-        // Reset layar sebelum menampilkan hasil baru (misal habis search)
+        // Reset layar sebelum menampilkan hasil baru
         function resetRender() {
+            currentPage = 1; // Reset ke halaman 1
+            renderPage(currentPage);
+        }
+
+        // Render Halaman Tertentu
+        function renderPage(page) {
             const container = document.getElementById('news-container');
             container.innerHTML = ""; // Bersihkan layar
-            currentIndex = 0;         // Reset hitungan
-
-            // Hapus tombol load more lama jika ada
-            const oldBtn = document.getElementById('btn-load-more');
-            if (oldBtn) oldBtn.remove();
 
             if (activeData.length === 0) {
                 container.innerHTML = `<div class="no-data">Tidak ditemukan berita.</div>`;
                 return;
             }
 
-            loadNextBatch(); // Muat 9 pertama
-        }
+            // Hitung Index Start & End
+            const start = (page - 1) * BATCH_SIZE;
+            const end = start + BATCH_SIZE;
+            const batch = activeData.slice(start, end);
 
-        // Muat 9 berita berikutnya
-        function loadNextBatch() {
-            const container = document.getElementById('news-container');
-            const batch = activeData.slice(currentIndex, currentIndex + BATCH_SIZE);
-
+            // Render Berita
             batch.forEach(item => {
                 const html = createCardHTML(item);
                 container.insertAdjacentHTML('beforeend', html);
             });
 
-            currentIndex += BATCH_SIZE;
-            manageLoadMoreButton(); // Cek perlu tombol lagi gak?
+            // Render Pagination Control
+            renderPaginationControls(page);
         }
 
-        // Atur tombol "Muat Lebih Banyak"
-        function manageLoadMoreButton() {
-            const oldBtn = document.getElementById('btn-load-more');
-            if (oldBtn) oldBtn.remove(); // Hapus dulu biar gak numpuk
+        // Render Tombol Pagination (1, 2, 3...)
+        function renderPaginationControls(page) {
+            const container = document.getElementById('news-container');
+            const totalPages = Math.ceil(activeData.length / BATCH_SIZE);
 
-            // Jika masih ada sisa berita yang belum tampil
-            if (currentIndex < activeData.length) {
-                const btnHTML = `
-                <div id="btn-load-more" style="text-align:center; margin-top:30px; width:100%; grid-column: 1/-1;">
-                    <button onclick="loadNextBatch()" style="
-                        background:white; border:1px solid #ccc; padding:10px 30px; 
-                        border-radius:50px; cursor:pointer; font-weight:bold; color:#555;
-                        transition:0.3s; font-family:'Lato', sans-serif;">
-                        MUAT LEBIH BANYAK ↓
-                    </button>
+            if (totalPages <= 1) return; // Kalau cuma 1 halaman, gak perlu tombol
+
+            let buttonsHTML = '';
+
+            // Tombol Prev
+            if (page > 1) {
+                buttonsHTML += `<button onclick="goToPage(${page - 1})" class="page-btn" aria-label="Previous">‹</button>`;
+            }
+
+            // Logic Smart Pagination (biar gak kepanjangan kalau halaman banyak)
+            // Tampilkan: 1 ... [current-1] [current] [current+1] ... [last]
+            // Tapi User request "1, 2, 3... dst". Kita kasih limit sederhana biar rapi kalo datanya ratusan.
+
+            // Untuk sekarang kita loop semua jika < 10 halaman. Jika > 10 kita slicing.
+            let startPage = 1;
+            let endPage = totalPages;
+
+            // Render Buttons
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === page ? 'active' : '';
+                buttonsHTML += `<button onclick="goToPage(${i})" class="page-btn ${activeClass}">${i}</button>`;
+            }
+
+            // Tombol Next
+            if (page < totalPages) {
+                buttonsHTML += `<button onclick="goToPage(${page + 1})" class="page-btn" aria-label="Next">›</button>`;
+            }
+
+            const wrapper = `
+                <div class="pagination-wrapper">
+                    ${buttonsHTML}
                 </div>
             `;
-                document.getElementById('news-container').insertAdjacentHTML('afterend', btnHTML);
-            }
+            container.insertAdjacentHTML('beforeend', wrapper);
         }
+
+        // Fungsi Pindah Halaman
+        window.goToPage = function (page) {
+            currentPage = page;
+            renderPage(page);
+
+            // Scroll sedikit ke atas (section label) biar UX enak
+            const label = document.querySelector('.section-label');
+            if (label) label.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
 
         // Template HTML Kartu Berita (DENGAN TOMBOL SIMPAN & BACA)
         function createCardHTML(item) {
