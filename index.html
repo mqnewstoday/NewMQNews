@@ -541,6 +541,13 @@
             if (nc) nc.innerHTML = `<div class='no-data' style='color:red;'>${msg}</div>`;
         }
 
+        // Global Helper: Case Insensitive Getter (PENTING: JANGAN DIHAPUS)
+        const getVal = (obj, str) => {
+            if (!obj) return "";
+            const key = Object.keys(obj).find(k => k.toLowerCase() === str.toLowerCase());
+            return key ? obj[key] : "";
+        };
+
         // --- SCRIPT JAM REDAKSI ---
         function updateClock() {
             const now = new Date();
