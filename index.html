@@ -243,6 +243,17 @@
             </div>
             <!-- <div id="news-container" class="news-grid"></div> -->
 
+            <!-- PILIHAN EDITOR SECTION (NEW) -->
+            <div class="editor-section">
+                <div class="section-label">
+                    <span>PILIHAN EDITOR</span>
+                    <div class="section-line"></div>
+                </div>
+                <div id="editor-picks-container" class="editor-list">
+                    <div class="loader" style="color:var(--text-muted);">Memuat Pilihan Editor...</div>
+                </div>
+            </div>
+
 
             <!-- MUBASYIRAT SECTION (NEW) -->
             <div class="mubasyirat-section">
@@ -522,6 +533,11 @@
                             try { resetRender(); } catch (e) { console.error("Render Error:", e); }
 
                             if (typeof updateClock === 'function') updateClock();
+
+                            // Render Pilihan Editor with protection
+                            if (typeof renderEditorPicks === 'function') {
+                                renderEditorPicks();
+                            }
                         } catch (parseLogicErr) {
                             showError("Data Error: " + parseLogicErr.message);
                         }
@@ -546,6 +562,50 @@
             if (!obj) return "";
             const key = Object.keys(obj).find(k => k.toLowerCase() === str.toLowerCase());
             return key ? obj[key] : "";
+        };
+
+        // Fungsi Render PILIHAN EDITOR (Global Scope)
+        window.renderEditorPicks = function () {
+            const container = document.getElementById('editor-picks-container');
+            if (!container) return;
+
+            container.innerHTML = "";
+
+            // Pastikan allNews ada
+            if (!window.allNews || window.allNews.length === 0) {
+                container.innerHTML = '<div class="loader" style="color:red;">Menunggu data...</div>';
+                return;
+            }
+
+            // Ambil 3 Berita Terbaru
+            let source = window.allNews.slice().reverse();
+
+            // Filter yang punya gambar valid (Opsional, tapi diminta "Pilihan Editor")
+            // Kita ambil saja 3 teratas agar konsisten dengan "Berita Terkini"
+            const selected = source.slice(0, 3);
+
+            selected.forEach(item => {
+                const judul = getVal(item, 'judul') || getVal(item, 'title');
+                const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
+                let gambar = getVal(item, 'gambar') || getVal(item, 'image') || getVal(item, 'thumbnail');
+
+                if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/150x100?text=MQ";
+
+                const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+
+                const html = `
+                <a href="${targetUrl}" class="editor-card">
+                    <div class="editor-thumb">
+                        <img src="${gambar}" loading="lazy" alt="thumb" onerror="this.src='https://via.placeholder.com/150x100?text=Err'">
+                    </div>
+                    <div class="editor-info">
+                        <h4 class="editor-title">${judul}</h4>
+                        <span class="editor-date">${tanggal}</span>
+                    </div>
+                </a>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
         };
 
         // --- SCRIPT JAM REDAKSI ---
