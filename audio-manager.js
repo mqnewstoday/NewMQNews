@@ -241,8 +241,8 @@
         const div = document.createElement('div');
         div.id = 'mq-global-player';
         div.innerHTML = `
-            <img src="" class="gp-thumb" id="gp-img" onclick="window.location.href='audio.html'">
-            <div class="gp-info" onclick="window.location.href='audio.html'">
+            <img src="" class="gp-thumb" id="gp-img">
+            <div class="gp-info" id="gp-info">
                 <div class="gp-title" id="gp-title">Loading...</div>
                 <div class="gp-desc" id="gp-desc">...</div>
             </div>
@@ -258,16 +258,27 @@
         document.body.appendChild(div);
 
         // Bind Events
+        const openPlayer = () => {
+            const t = document.getElementById('gp-title').innerText;
+            // Save state first to ensure latest time is captured
+            saveState();
+            window.location.href = 'audio.html#track=' + encodeURIComponent(t) + '&open=true';
+        };
+
+        document.getElementById('gp-img').onclick = openPlayer;
+        document.getElementById('gp-info').onclick = openPlayer;
         document.getElementById('gp-play-btn').onclick = toggleGlobalPlay;
         document.getElementById('gp-close-btn').onclick = closeGlobalPlayer;
     }
 
-    function toggleGlobalPlay() {
+    function toggleGlobalPlay(e) {
+        if (e) e.stopPropagation();
         if (audioObj.paused) audioObj.play();
         else audioObj.pause();
     }
 
-    function closeGlobalPlayer() {
+    function closeGlobalPlayer(e) {
+        if (e) e.stopPropagation();
         if (audioObj) {
             audioObj.pause();
             audioState.isPlaying = false;
@@ -276,6 +287,11 @@
         const el = document.getElementById('mq-global-player');
         if (el) el.style.display = 'none';
     }
+
+    // Save state on unload to minimize gap
+    window.addEventListener('beforeunload', () => {
+        saveState();
+    });
 
     function updateMiniUI(track) {
         document.getElementById('gp-title').innerText = track.title;

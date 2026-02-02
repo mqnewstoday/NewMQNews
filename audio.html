@@ -12,6 +12,7 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="theme.css">
+    <link rel="icon" type="image/png" href="MQ_Icon.png">
 
     <style>
         /* CONFIG */
@@ -758,12 +759,40 @@
         let syncTimer = null;
 
         async function init() {
+            // FAST RESUME: Check localStorage first
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const state = JSON.parse(saved);
+                    // Only resume if data is fresh (e.g. < 1 hour)
+                    if (Date.now() - (state.lastUpdate || 0) < 3600000 && state.playlist && state.playlist.length > 0) {
+                        playlist = state.playlist;
+                        currentIndex = state.trackIndex || 0;
+                        renderList();
+
+                        // If it was playing or we are auto-opening, resume immediately
+                        const hash = window.location.hash;
+                        const forceOpen = hash.includes('open=true');
+
+                        if (state.isPlaying || forceOpen) {
+                            loadTrack(currentIndex, true);
+                            // Temporarily suppress full player if just resuming background audio (unless open=true)
+                            if (!forceOpen && !hash.includes('view=player')) {
+                                closeFullPlayer();
+                            }
+                        } else {
+                            loadTrack(currentIndex, false);
+                        }
+                    }
+                }
+            } catch (e) { console.log("Fast resume error", e); }
+
             try {
                 const res = await fetch(SHEET_CSV_URL);
                 const text = await res.text();
                 const rows = text.split('\n').slice(1);
 
-                playlist = rows.map(row => {
+                const newPlaylist = rows.map(row => {
                     // CSV Parser yang lebih robust untuk menangani quote dan koma
                     const regex = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
                     const cols = [];
@@ -786,8 +815,16 @@
                     };
                 }).filter(track => track && track.url && track.url.length > 5);
 
-                renderList();
-                checkDeepLink();
+                // Update playlist if different or empty
+                if (newPlaylist.length > 0) {
+                    // If we already have a playlist from localStorage, we might want to keep the current track index valid
+                    // For now, simply updating it is safe as long as the order hasn't drastically changed.
+                    playlist = newPlaylist;
+                    renderList();
+                    checkDeepLink();
+                }
+
+
 
             } catch (e) { console.error(e); }
         }
@@ -969,11 +1006,27 @@
         function checkDeepLink() {
             const hash = window.location.hash;
             if (hash.startsWith('#track=')) {
-                const titleDecoded = decodeURIComponent(hash.replace('#track=', ''));
-                const foundIndex = playlist.findIndex(t => t.title === titleDecoded);
-                if (foundIndex !== -1) loadTrack(foundIndex, true);
+                // Parse params from hash
+                const params = new URLSearchParams(hash.replace('#', '?')); // Hack to use URLSearchParams on hash
+                const trackParam = params.get('track');
+                const openParam = params.get('open');
+
+                if (trackParam) {
+                    const titleDecoded = decodeURIComponent(trackParam);
+                    const foundIndex = playlist.findIndex(t => t.title === titleDecoded);
+                    if (foundIndex !== -1) {
+                        // Load and Play
+                        loadTrack(foundIndex, true);
+                        if (openParam === 'true') openFullPlayer();
+                    }
+                }
             }
         }
+
+        // Save state on unload
+        window.addEventListener('beforeunload', () => {
+            saveToGlobalState();
+        });
 
         // --- FUNGSI SHARE & NOTIFIKASI ---
         function shareLink() {
