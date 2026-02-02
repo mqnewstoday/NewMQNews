@@ -1,5 +1,3 @@
-import { DOMParser } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
-
 export default async (request, context) => {
     const url = new URL(request.url);
 
@@ -11,28 +9,36 @@ export default async (request, context) => {
         return context.next();
     }
 
-    // 2. Ambil Data CSV dari Google Sheets (Server-Side Fetching)
-    // ID Sheet sesuai dengan yang ada di index.html/baca.html
-    const sheetID = "1FDzhBlVOFlnlQgphN2gsGJUdDeFWonpoJcadY8JqUcM";
-    const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetID}/export?format=csv`;
+    // 2. Ambil Data CSV dari Google Sheets (Published to Web URL)
+    // Menggunakan URL 'published' agar konsisten dengan client-side dan tidak butuh login
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
+
+    // Tambahkan timestamp untuk menghindari caching agresif dari Google
+    const fetchUrl = csvUrl + "&t=" + Date.now();
 
     try {
-        const csvResponse = await fetch(csvUrl);
-        if (!csvResponse.ok) return context.next();
+        const csvResponse = await fetch(fetchUrl);
+
+        // Cek jika response bukan OK
+        if (!csvResponse.ok) {
+            console.log("Error fetching CSV:", csvResponse.status);
+            return context.next();
+        }
 
         const csvText = await csvResponse.text();
 
-        // 3. Parsing CSV Sederhana (Tanpa Library Berat)
-        // Asumsi: Header ada di baris pertama
+        // 3. Parsing CSV Sederhana
         const rows = csvText.split("\n");
+        if (rows.length < 2) return context.next(); // Data kosong
+
         const headers = parseCSVRow(rows[0]);
 
-        // Cari index kolom 'judul', 'gambar', 'isi'/'deskripsi'
+        // Cari index kolom
         const titleIdx = headers.findIndex(h => h.toLowerCase() === 'judul' || h.toLowerCase() === 'title');
-        const imgIdx = headers.findIndex(h => h.toLowerCase() === 'gambar' || h.toLowerCase() === 'image');
+        const imgIdx = headers.findIndex(h => h.toLowerCase() === 'gambar' || h.toLowerCase() === 'image' || h.toLowerCase() === 'thumbnail');
         const dateIdx = headers.findIndex(h => h.toLowerCase() === 'tanggal' || h.toLowerCase() === 'date');
 
-        if (titleIdx === -1) return context.next(); // Gagal identifikasi kolom
+        if (titleIdx === -1) return context.next();
 
         // 4. Cari Artikel yang Cocok
         let foundArticle = null;
@@ -40,79 +46,65 @@ export default async (request, context) => {
 
         for (let i = 1; i < rows.length; i++) {
             const rowData = parseCSVRow(rows[i]);
+            // Pastikan baris memiliki data di kolom title
             if (!rowData[titleIdx]) continue;
 
             if (rowData[titleIdx].trim().toLowerCase() === searchTarget) {
                 foundArticle = {
-                    title: rowData[titleIdx],
-                    image: rowData[imgIdx] || "",
-                    date: rowData[dateIdx] || ""
+                    title: rowData[titleIdx].trim(),
+                    image: (rowData[imgIdx] || "").trim(),
+                    date: (rowData[dateIdx] || "").trim()
                 };
                 break;
             }
         }
 
-        // Jika artikel tidak ditemukan, lanjut aja (nanti client-side yang handle 404)
         if (!foundArticle) return context.next();
 
         // 5. Modifikasi HTML Response
-        // Kita ambil respon asli dari Netlify
         const response = await context.next();
         const pageToModify = await response.text();
 
-        // Regex yang lebih aman (case insensitive & flexible spacing)
         let updatedPage = pageToModify;
 
-        // A. Ganti Title
-        updatedPage = updatedPage.replace(
-            /<title>[\s\S]*?<\/title>/i,
-            `<title>${foundArticle.title} - MQ News</title>`
-        );
+        // Helper untuk replace meta tag dengan aman (case insensitive)
+        const replaceMeta = (property, content) => {
+            const regex = new RegExp(`<meta\\s+property=["']${property}["']\\s+content=["'].*?["']\\s*\\/?>`, 'i');
+            updatedPage = updatedPage.replace(regex, `<meta property="${property}" content="${content}">`);
+        };
 
-        // B. Ganti OG:Title
-        updatedPage = updatedPage.replace(
-            /<meta\s+property=["']og:title["']\s+content=["'].*?["']\s*\/?>/i,
-            `<meta property="og:title" content="${foundArticle.title}">`
-        );
+        // A. Title Page
+        updatedPage = updatedPage.replace(/<title>[\s\S]*?<\/title>/i, `<title>${foundArticle.title} - MQ News Today</title>`);
 
-        // C. Ganti OG:Image (Pastikan URL Absolute)
-        // Fallback logo jika gambar kosong atau invalid
-        let imgUrl = foundArticle.image && foundArticle.image.length > 5 ? foundArticle.image : "https://mqnews-today.netlify.app/ALT_LogoMQN.png";
+        // B. Open Graph Tags
+        replaceMeta('og:title', foundArticle.title);
 
-        // Facebook butuh URL absolute, jadi kalau di CSV cuma 'gambar.jpg', kita harus fix (tapi biasanya di CSV udah full url sih)
+        const desc = `Baca selengkapnya tentang ${foundArticle.title}. ${foundArticle.date}`;
+        replaceMeta('og:description', desc);
 
-        updatedPage = updatedPage.replace(
-            /<meta\s+property=["']og:image["']\s+content=["'].*?["']\s*\/?>/i,
-            `<meta property="og:image" content="${imgUrl}">`
-        );
+        // Link Gambar (Fallback ke logo jika kosong)
+        let imgUrl = foundArticle.image;
+        if (!imgUrl || imgUrl.length < 5) {
+            imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
+        }
+        replaceMeta('og:image', imgUrl);
 
-        // D. Ganti OG:Description
-        const desc = `Baca selengkapnya tentang ${foundArticle.title}. Diposting pada ${foundArticle.date}`;
-        updatedPage = updatedPage.replace(
-            /<meta\s+property=["']og:description["']\s+content=["'].*?["']\s*\/?>/i,
-            `<meta property="og:description" content="${desc}">`
-        );
-
-        // Update juga Twitter Card
+        // C. Twitter Card Tags (biasanya name="twitter:...")
         updatedPage = updatedPage.replace(
             /<meta\s+name=["']twitter:image["']\s+content=["'].*?["']\s*\/?>/i,
             `<meta name="twitter:image" content="${imgUrl}">`
         );
 
-        // DEBUGGING: Tambah komentar di HTML biar tau ini hasil proses Edge Function
-        updatedPage += "\n<!-- Processed by Netlify Edge Function -->";
+        updatedPage += "\n<!-- Processed by Netlify Edge Functions -->";
 
-        // Return HTML yang sudah dimodifikasi
         return new Response(updatedPage, response);
 
     } catch (error) {
-        // Jika error, fallback ke default
-        console.log("Edge Function Error:", error);
+        console.log("Edge Function Exception:", error);
         return context.next();
     }
 };
 
-// Helper: Parse CSV Row (handling quotes sederhana)
 function parseCSVRow(row) {
     const result = [];
     let cell = "";
@@ -123,12 +115,12 @@ function parseCSVRow(row) {
         if (char === '"') {
             inQuote = !inQuote;
         } else if (char === ',' && !inQuote) {
-            result.push(cell.trim());
+            result.push(cell.replace(/^"|"$/g, '').trim()); // Clean quotes
             cell = "";
         } else {
             cell += char;
         }
     }
-    result.push(cell.trim());
+    result.push(cell.replace(/^"|"$/g, '').trim());
     return result;
 }
