@@ -1254,7 +1254,7 @@
         // Let's add a small script that runs after renderNews updates DOM?
         // Or update `renderNews` definition.
 
-        // Helper Toast
+        // Helper Toast -- EXISTING CODE --
         function showToast(msg, type) {
             let box = document.getElementById('toast-box');
             if (!box) {
@@ -1270,6 +1270,14 @@
 
             box.style.display = 'block';
             setTimeout(() => { box.style.display = 'none'; }, 3000);
+        }
+
+        // SIDEBAR DROPDOWN TOGGLE
+        function toggleDropdown(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.toggle('active');
+            }
         }
     </script>
 </body>
