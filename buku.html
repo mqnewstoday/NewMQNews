@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Qasim Dream's - MQ News</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="theme.css">
-    
+    <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
+    <link rel="shortcut icon" href="ALT_LogoMQN.png" type="image/png">
+
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -18,10 +22,13 @@
            VARIABLES (SAMA PERSIS DENGAN PROFIL.HTML)
            ========================================= */
         :root {
-            --primary: #9d1b1b;       /* Merah Utama */
-            --gold: #c5a059;          /* Emas Elegan */
-            --accent: #80df06;        /* Kuning/Lime Aksen */
-            --bg-body: #f8f9fa;      
+            --primary: #9d1b1b;
+            /* Merah Utama */
+            --gold: #c5a059;
+            /* Emas Elegan */
+            --accent: #80df06;
+            /* Kuning/Lime Aksen */
+            --bg-body: #f8f9fa;
             --bg-card: #ffffff;
             --text-main: #334155;
             --text-muted: #64748b;
@@ -42,8 +49,12 @@
         }
 
         /* RESET & LAYOUT */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Lato', sans-serif;
             background-color: var(--bg-body);
@@ -52,7 +63,8 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Mencegah scroll body, biar scroll di buku aja */
+            overflow: hidden;
+            /* Mencegah scroll body, biar scroll di buku aja */
         }
 
         /* =========================================
@@ -62,106 +74,157 @@
             background: var(--bg-card);
             padding: 0 15px;
             height: 70px;
-            position: relative; z-index: 100;
+            position: relative;
+            z-index: 100;
             border-bottom: 3px solid var(--primary);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-            flex-shrink: 0; /* Header gak boleh mengecil */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            /* Header gak boleh mengecil */
         }
 
         .header-title {
-            font-family: 'Cinzel', serif; font-size: 1.2rem;
-            color: var(--header-text); font-weight: 700;
-            margin: 0; flex-grow: 1; text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--header-text);
+            font-weight: 700;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
             letter-spacing: 1px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .header-icon-btn {
-            width: 44px; height: 44px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; text-decoration: none; border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 50%;
             transition: background 0.2s;
         }
-        .header-icon-btn:hover { background: rgba(157, 27, 27, 0.05); }
+
+        .header-icon-btn:hover {
+            background: rgba(157, 27, 27, 0.05);
+        }
 
         .header-icon-btn svg {
-            width: 26px; height: 26px;
+            width: 26px;
+            height: 26px;
             stroke: var(--primary);
-            stroke-width: 2px; fill: none;
-            stroke-linecap: round; stroke-linejoin: round;
+            stroke-width: 2px;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         /* =========================================
            BOOK CONTAINER (FLIPBOOK AREA)
            ========================================= */
         .book-wrapper {
-            flex: 1; /* Mengisi sisa ruang antara header dan footer */
+            flex: 1;
+            /* Mengisi sisa ruang antara header dan footer */
             width: 100%;
             position: relative;
-            background: #2d2d2d; /* Background gelap di belakang buku biar fokus */
+            background: #2d2d2d;
+            /* Background gelap di belakang buku biar fokus */
         }
 
         iframe {
-            width: 100%; height: 100%;
+            width: 100%;
+            height: 100%;
             border: none;
             display: block;
         }
 
         /* Loader Animation */
         .loader {
-            position: absolute; top: 50%; left: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
-            color: white; text-align: center; font-family: 'Lato', sans-serif;
+            color: white;
+            text-align: center;
+            font-family: 'Lato', sans-serif;
         }
+
         .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top: 4px solid var(--accent); /* Aksen Kuning/Hijau */
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--accent);
+            /* Aksen Kuning/Hijau */
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 10px;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
         /* =========================================
            FOOTER (DESAIN KONSISTEN)
            ========================================= */
         .main-footer {
             background: var(--bg-card);
-            text-align: center; padding: 15px;
+            text-align: center;
+            padding: 15px;
             border-top: 1px solid var(--border);
-            flex-shrink: 0; /* Footer gak boleh mengecil */
+            flex-shrink: 0;
+            /* Footer gak boleh mengecil */
         }
 
         .copyright {
-            color: var(--text-muted); font-size: 0.85rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
-        
+
         .copyright a {
-            color: inherit; text-decoration: none; font-weight: bold;
+            color: inherit;
+            text-decoration: none;
+            font-weight: bold;
             transition: color 0.2s;
         }
-        .copyright a:hover { color: var(--primary); }
 
+        .copyright a:hover {
+            color: var(--primary);
+        }
     </style>
 </head>
+
 <body>
 
     <script src="theme-init.js"></script>
 
     <header class="profile-header-nav">
-            <a href="javascript:void(0);" onclick="goHome()" class="header-icon-btn">
-    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-</a>
+        <a href="javascript:void(0);" onclick="goHome()" class="header-icon-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+        </a>
 
-        
+
         <h1 class="header-title">QASIM DREAM'S</h1>
-        
+
         <a href="settings.html" class="header-icon-btn">
             <svg viewBox="0 0 24 24">
-                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
             </svg>
         </a>
     </header>
@@ -172,13 +235,10 @@
             <span>Memuat Kitab...</span>
         </div>
 
-        <iframe 
-    id="bookFrame"
-    src="https://heyzine.com/flip-book/9fd2b24848.html" 
-    allowfullscreen 
-    sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-    onload="document.getElementById('bookLoader').style.display='none'">
-</iframe>
+        <iframe id="bookFrame" src="https://heyzine.com/flip-book/9fd2b24848.html" allowfullscreen
+            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+            onload="document.getElementById('bookLoader').style.display='none'">
+        </iframe>
 
     </div>
 
@@ -190,25 +250,26 @@
         </div>
     </footer>
 
-<script>
-    // 1. FUNGSI UNTUK TOMBOL UI (KIRI ATAS)
-    function goHome() {
-        // Menggunakan 'replace' supaya halaman buku ini DIHAPUS dari riwayat
-        // Jadi pas di home di-back, gak balik kesini lagi.
-        window.location.replace("index.html");
-    }
+    <script>
+        // 1. FUNGSI UNTUK TOMBOL UI (KIRI ATAS)
+        function goHome() {
+            // Menggunakan 'replace' supaya halaman buku ini DIHAPUS dari riwayat
+            // Jadi pas di home di-back, gak balik kesini lagi.
+            window.location.replace("index.html");
+        }
 
-    // 2. MANIPULASI TOMBOL BACK HP (HARDWARE BUTTON)
-    // Kita pancing history state palsu pas halaman dimuat
-    history.pushState(null, null, location.href);
+        // 2. MANIPULASI TOMBOL BACK HP (HARDWARE BUTTON)
+        // Kita pancing history state palsu pas halaman dimuat
+        history.pushState(null, null, location.href);
 
-    // Pas user tekan Back HP, browser akan memicu event 'popstate'
-    window.onpopstate = function () {
-        // Paksa langsung pulang ke index
-        window.location.replace("index.html");
-    };
-</script>
-<script src="custom-notif-lu.js"></script>
-<script type="module" src="chatbot.js"></script>
+        // Pas user tekan Back HP, browser akan memicu event 'popstate'
+        window.onpopstate = function () {
+            // Paksa langsung pulang ke index
+            window.location.replace("index.html");
+        };
+    </script>
+    <script src="custom-notif-lu.js"></script>
+    <script type="module" src="chatbot.js"></script>
 </body>
+
 </html>

@@ -887,7 +887,7 @@
                 if (syncTimer) clearInterval(syncTimer);
                 syncTimer = setInterval(saveToGlobalState, 1000);
                 saveToGlobalState();
-                openFullPlayer();
+                openFullPlayer(); // AUTOMATICALLY OPEN FULL PLAYER
             } else {
                 // If not autoPlaying, ensure state is saved (e.g., if user manually loads a track but doesn't play)
                 saveToGlobalState();

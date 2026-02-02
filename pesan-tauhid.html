@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>19 Pesan Penting - MQ News</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="theme.css"> 
-    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="theme.css">
+    <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
+    <link rel="shortcut icon" href="ALT_LogoMQN.png" type="image/png">
+
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -18,20 +22,25 @@
            VARIABLES & THEME
            ========================================= */
         :root {
-            --primary: #9d1b1b;       
-            --accent: #80df06;        
-            --bg-body: #f8f9fa;      
+            --primary: #9d1b1b;
+            --accent: #80df06;
+            --bg-body: #f8f9fa;
             --bg-card: #ffffff;
             --text-main: #334155;
             --text-muted: #64748b;
             --header-text: #9d1b1b;
-            --shadow: 0 4px 20px rgba(0,0,0,0.06);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
             --radius: 16px;
         }
 
         /* RESET */
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             font-family: 'Lato', sans-serif;
             background-color: var(--bg-body);
@@ -45,41 +54,61 @@
             background: var(--bg-card);
             padding: 0 15px;
             height: 70px;
-            position: sticky; top: 0; z-index: 1000;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             border-bottom: 3px solid var(--primary);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .header-title {
-            font-family: 'Cinzel', serif; font-size: 1.1rem;
-            color: var(--header-text); font-weight: 700;
-            margin: 0; flex-grow: 1; text-align: center;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--header-text);
+            font-weight: 700;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .header-icon-btn {
-            width: 44px; height: 44px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; text-decoration: none; border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 50%;
             transition: background 0.2s;
             position: relative;
         }
-        .header-icon-btn:hover { background: rgba(157, 27, 27, 0.05); }
+
+        .header-icon-btn:hover {
+            background: rgba(157, 27, 27, 0.05);
+        }
 
         .header-icon-btn svg {
-            width: 26px; height: 26px;
+            width: 26px;
+            height: 26px;
             stroke: var(--primary);
             stroke-width: 2px;
             fill: none;
-            stroke-linecap: round; stroke-linejoin: round;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         /* HERO SECTION */
         .hero {
             padding: 30px 20px 20px;
             text-align: center;
-            background: linear-gradient(180deg, rgba(157,27,27,0.03) 0%, transparent 100%);
+            background: linear-gradient(180deg, rgba(157, 27, 27, 0.03) 0%, transparent 100%);
         }
 
         .hero h2 {
@@ -111,8 +140,9 @@
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: var(--shadow);
-            border: 1px solid rgba(0,0,0,0.03);
-            transition: all 0.3s ease; /* Smooth transition pas memanjang */
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            /* Smooth transition pas memanjang */
             position: relative;
             display: flex;
             flex-direction: column;
@@ -120,8 +150,9 @@
 
         .card-badge {
             position: absolute;
-            top: 15px; left: 15px;
-            background: rgba(0,0,0,0.6);
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
             color: var(--accent);
             font-family: 'Cinzel', serif;
@@ -168,7 +199,7 @@
             color: var(--text-main);
             line-height: 1.6;
             margin-bottom: 10px;
-            
+
             /* Default: Dipotong 3 baris */
             display: -webkit-box;
             -webkit-line-clamp: 3;
@@ -197,7 +228,7 @@
             display: inline-block;
             width: fit-content;
         }
-        
+
         .btn-read-more:hover {
             text-decoration: underline;
         }
@@ -208,24 +239,41 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-        
+
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .card { animation: fadeUp 0.6s ease forwards; opacity: 0; }
+        .card {
+            animation: fadeUp 0.6s ease forwards;
+            opacity: 0;
+        }
     </style>
 </head>
+
 <body>
 
     <header class="profile-header-nav">
         <a href="index.html" class="header-icon-btn" onclick="handleBack(event)">
-            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
         </a>
         <h1 class="header-title">19 PESAN</h1>
         <a href="settings.html" class="header-icon-btn">
-            <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+            <svg viewBox="0 0 24 24">
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+            </svg>
         </a>
     </header>
 
@@ -361,7 +409,7 @@
         const grid = document.getElementById('contentGrid');
 
         messages.forEach((item, index) => {
-            const delay = index * 0.05; 
+            const delay = index * 0.05;
             const card = document.createElement('div');
             card.className = 'card';
             card.style.animationDelay = `${delay}s`;
@@ -398,10 +446,10 @@
         // FUNGSI TOGGLE BACA SELENGKAPNYA
         function toggleReadMore(index, btn) {
             const textElement = document.getElementById(`desc-${index}`);
-            
+
             // Toggle class 'expanded'
             textElement.classList.toggle('expanded');
-            
+
             // Ganti Tulisan Tombol
             if (textElement.classList.contains('expanded')) {
                 btn.innerHTML = "Tutup ▴";
@@ -411,14 +459,14 @@
         }
 
         // Handle Back Logic
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             if (window.history && window.history.pushState) {
-                window.onpopstate = function(e) {
+                window.onpopstate = function (e) {
                     window.location.href = 'index.html';
                 };
             }
         });
-        document.addEventListener("deviceready", function() {
+        document.addEventListener("deviceready", function () {
             document.addEventListener("backbutton", function (e) {
                 e.preventDefault();
                 window.location.href = "index.html";
@@ -427,4 +475,5 @@
 
     </script>
 </body>
+
 </html>
