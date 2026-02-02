@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Transformasi - MQ News</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="theme.css">
+    <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
+    <link rel="shortcut icon" href="ALT_LogoMQN.png" type="image/png">
+
+    <style>
+        /* CONFIG */
+        :root {
+            --primary: #9d1b1b;
+            --gold: #c5a059;
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --header-text: #9d1b1b;
+        }
+
+        body.dark-mode {
+            --primary: #ff6b6b;
+            --gold: #ffd700;
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #333333;
+            --header-text: #ffffff;
+        }
+
+        body.font-small {
+            --base-size: 14px;
+        }
+
+        body.font-large {
+            --base-size: 19px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        .profile-header-nav {
+            background: var(--bg-card);
+            padding: 0 15px;
+            height: 70px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--header-text);
+            font-weight: 700;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-icon-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .header-icon-btn svg {
+            width: 26px;
+            height: 26px;
+            stroke: var(--primary);
+            stroke-width: 2px;
+            fill: none;
+        }
+
+        /* NAVBAR KATEGORI */
+        .category-nav {
+            background: var(--primary);
+            padding: 15px 0;
+            white-space: nowrap;
+            overflow-x: auto;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 70px;
+            /* Below header */
+            z-index: 900;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-inner {
+            padding: 0 20px;
+        }
+
+        .cat-link {
+            display: inline-block;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            transition: all 0.3s;
+            margin-right: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .cat-link.active {
+            color: var(--primary);
+            background: #ffffff;
+            border-color: #ffffff;
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* CONTENT AREA */
+        .content-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .transform-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            border-left: 4px solid var(--gold);
+            padding-left: 15px;
+            line-height: 1.2;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-main);
+            white-space: pre-wrap;
+            /* Preserve formatting */
+        }
+
+        .loader {
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        /* FOOTER */
+        .simple-footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .simple-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="theme-init.js"></script>
+
+    <!-- HEADER -->
+    <header class="profile-header-nav">
+        <!-- Smart Back Button -->
+        <a href="javascript:history.back()" class="header-icon-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </a>
+        <div class="header-title">TRANSFORMASI</div>
+        <a href="settings.html" class="header-icon-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                <path
+                    d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.72l-.15.1a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.72l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z">
+                </path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+        </a>
+    </header>
+
+    <!-- NAVBAR -->
+    <div class="category-nav">
+        <div class="nav-inner" id="nav-container">
+            <a onclick="setCategory('HAIR REGROWTH')" class="cat-link active" id="nav-hair">HAIR REGROWTH</a>
+            <a onclick="setCategory('FOOT ELONGATION')" class="cat-link" id="nav-foot">FOOT ELONGATION</a>
+            <a onclick="setCategory('FEET INCREASE')" class="cat-link" id="nav-feet">FEET INCREASE</a>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content-wrapper" id="content-area">
+        <div class="loader">Memuat Data...</div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="simple-footer">
+        Copyright 2026 <a href="tentang-kami.html">MQ News Today</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        // --- CONFIG ---
+        // Placeholder Sheet URL - User needs to update this later
+        const TRANSFORMASI_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv"; // GANTI NANTI
+
+        let allData = [];
+        let currentCategory = 'HAIR REGROWTH';
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check URL Params for category
+            const params = new URLSearchParams(window.location.search);
+            const catParam = params.get('category');
+            if (catParam) {
+                // Normalize and set
+                if (catParam.toLowerCase().includes('hair')) currentCategory = 'HAIR REGROWTH';
+                else if (catParam.toLowerCase().includes('foot')) currentCategory = 'FOOT ELONGATION';
+                else if (catParam.toLowerCase().includes('feet')) currentCategory = 'FEET INCREASE';
+            }
+
+            fetchData();
+        });
+
+        // --- FETCH DATA ---
+        function fetchData() {
+            // Because URL is placeholder, I will use Mock Data fallback if fetch fails or empty
+            // This allows the user to see UI immediately.
+
+            // NOTE FOR USER: Create Sheet with columns: Category, Image, Content
+
+            Papa.parse(TRANSFORMASI_CSV_URL, {
+                download: true,
+                header: true,
+                complete: (results) => {
+                    if (results.data && results.data.length > 0) {
+                        allData = results.data;
+                        renderContent();
+                    } else {
+                        // Fallback Mock Data
+                        useMockData();
+                    }
+                },
+                error: (err) => {
+                    console.error("CSV Error", err);
+                    useMockData();
+                }
+            });
+        }
+
+        function useMockData() {
+            // Mock data for demonstration until user provides real sheet
+            allData = [
+                {
+                    Category: "HAIR REGROWTH",
+                    Image: "https://placehold.co/800x450/9d1b1b/FFF?text=Hair+Regrowth",
+                    Content: "Ini adalah konten demo untuk Hair Regrowth. Silakan ganti Link CSV dengan sheet yang valid.\n\nStruktur CSV:\nColumn 1: Category\nColumn 2: Image\nColumn 3: Content"
+                },
+                {
+                    Category: "FOOT ELONGATION",
+                    Image: "https://placehold.co/800x450/c5a059/FFF?text=Foot+Elongation",
+                    Content: "Konten demo untuk Foot Elongation."
+                },
+                {
+                    Category: "FEET INCREASE",
+                    Image: "https://placehold.co/800x450/333/FFF?text=Feet+Increase",
+                    Content: "Konten demo untuk Feet Increase."
+                }
+            ];
+            renderContent();
+        }
+
+        // --- RENDER ---
+        function setCategory(cat) {
+            currentCategory = cat;
+
+            // Update Active Nav
+            document.querySelectorAll('.cat-link').forEach(el => el.classList.remove('active'));
+            if (cat === 'HAIR REGROWTH') document.getElementById('nav-hair').classList.add('active');
+            if (cat === 'FOOT ELONGATION') document.getElementById('nav-foot').classList.add('active');
+            if (cat === 'FEET INCREASE') document.getElementById('nav-feet').classList.add('active');
+
+            renderContent();
+
+            // Scroll to top of content
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderContent() {
+            const container = document.getElementById('content-area');
+
+            // Filter Data
+            // We use loose matching or exact matching? Exact is safer.
+            const item = allData.find(d =>
+                (d.Category || d.category || "").trim().toUpperCase() === currentCategory
+            );
+
+            if (!item) {
+                container.innerHTML = `<div class="loader">Data untuk kategori ini belum tersedia.</div>`;
+                return;
+            }
+
+            // Safe Access
+            const getK = (obj, str) => obj[Object.keys(obj).find(k => k.toLowerCase() === str.toLowerCase())] || "";
+            const image = getK(item, 'image') || getK(item, 'gambar') || "https://placehold.co/800x400?text=No+Image";
+            const content = getK(item, 'content') || getK(item, 'isi') || getK(item, 'text') || "";
+
+            const html = `
+                <div class="transform-card">
+                    <img src="${image}" alt="${currentCategory}" class="card-image" onerror="this.src='https://placehold.co/800x400?text=Error'">
+                    <div class="card-body">
+                        <h1 class="card-title">${currentCategory}</h1>
+                        <div class="card-text">${formatText(content)}</div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function formatText(text) {
+            if (!text) return "";
+            return text.replace(/\n/g, '<br>');
+        }
+
+    </script>
+</body>
+
+</html>
