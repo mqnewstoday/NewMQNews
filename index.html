@@ -63,7 +63,19 @@
 
         <div class="sidebar-menu">
             <a href="#" onclick="toggleSidebar(); setCategory(null, 'Semua')">BERANDA</a>
-            <a href="https://muhammadqasimpk.org/id" target="_blank">MUHAMMAD QASIM OFFICIAL</a>
+            <!-- DROPDOWN WRAPPER -->
+            <div class="sidebar-dropdown-wrapper" id="mq-official-dropdown">
+                <div class="sidebar-dropdown-header" onclick="toggleDropdown('mq-official-dropdown')">
+                    <span>MUHAMMAD QASIM OFFICIAL</span>
+                    <span class="sidebar-arrow">›</span>
+                    <!-- Menggunakan simbol yang sama dengan hover tapi diputar nanti -->
+                </div>
+                <div class="sidebar-submenu">
+                    <a href="https://muhammadqasimpk.org/id" target="_blank">MUHAMMAD QASIM PK</a>
+                    <a href="#" onclick="return false;">PIDATO & WAWANCARA</a>
+                    <a href="#" onclick="return false;">SIARAN AKBAR</a>
+                </div>
+            </div>
             <a href="https://casereportsinregrowth.com" target="_blank">MUKJIZAT</a>
             <a href="https://saweria.co/mqnewstoday" target="_blank">SUPPORT ME</a>
         </div>
