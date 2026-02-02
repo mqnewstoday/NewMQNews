@@ -911,13 +911,7 @@
             updateMediaSession(track);
         }
 
-        const displayPlay = isPlaying ? 'none' : 'block';
-        const displayPause = isPlaying ? 'block' : 'none';
-        ['mini', 'full'].forEach(prefix => {
-            document.getElementById(`${prefix}-play-icon`).style.display = displayPlay;
-            document.getElementById(`${prefix}-pause-icon`).style.display = displayPause;
-        });
-        }
+
 
         function updateMediaSession(track) {
             if ('mediaSession' in navigator) {
