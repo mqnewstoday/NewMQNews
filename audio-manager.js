@@ -69,6 +69,11 @@
     // If nothing valid was playing, pause and exit
     if (!audioState.playlist || audioState.playlist.length === 0) return;
 
+    // IMPORTANT: Only show if explicitly playing OR if we have a valid saved state that wasn't "closed/stopped"
+    // Since we don't have a "closed" state in the object, we rely on isPlaying.
+    // If NOT playing, do NOT show the player on load.
+    if (!audioState.isPlaying) return;
+
     // 3. CREATE FLOATING PLAYER UI
     createFloatingPlayer();
 
