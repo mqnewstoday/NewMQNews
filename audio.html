@@ -883,11 +883,15 @@
             history.replaceState(null, null, `#track=${encodeURIComponent(track.title)}`);
 
             if (autoPlay) {
-                audio.play();
-                if (syncTimer) clearInterval(syncTimer);
-                syncTimer = setInterval(saveToGlobalState, 1000);
-                saveToGlobalState();
-                openFullPlayer(); // AUTOMATICALLY OPEN FULL PLAYER
+                // IMPORTANT: Open UI First
+                openFullPlayer();
+
+                audio.play().then(() => {
+                    if (syncTimer) clearInterval(syncTimer);
+                    syncTimer = setInterval(saveToGlobalState, 1000);
+                    saveToGlobalState();
+                }).catch(e => console.error("Play failed:", e));
+
             } else {
                 // If not autoPlaying, ensure state is saved (e.g., if user manually loads a track but doesn't play)
                 saveToGlobalState();
