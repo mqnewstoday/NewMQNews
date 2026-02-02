@@ -95,20 +95,20 @@
                 <span>Truth & Clarity</span>
             </div>
         </div>
-        <!-- Toggle Menu di sini bisa buat balik ke index atau buka menu sidebar -->
-        <div class="menu-toggle" onclick="toggleSidebar()">
-            <!-- Pake icon silang atau panah back? -->
-            <!-- Kita pake icon menu biasa aja, tapi arahin ke home atau sidebar? 
-                 Sesuai request 'beda file', jadi kalau klik menu mending balik ke index atau buka sidebar di sini?
-                 Demi simpel, kita kasih sidebar juga di sini biar konsisten.
-            -->
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
+        <!-- Ganti Menu Toggle jadi Settings Gear -->
+        <a href="settings.html" class="menu-toggle"
+            style="display:flex; justify-content:center; align-items:center; text-decoration:none; color:inherit;">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                </path>
+            </svg>
+        </a>
     </header>
 
-    <!-- Sidebar juga kita copy biar bisa navigasi -->
+    <!-- Sidebar tetap ada di markup tapi trigger button diganti -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="search-box" style="visibility: hidden;"> <!-- Search diumpetin aja di halaman baca -->
@@ -673,11 +673,14 @@
         init();
 
     </script>
+    <!-- Script goBack Updated for Smart Back -->
     <script>
         function goBack() {
-            if (window.history.length > 1 && document.referrer.toLowerCase().indexOf(window.location.hostname.toLowerCase()) !== -1) {
+            // Cek apakah ada history sebelumnya di domain yang sama (Smart Back)
+            if (document.referrer && document.referrer.includes(window.location.hostname)) {
                 window.history.back();
             } else {
+                // Fallback ke index jika buka langsung direct link link eksternal
                 window.location.href = 'index.html';
             }
         }
