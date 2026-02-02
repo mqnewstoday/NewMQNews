@@ -62,7 +62,21 @@
         </div>
 
         <div class="sidebar-menu">
-            <a href="#" onclick="toggleSidebar(); setCategory(null, 'Semua')">BERANDA</a>
+            <!-- MENU UTAMA DROPDOWN -->
+            <div class="sidebar-dropdown-wrapper" id="menu-utama-dropdown">
+                <div class="sidebar-dropdown-header" onclick="toggleDropdown('menu-utama-dropdown')">
+                    <span>MENU UTAMA</span>
+                    <span class="sidebar-arrow">›</span>
+                </div>
+                <div class="sidebar-submenu">
+                    <a href="#" onclick="toggleSidebar(); setCategory(null, 'Semua')">BERANDA</a>
+                    <a href="buku.html">PDF</a>
+                    <a href="pesan-tauhid.html">19 PESAN</a>
+                    <a href="audio.html">AUDIO</a>
+                    <a href="simpan.html">BOOKMARK</a>
+                    <a href="pramimpi.html">MUBASYIRAT</a>
+                </div>
+            </div>
             <!-- DROPDOWN WRAPPER -->
             <div class="sidebar-dropdown-wrapper" id="mq-official-dropdown">
                 <div class="sidebar-dropdown-header" onclick="toggleDropdown('mq-official-dropdown')">
