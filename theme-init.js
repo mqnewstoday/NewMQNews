@@ -1,4 +1,4 @@
-(function() {
+(function () {
     // KITA BUNGKUS JADI SATU FUNGSI BIAR BISA DIPANGGIL ULANG
     function terapkanSettingan() {
         // 1. CEK DARK MODE (Target: Body)
@@ -13,7 +13,7 @@
         // 2. CEK UKURAN FONT (Target: HTML)
         const font = localStorage.getItem('fontSize');
         const root = document.documentElement; // Tag <html>
-        
+
         // Bersihin dulu class lama
         root.classList.remove('font-small', 'font-large');
 
@@ -29,9 +29,13 @@
 
     // B. Jalanin PAS TOMBOL BACK DITEKAN (Ini kuncinya!)
     // Event 'pageshow' jalan tiap kali halaman muncul, termasuk dari cache (back button)
-    window.addEventListener('pageshow', function(event) {
+    window.addEventListener('pageshow', function (event) {
         // Paksa baca ulang settingan
         terapkanSettingan();
     });
 
+    // Inject Persistent Audio Manager (except where it handles itself)
+    const audioScript = document.createElement('script');
+    audioScript.src = "audio-manager.js";
+    document.body.appendChild(audioScript);
 })();

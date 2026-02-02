@@ -754,6 +754,8 @@
         let playlist = [];
         let currentIndex = 0;
         let isPlaying = false;
+        const STORAGE_KEY = 'mq_audio_state';
+        let syncTimer = null;
 
         async function init() {
             try {
@@ -811,45 +813,110 @@
 
             audio.src = track.url;
             audio.load();
-            updatePlayerUI(track);
+            updatePlayerUI(); // Call the new updatePlayerUI without arguments
 
             document.querySelectorAll('.audio-card').forEach(c => c.classList.remove('active-track'));
             if (listView.children[index]) listView.children[index].classList.add('active-track');
 
             history.replaceState(null, null, `#track=${encodeURIComponent(track.title)}`);
 
-            if (autoPlay) { playAudio(); openFullPlayer(); }
+            if (autoPlay) {
+                audio.play();
+                if (syncTimer) clearInterval(syncTimer);
+                syncTimer = setInterval(saveToGlobalState, 1000);
+                saveToGlobalState();
+                openFullPlayer();
+            } else {
+                // If not autoPlaying, ensure state is saved (e.g., if user manually loads a track but doesn't play)
+                saveToGlobalState();
+            }
         }
 
-        function updatePlayerUI(track) {
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                if (syncTimer) clearInterval(syncTimer);
+                syncTimer = setInterval(saveToGlobalState, 1000);
+            } else {
+                audio.pause();
+                if (syncTimer) clearInterval(syncTimer);
+            }
+            saveToGlobalState();
+        }
+
+        // SYNC HELPER
+        function saveToGlobalState() {
+            const track = playlist[currentIndex];
+            if (!track) return;
+
+            const state = {
+                isPlaying: !audio.paused,
+                currentTime: audio.currentTime,
+                trackIndex: currentIndex,
+                playlist: playlist, // Warning: Large payload if playlist big, but necessary for next/prev
+                lastUpdate: Date.now()
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        // AUTO SYNC ON EVENTS
+        audio.addEventListener('play', () => { isPlaying = true; updatePlayerUI(); saveToGlobalState(); });
+        audio.addEventListener('pause', () => { isPlaying = false; updatePlayerUI(); saveToGlobalState(); });
+        audio.addEventListener('ended', nextTrack);
+
+        function updatePlayerUI() {
+            const track = playlist[currentIndex];
+            if (!track) { // Handle case where track might not be loaded yet
+                miniPlayer.style.display = 'none';
+                return;
+            }
+
+            const playIcons = document.querySelectorAll('#full-play-icon, #mini-play-icon');
+            const pauseIcons = document.querySelectorAll('#full-pause-icon, #mini-pause-icon');
+
+            if (isPlaying) {
+                playIcons.forEach(el => el.style.display = 'none');
+                pauseIcons.forEach(el => el.style.display = 'block');
+
+                // Show Mini Player Playing Indicator
+                document.querySelectorAll('.playing-indicator').forEach(el => el.style.display = 'none');
+                const cards = document.querySelectorAll('.audio-card');
+                if (cards[currentIndex]) {
+                    const indicator = cards[currentIndex].querySelector('.playing-indicator');
+                    if (indicator) indicator.style.display = 'flex';
+                }
+            } else {
+                playIcons.forEach(el => el.style.display = 'block');
+                pauseIcons.forEach(el => el.style.display = 'none');
+                // Hide indicators
+                document.querySelectorAll('.playing-indicator').forEach(el => el.style.display = 'none');
+            }
+
+            // Text Updates
             document.getElementById('mini-title').innerText = track.title;
             document.getElementById('mini-desc').innerText = track.desc;
             document.getElementById('mini-img').src = track.thumb;
-            miniPlayer.style.display = 'flex';
+            miniPlayer.style.display = 'flex'; // Ensure mini player is visible when a track is loaded
 
             document.getElementById('full-title').innerText = track.title;
             document.getElementById('full-desc').innerText = track.desc;
             document.getElementById('full-img').src = track.thumb;
 
+            // Highlight List
+            document.querySelectorAll('.audio-card').forEach(el => el.classList.remove('active-track'));
+            if (document.querySelectorAll('.audio-card')[currentIndex]) {
+                document.querySelectorAll('.audio-card')[currentIndex].classList.add('active-track');
+            }
+
             updateMediaSession(track);
         }
 
-        function playAudio() {
-            audio.play().then(() => { isPlaying = true; updatePlayBtnState(); }).catch(e => console.log(e));
-        }
-        function pauseAudio() {
-            audio.pause(); isPlaying = false; updatePlayBtnState();
-        }
-        function togglePlay() {
-            if (audio.paused) playAudio(); else pauseAudio();
-        }
-        function updatePlayBtnState() {
-            const displayPlay = isPlaying ? 'none' : 'block';
-            const displayPause = isPlaying ? 'block' : 'none';
-            ['mini', 'full'].forEach(prefix => {
-                document.getElementById(`${prefix}-play-icon`).style.display = displayPlay;
-                document.getElementById(`${prefix}-pause-icon`).style.display = displayPause;
-            });
+        const displayPlay = isPlaying ? 'none' : 'block';
+        const displayPause = isPlaying ? 'block' : 'none';
+        ['mini', 'full'].forEach(prefix => {
+            document.getElementById(`${prefix}-play-icon`).style.display = displayPlay;
+            document.getElementById(`${prefix}-pause-icon`).style.display = displayPause;
+        });
         }
 
         function updateMediaSession(track) {
