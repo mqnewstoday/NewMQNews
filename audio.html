@@ -779,6 +779,7 @@
         let playlist = [];
         let currentIndex = 0;
         let isPlaying = false;
+        let isManuallyClosed = false;
         const STORAGE_KEY = 'mq_audio_state';
         let syncTimer = null;
 
@@ -804,9 +805,8 @@
                             if (!forceOpen && !hash.includes('view=player')) {
                                 closeFullPlayer();
                             }
-                        } else {
-                            loadTrack(currentIndex, false);
                         }
+                        // ELSE: Do nothing. Keep player hidden if not playing.
                     }
                 }
             } catch (e) { console.log("Fast resume error", e); }
@@ -868,6 +868,7 @@
         }
 
         function loadTrack(index, autoPlay = false) {
+            isManuallyClosed = false; // Reset close flag
             if (index < 0 || index >= playlist.length) return;
             currentIndex = index;
             const track = playlist[index];
@@ -926,6 +927,11 @@
         audio.addEventListener('ended', nextTrack);
 
         function updatePlayerUI() {
+            if (isManuallyClosed) {
+                miniPlayer.style.display = 'none';
+                return;
+            }
+
             const track = playlist[currentIndex];
             if (!track) { // Handle case where track might not be loaded yet
                 miniPlayer.style.display = 'none';
@@ -1047,12 +1053,16 @@
             }
         }
 
-        function closeMiniPlayer() {
+        function closeMiniPlayer(e) {
+            if (e) e.stopPropagation();
+            isManuallyClosed = true;
             audio.pause();
             isPlaying = false;
-            updatePlayerUI();
-            saveToGlobalState();
+            // updatePlayerUI will be called by 'pause' event, but 'isManuallyClosed' will stop it from showing
             miniPlayer.style.display = 'none';
+
+            // Clear global state to prevent resume on other pages
+            saveToGlobalState();
         }
 
         // Save state on unload
