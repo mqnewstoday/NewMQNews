@@ -1738,6 +1738,11 @@
                         }
                     });
         });
+
+                // CRITICAL: Call init() to load news data
+                if(typeof init === 'function') {
+                    init();
+        }
     </script>
 
 
