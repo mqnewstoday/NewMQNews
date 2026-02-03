@@ -1,0 +1,32 @@
+/* =========================================
+   ADVERTISING SLOTS (SKYSCRAPER)
+   ========================================= */
+.ad-skyscraper {
+    position: fixed;
+    top: 100px;
+    width: 160px;
+    height: 600px;
+    z-index: 900;
+    display: none;
+    /* Hidden on mobile */
+    /* Background transparent by default as requested */
+    background: transparent;
+}
+
+/* Specific positions */
+.ad-left {
+    /* 50% - (Half Content Width 550px) - (Ad Width 160px) - (Gap 20px) */
+    left: calc(50% - 730px);
+}
+
+.ad-right {
+    right: calc(50% - 730px);
+}
+
+/* Only show on large screens where there is space */
+/* Content max-width 1100px -> half 550px. Ad relative to 1100px container */
+@media screen and (min-width: 1450px) {
+    .ad-skyscraper {
+        display: block;
+    }
+}
