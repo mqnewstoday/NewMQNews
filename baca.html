@@ -514,8 +514,31 @@
             document.title = (getVal(item, 'judul') || "Berita") + " - MQ News Today";
 
             document.getElementById('art-title').innerText = getVal(item, 'judul') || getVal(item, 'title');
-            const content = (getVal(item, 'isi') || getVal(item, 'content')).replace(/\n/g, '<br>');
-            document.getElementById('art-desc').innerHTML = content;
+
+            // --- IN-ARTICLE AD INJECTION LOGIC (New) ---
+            const rawContent = (getVal(item, 'isi') || getVal(item, 'content'));
+            const paragraphs = rawContent.split(/\n/g).filter(p => p.trim() !== ""); // Split & clean empty lines
+
+            let finalHtml = "";
+
+            paragraphs.forEach((p, index) => {
+                finalHtml += `<p>${p}</p>`;
+
+                // Inject Ad after 3rd paragraph (index 2)
+                if (index === 2) {
+                    finalHtml += `
+                    <!-- IN-ARTICLE AD SLOT (Mobile Only) -->
+                    <div class="ad-in-article-wrapper">
+                        <div class="ad-in-article-slot">
+                            <!-- Google AdSense Script Here (Responsive 16:9) -->
+                            <span style="color:#888; font-size:0.7rem;">IKLAN</span>
+                        </div>
+                    </div>
+                    `;
+                }
+            });
+
+            document.getElementById('art-desc').innerHTML = finalHtml || rawContent.replace(/\n/g, '<br>');
 
             document.getElementById('art-meta').innerText = (getVal(item, 'kategori') || 'NEWS') + " • " + (getVal(item, 'tanggal') || '');
 

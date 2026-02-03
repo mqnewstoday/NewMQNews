@@ -1979,3 +1979,38 @@ body.dark-mode .editor-title {
         display: block;
     }
 }
+
+
+/* =========================================
+   IN-ARTICLE ADS (MOBILE/RESPONSIVE)
+   ========================================= */
+.ad-in-article-wrapper {
+    width: 100%;
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.ad-in-article-slot {
+    width: 100%;
+    max-width: 600px; /* Limit width on tablets */
+    aspect-ratio: 16/9;
+    background: #f1f5f9; /* Placeholder grey */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px dashed #cbd5e1;
+}
+
+/* OPTIONAL: Hide in-article ad on large desktop if sidebar ads are sufficient 
+   Uncomment below if you want to strictly hide it on Desktop 
+*/
+/*
+@media screen and (min-width: 1024px) {
+    .ad-in-article-wrapper {
+        display: none;
+    }
+}
+*/
+
