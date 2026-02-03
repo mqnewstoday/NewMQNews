@@ -446,7 +446,8 @@ header {
 /* Grid System */
 .news-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    /* Reduce min-width to prevent overflow on small screens */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 30px;
 }
 
