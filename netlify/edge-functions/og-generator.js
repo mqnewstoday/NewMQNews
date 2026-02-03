@@ -40,16 +40,22 @@ export default async (request, context) => {
 
         if (titleIdx === -1) return context.next();
 
-        // 4. Cari Artikel yang Cocok
+        // 4. Cari Artikel yang Cocok (Improved Fuzzy Matching)
         let foundArticle = null;
-        const searchTarget = titleParam.trim().toLowerCase();
+
+        // Buat slug dari parameter URL (hapus simbol, lowercase)
+        const normalize = (str) => (str || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+        const targetSlug = normalize(titleParam);
 
         for (let i = 1; i < rows.length; i++) {
             const rowData = parseCSVRow(rows[i]);
             // Pastikan baris memiliki data di kolom title
             if (!rowData[titleIdx]) continue;
 
-            if (rowData[titleIdx].trim().toLowerCase() === searchTarget) {
+            const rowSlug = normalize(rowData[titleIdx]);
+
+            // Cek apakah slug cocok (atau salah satu mengandung yang lain jika terjadi pemotongan)
+            if (rowSlug === targetSlug || (rowSlug.length > 10 && targetSlug.length > 10 && rowSlug.includes(targetSlug))) {
                 foundArticle = {
                     title: rowData[titleIdx].trim(),
                     image: (rowData[imgIdx] || "").trim(),
