@@ -96,12 +96,15 @@
         /* RESET BODY */
         /* The body rules above have been updated to include margin, padding, and overflow-x. */
         .main-content {
+            /* Fix Padding: Ensure visual inset matches designs */
             padding: 80px 20px 20px;
             max-width: 1200px;
             margin: 0 auto;
             flex: 1;
-            /* Ensure footer flush bottom */
             min-height: 80vh;
+            width: 100%;
+            box-sizing: border-box;
+            /* IMPORTANT: Include padding in width */
         }
 
         .page-desc {
@@ -111,6 +114,12 @@
             margin-bottom: 25px;
             font-style: italic;
             line-height: 1.5;
+            /* Force Word Wrap */
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            width: 100%;
+            max-width: 100%;
         }
 
         /* Mobile Adjustment for Page Desc */
@@ -135,7 +144,7 @@
             gap: 15px;
         }
 
-        /* PRAMIMPI GRID DEFINITION (Mobile First: 1 Column) */
+        /* Better Approach: Just standard grid */
         .pramimpi-grid {
             display: flex;
             flex-direction: column;
