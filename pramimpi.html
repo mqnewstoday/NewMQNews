@@ -365,6 +365,59 @@
             background: var(--border);
         }
 
+        /* FILTER SECTION (NEW) */
+        .filter-section {
+            margin-bottom: 25px;
+        }
+
+        .filter-header {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            margin-left: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 20px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            margin-right: -20px;
+            /* Bleed right */
+        }
+
+        .filter-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-chip {
+            white-space: nowrap;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Lato', sans-serif;
+            font-weight: 600;
+        }
+
+        .filter-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(157, 27, 27, 0.2);
+        }
+
         /* PAGINATION STYLES (Copied from style.css for consistency) */
         .pagination-wrapper {
             grid-column: 1 / -1;
@@ -416,6 +469,55 @@
             cursor: not-allowed;
             transform: none;
         }
+
+        /* UPDATED CARD STYLES */
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            gap: 6px;
+            /* Added gap */
+        }
+
+        .card-title {
+            font-family: 'Lato', sans-serif;
+            /* Changed for balance */
+            font-size: 0.95rem;
+            /* Reduced size */
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            /* Limit to 2 lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .meta-tag {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #f0f0f0;
+            color: #666;
+            font-weight: 600;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .meta-tag {
+            background: #2a2a2a;
+            color: #aaa;
+            border-color: #444;
+        }
     </style>
 </head>
 
@@ -456,6 +558,22 @@
             </div>
         </div>
 
+        <!-- FILTER SECTION -->
+        <div class="filter-section">
+            <div class="filter-header">Kategori Mubasyirat</div>
+            <div class="filter-scroll" id="cat-filters">
+                <!-- JS Rendered -->
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-header">Tahun Mimpi</div>
+            <div class="filter-scroll" id="year-filters">
+                <!-- JS Rendered -->
+            </div>
+        </div>
+
+
         <div id="dream-list-container" class="dream-list">
             <div class="status-msg">Memuat daftar mimpi...</div>
         </div>
@@ -479,7 +597,24 @@
         // === FETCH AND RENDER ===
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=703095600&single=true&output=csv";
 
+        // Filter Data
+        const CATEGORIES = [
+            "Semua", "Eskatologi Islam", "Politik Pakistan", "Perang Dunia", "Mimpi Rahmani",
+            "Pembantu Qasim", "Dajjal", "Masa Damai", "Biografi", "Ghazwatul Hind", "Geopolitik"
+        ];
+
+        const YEARS = [
+            "Semua", "1980/1981", "1993", "1994", "1998", "2001", "2002", "2003",
+            "2004", "2005", "2006", "2007", "2008", "2009", "2011", "2012",
+            "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"
+        ];
+
+        let activeCat = "Semua";
+        let activeYear = "Semua";
+
         document.addEventListener('DOMContentLoaded', () => {
+            renderFilters();
+
             Papa.parse(CSV_URL, {
                 download: true,
                 header: true,
@@ -496,13 +631,66 @@
             });
         });
 
+        function renderFilters() {
+            const catContainer = document.getElementById('cat-filters');
+            const yearContainer = document.getElementById('year-filters');
+
+            // Render Cat
+            catContainer.innerHTML = CATEGORIES.map(c =>
+                `<div class="filter-chip ${c === activeCat ? 'active' : ''}" onclick="setFilter('cat', '${c}')">${c}</div>`
+            ).join('');
+
+            // Render Year
+            yearContainer.innerHTML = YEARS.map(y =>
+                `<div class="filter-chip ${y === activeYear ? 'active' : ''}" onclick="setFilter('year', '${y}')">${y}</div>`
+            ).join('');
+        }
+
+        function setFilter(type, val) {
+            if (type === 'cat') activeCat = val;
+            if (type === 'year') activeYear = val;
+
+            renderFilters(); // Re-render to update active class
+
+            // Re-render Data with new filters
+            // We need to re-process the raw data.
+            // Since `pramimpiData` is global stores RAW data, we can call renderDreams with it? 
+            // Wait, logic in renderDreams needs to handle filtering now.
+            // But renderDreams function below currently takes data arg.
+            // Let's modify logic.
+
+            // We have globalRawData to store initial fetch
+            if (window.globalRawData) {
+                processAndRender(window.globalRawData);
+            }
+        }
+
         // Global variables for pagination
         let currentPramimpiPage = 1;      // Halaman aktif sekarang
         const PRAMIMPI_BATCH_SIZE = 10;   // Jumlah mimpi per halaman (10 items)
-        let pramimpiData = [];            // Data mentah mimpi
+        let filteredData = [];            // Data yang SUDAH difilter
 
         function renderDreams(data) {
-            pramimpiData = data || []; // Simpan data ke global
+            window.globalRawData = data; // Store raw for filtering
+            processAndRender(data);
+        }
+
+        function processAndRender(data) {
+            // Safe Key Getter Util
+            const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
+
+            // Filtering Logic
+            filteredData = data.filter(item => {
+                const itemCat = getK(item, 'kategori') || "";
+                const itemYear = getK(item, 'tahun') || ""; // Expect string matching
+
+                const catMatch = activeCat === "Semua" || itemCat.toLowerCase().includes(activeCat.toLowerCase());
+                // For year, we do loose match string to handle cases roughly
+                const yearMatch = activeYear === "Semua" || itemYear.includes(activeYear);
+
+                return catMatch && yearMatch;
+            });
+
             currentPramimpiPage = 1;   // Reset ke halaman 1
             renderPramimpiPage(currentPramimpiPage);
         }
@@ -512,17 +700,16 @@
             const container = document.getElementById('dream-list-container');
             container.innerHTML = ""; // Bersihkan layar
 
-            if (!pramimpiData || pramimpiData.length === 0) {
-                container.innerHTML = '<div class="status-msg">Tidak ada data mimpi ditemukan.</div>';
+            if (!filteredData || filteredData.length === 0) {
+                container.innerHTML = '<div class="status-msg">Tidak ada mimpi yang sesuai filter ini.</div>';
                 return;
             }
 
             // Hitung Index Start & End
             const start = (page - 1) * PRAMIMPI_BATCH_SIZE;
             const end = start + PRAMIMPI_BATCH_SIZE;
-            const batch = pramimpiData.slice(start, end);
+            const batch = filteredData.slice(start, end);
 
-            // Utilitas Extract Value Case Insensitive
             const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
 
             batch.forEach((item, index) => {
@@ -530,8 +717,11 @@
                 if (!title) return; // Skip empty rows
 
                 const thumb = getK(item, 'gambar') || getK(item, 'thumbnail') || 'https://placehold.co/100x70?text=MQ';
-                // Asumsi ada kolom 'tanggal', kalo ga ada pake default text
                 const date = getK(item, 'tanggal') || "";
+
+                // New Fields
+                const category = getK(item, 'kategori') || "-";
+                const year = getK(item, 'tahun') || "-";
 
                 const el = document.createElement('a');
                 el.className = 'dream-card fade-in';
@@ -548,10 +738,10 @@
                     </div>
                     <div class="card-body">
                         <div class="card-title">${title}</div>
-                        ${date ? `<div class="card-meta">
-                            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                            ${date}
-                        </div>` : ''}
+                        <div class="card-meta-row">
+                             ${category !== '-' ? `<span class="meta-tag">${category}</span>` : ''}
+                             ${year !== '-' ? `<span class="meta-tag">${year}</span>` : ''}
+                        </div>
                     </div>
                 `;
                 container.appendChild(el);
@@ -564,7 +754,7 @@
         // Render Tombol Pagination (1, 2, 3...)
         function renderPramimpiPagination(page) {
             const container = document.getElementById('dream-list-container');
-            const totalPages = Math.ceil(pramimpiData.length / PRAMIMPI_BATCH_SIZE);
+            const totalPages = Math.ceil(filteredData.length / PRAMIMPI_BATCH_SIZE);
 
             if (totalPages <= 1) return; // Kalau cuma 1 halaman, gak perlu tombol
 
@@ -578,6 +768,12 @@
             // Untuk sekarang kita loop semua jika < 10 halaman. Jika > 10 kita slicing.
             let startPage = 1;
             let endPage = totalPages;
+
+            if (totalPages > 7) {
+                if (page < 4) { endPage = 5; }
+                else if (page > totalPages - 3) { startPage = totalPages - 4; }
+                else { startPage = page - 2; endPage = page + 2; }
+            }
 
             // Render Buttons
             for (let i = startPage; i <= endPage; i++) {
@@ -604,8 +800,9 @@
             renderPramimpiPage(page);
 
             // Scroll ke atas list biar UX enak
-            const header = document.querySelector('.page-desc');
-            if (header) header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Adjusted target for scroll (To top of list, not top of page, to keep filters visible)
+            const listContainer = document.querySelector('.filter-section');
+            if (listContainer) listContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
 
         // === RENDER FEATURED (Top 7, 4:5 Ratio) ===
