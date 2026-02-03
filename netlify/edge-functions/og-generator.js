@@ -25,18 +25,20 @@ export default async (request, context) => {
             return context.next();
         }
 
-        const csvText = await csvResponse.text();
+        const csvText = (await csvResponse.text()).replace(/^\uFEFF/, ''); // Strip BOM if present
 
         // 3. Parsing CSV Sederhana
         const rows = csvText.split("\n");
-        if (rows.length < 2) return context.next(); // Data kosong
+        if (rows.length < 2) return context.next();
 
         const headers = parseCSVRow(rows[0]);
 
         // Cari index kolom
-        const titleIdx = headers.findIndex(h => h.toLowerCase() === 'judul' || h.toLowerCase() === 'title');
-        const imgIdx = headers.findIndex(h => h.toLowerCase() === 'gambar' || h.toLowerCase() === 'image' || h.toLowerCase() === 'thumbnail');
-        const dateIdx = headers.findIndex(h => h.toLowerCase() === 'tanggal' || h.toLowerCase() === 'date');
+        const titleIdx = headers.findIndex(h => h.trim().toLowerCase() === 'judul' || h.trim().toLowerCase() === 'title');
+        const imgIdx = headers.findIndex(h => h.trim().toLowerCase() === 'gambar' || h.trim().toLowerCase() === 'image' || h.trim().toLowerCase() === 'thumbnail');
+        const dateIdx = headers.findIndex(h => h.trim().toLowerCase() === 'tanggal' || h.trim().toLowerCase() === 'date');
+
+        // ... (existing helper functions) ...
 
         if (titleIdx === -1) return context.next();
 
@@ -85,14 +87,26 @@ export default async (request, context) => {
         // B. Open Graph Tags
         replaceMeta('og:title', foundArticle.title);
 
-        const desc = `Baca selengkapnya tentang ${foundArticle.title}. ${foundArticle.date}`;
+        // DEBUG MODE: Tambahkan info status gambar ke deskripsi agar terlihat di WA
+        let imgUrl = foundArticle.image;
+        let debugMsg = "";
+
+        if (!imgUrl) {
+            debugMsg = "[DEBUG: Image Column Empty]";
+            imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
+        } else if (imgUrl.length < 5) {
+            debugMsg = `[DEBUG: Url too short '${imgUrl}']`;
+            imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
+        } else {
+            // Validasi sederhana URL
+            if (!imgUrl.startsWith('http')) debugMsg = "[DEBUG: URL not http]";
+        }
+
+        // Jika gambar masih tidak muncul di WA, deskripsi ini akan memberitahu alasannya
+        const desc = `Baca selengkapnya tentang ${foundArticle.title}. ${foundArticle.date} ${debugMsg}`;
         replaceMeta('og:description', desc);
 
-        // Link Gambar (Fallback ke logo jika kosong)
-        let imgUrl = foundArticle.image;
-        if (!imgUrl || imgUrl.length < 5) {
-            imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
-        }
+        // Link Gambar
         replaceMeta('og:image', imgUrl);
 
         // C. Twitter Card Tags (biasanya name="twitter:...")
