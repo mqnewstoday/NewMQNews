@@ -288,7 +288,7 @@
     <script>
         // --- CONFIG ---
         // Placeholder Sheet URL - User needs to update this later
-        const TRANSFORMASI_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv"; // GANTI NANTI
+        const TRANSFORMASI_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1574236896&single=true&output=csv"; // GANTI NANTI
 
         let allData = [];
         let currentCategory = 'HAIR REGROWTH';
@@ -298,12 +298,18 @@
             // Check URL Params for category
             const params = new URLSearchParams(window.location.search);
             const catParam = params.get('category');
+
             if (catParam) {
-                // Normalize and set
                 if (catParam.toLowerCase().includes('hair')) currentCategory = 'HAIR REGROWTH';
                 else if (catParam.toLowerCase().includes('foot')) currentCategory = 'FOOT ELONGATION';
                 else if (catParam.toLowerCase().includes('feet')) currentCategory = 'FEET INCREASE';
             }
+
+            // UPDATE UI VISUALS
+            document.querySelectorAll('.cat-link').forEach(el => el.classList.remove('active'));
+            if (currentCategory === 'HAIR REGROWTH') document.getElementById('nav-hair').classList.add('active');
+            if (currentCategory === 'FOOT ELONGATION') document.getElementById('nav-foot').classList.add('active');
+            if (currentCategory === 'FEET INCREASE') document.getElementById('nav-feet').classList.add('active');
 
             fetchData();
         });
