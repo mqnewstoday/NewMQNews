@@ -1738,36 +1738,40 @@
                         }
                     });
         });
-            </script>
+    </script>
 
 
-        // Toggle Sidebar (Logic Stack: Buka=Push, Tutup=Back)
-        function toggleSidebar() {
+    </script>
+
+    <!-- MAIN LOGIC RESTORED -->
+    <script>
+            // Toggle Sidebar (Logic Stack: Buka=Push, Tutup=Back)
+            function toggleSidebar() {
             const sb = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             const toggleBtn = document.querySelector('.menu-toggle');
 
             if (sb.classList.contains('active')) {
                 sb.classList.remove('active');
-                overlay.classList.remove('active');
-                toggleBtn.classList.remove('active');
+            overlay.classList.remove('active');
+            toggleBtn.classList.remove('active');
             } else {
                 sb.classList.add('active');
-                overlay.classList.add('active');
-                toggleBtn.classList.add('active');
+            overlay.classList.add('active');
+            toggleBtn.classList.add('active');
             }
         }
-        window.toggleSidebar = toggleSidebar;
+            window.toggleSidebar = toggleSidebar;
 
-        // getVal sudah didefinisikan di atas (line 565)
+            // getVal sudah didefinisikan di atas (line 565)
 
-        function handleEnterKey(e) { if (e.key === 'Enter') { e.preventDefault(); executeSearch(); } }
+            function handleEnterKey(e) { if (e.key === 'Enter') {e.preventDefault(); executeSearch(); } }
 
-        // --- GLOBAL FUNCTIONS (Harus di-bind ke window karena module) ---
+            // --- GLOBAL FUNCTIONS (Harus di-bind ke window karena module) ---
 
-        // 1. Save News (Real Logic)
-        window.saveNews = function (judul, isi, gambar, url, tanggal, e) {
-            e.stopPropagation();
+            // 1. Save News (Real Logic)
+            window.saveNews = function (judul, isi, gambar, url, tanggal, e) {
+                e.stopPropagation();
             e.preventDefault();
 
             // Ambil data lama
@@ -1776,7 +1780,7 @@
             // Cek Duplikat
             if (saved.some(x => x.judul === judul)) {
                 showNotif('Berita sudah tersimpan!', 'error');
-                return;
+            return;
             }
 
             // Simpan
@@ -1793,8 +1797,8 @@
             showNotif('Berita berhasil disimpan!', 'success');
         };
 
-        // 2. Handle Article Click (Guest Limit)
-        window.handleArticleClick = function (url) {
+            // 2. Handle Article Click (Guest Limit)
+            window.handleArticleClick = function (url) {
             // Tunggu sebentar sampai auth siap jika belum (opsional, tapi sederhananya kita cek window.auth)
             // Note: window.auth diset oleh script module.
             const user = window.auth ? window.auth.currentUser : null;
@@ -1802,15 +1806,15 @@
             // Kalo user login, gas terus
             if (user) {
                 window.location.href = url;
-                return;
+            return;
             }
 
             // Kalo tamu, cek kuota
             let count = parseInt(localStorage.getItem('guest_read_count') || '0');
 
-    // Batas 3 artikel. Jika sudah 3, pas mau baca ke-4 ditolak.
-    // (Asumsi saat baca artikel, counter nambah. Jadi misal baca 1, count=1. Baca 3, count=3. Next click -> 3>=3 ->
-    Block)
+            // Batas 3 artikel. Jika sudah 3, pas mau baca ke-4 ditolak.
+            // (Asumsi saat baca artikel, counter nambah. Jadi misal baca 1, count=1. Baca 3, count=3. Next click -> 3>=3 ->
+            Block)
             if (count >= 3) {
                 document.getElementById('limitModal').style.display = 'flex';
             } else {
@@ -1818,8 +1822,8 @@
             }
         };
 
-        // 3. Show Notification
-        function showNotif(message, type) {
+            // 3. Show Notification
+            function showNotif(message, type) {
             const box = document.getElementById('notifBox');
             const text = document.getElementById('notifText');
             const iconDiv = document.getElementById('notifIcon');
@@ -1829,31 +1833,31 @@
 
             if (type === 'success') {
                 box.classList.add('success');
-                iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#2e7d32" viewBox="0 0 24 24">
-        <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-    </svg>`;
+            iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#2e7d32" viewBox="0 0 24 24">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>`;
             } else {
                 box.classList.add('error');
-                iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#d32f2f" viewBox="0 0 24 24">
-        <path
-            d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
-    </svg>`;
+            iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#d32f2f" viewBox="0 0 24 24">
+                <path
+                    d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
+            </svg>`;
             }
 
             setTimeout(() => {
                 box.classList.remove('active');
-                box.classList.remove('success');
-                box.classList.remove('error');
+            box.classList.remove('success');
+            box.classList.remove('error');
             }, 3000);
         }
-        window.showNotif = showNotif;
+            window.showNotif = showNotif;
 
 
-        // 4. PWA Install Logic (Dengan Notif Konsisten)
-        let deferredPrompt;
+            // 4. PWA Install Logic (Dengan Notif Konsisten)
+            let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
+                e.preventDefault();
             deferredPrompt = e;
             // Tampilkan tombol Install di menu "Lainnya"
             const btn = document.getElementById('installBtn');
@@ -1879,7 +1883,7 @@
 
         // Event saat sukses install
         window.addEventListener('appinstalled', () => {
-            deferredPrompt = null;
+                deferredPrompt = null;
             showNotif("Aplikasi BERHASIL diinstall!", "success");
 
             // Sembunyikan tombol kalau perlu
@@ -1887,8 +1891,8 @@
             if (btn) btn.style.display = 'none';
         });
 
-        // --- [BARU] FUNGSI RENDER REKOMENDASI ---
-        function renderRelatedNews(containerID, excludeTitle = null) {
+            // --- [BARU] FUNGSI RENDER REKOMENDASI ---
+            function renderRelatedNews(containerID, excludeTitle = null) {
             const container = document.getElementById(containerID);
             if (!container) return;
 
@@ -1897,7 +1901,7 @@
             // 1. Filter berita (supaya berita yg lagi dibaca gak muncul di rekomendasi)
             let candidates = allNews.filter(item => {
                 const t = getVal(item, 'judul') || getVal(item, 'title');
-                return t !== excludeTitle;
+            return t !== excludeTitle;
             });
 
             // 2. Acak Urutan (Shuffle) biar yang muncul beda-beda
@@ -1909,38 +1913,38 @@
             // 4. Render ke HTML
             selected.forEach(item => {
                 const judul = getVal(item, 'judul') || getVal(item, 'title');
-                const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
+            const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
 
-                // FIX GAMBAR
-                let gambar = getVal(item, 'gambar') || getVal(item, 'image');
-                if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/100x75?text=MQ"; const
-                    targetUrl = 'mimpi.html?title=' + encodeURIComponent(judul); const html = ` <a href="${targetUrl}"
-        class="dream-card">
-        <div class="dream-thumb">
-            <img src="${gambar}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
-            <div class="play-overlay">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                </svg>
-            </div>
-        </div>
-        <div class="dream-info">
-            <h4 class="dream-title">${judul}</h4>
-            <span class="dream-date">${tanggal}</span>
-        </div>
-        </a>
-        `;
-                container.insertAdjacentHTML('beforeend', html);
+            // FIX GAMBAR
+            let gambar = getVal(item, 'gambar') || getVal(item, 'image');
+            if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/100x75?text=MQ"; const
+            targetUrl = 'mimpi.html?title=' + encodeURIComponent(judul); const html = ` <a href="${targetUrl}"
+                class="dream-card">
+                <div class="dream-thumb">
+                    <img src="${gambar}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
+                        <div class="play-overlay">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                        </div>
+                </div>
+                <div class="dream-info">
+                    <h4 class="dream-title">${judul}</h4>
+                    <span class="dream-date">${tanggal}</span>
+                </div>
+            </a>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
             });
 
             // 5. Tambahkan Tombol "LIHAT SEMUA" di Akhir
             const viewAllHtml = `
-        <a href="pramimpi.html" class="view-all-card">
-            <svg class="view-all-icon" viewBox="0 0 24 24">
-                <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            </svg>
-            <span class="view-all-text">LIHAT<br>SEMUA</span>
-        </a>
+            <a href="pramimpi.html" class="view-all-card">
+                <svg class="view-all-icon" viewBox="0 0 24 24">
+                    <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <span class="view-all-text">LIHAT<br>SEMUA</span>
+            </a>
         `;
             container.insertAdjacentHTML('beforeend', viewAllHtml);
         }
@@ -1979,71 +1983,71 @@
         // Jalankan init
         init();
     </script>
-        <script>
+    <script>
             // === FITUR SIMPAN BERITA (INDEX) ===
             function toggleSaveIndex(btn, encodedTitle) {
                 // Prevent Card Click
                 event.stopPropagation();
 
-                const title = decodeURIComponent(encodedTitle);
+            const title = decodeURIComponent(encodedTitle);
 
                 // Cari data article dari allNews (Global)
                 // Helper local
                 const getProp = (itm, k) => {
                     if (!itm) return "";
                     const found = Object.keys(itm).find(key => key.toLowerCase() === k.toLowerCase());
-                    return found ? itm[found] : "";
+            return found ? itm[found] : "";
                 };
 
                 const article = allNews.find(i => {
                     const t = getProp(i, 'judul') || getProp(i, 'title');
-                    return t === title;
+            return t === title;
                 });
 
-                if (!article) {
-                    showError("Gagal: Data berita tidak ditemukan.");
-                    return;
+            if (!article) {
+                showError("Gagal: Data berita tidak ditemukan.");
+            return;
                 }
 
-                // Load Saved Data
-                let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
+            // Load Saved Data
+            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
 
                 // Check if exist
                 const index = saved.findIndex(x => x.judul === title);
 
-                if (index !== -1) {
-                    // HAPUS
-                    saved.splice(index, 1);
-                    btn.classList.remove('saved');
-                    showError("Berita dihapus dari simpanan."); // Reuse showError overlay style but maybe change color if needed, or create new toast.
-                    // Using standard alert/toast might be better if available. 
-                    // Let's use a temporary Toast if custom-notif exists? 
-                    // index.html doesnt have custom-notif structure by default?
-                    // Let's check... It DOES NOT have #notifBox visible in source... 
-                    // reuse showError for now or console.
-                    // But user requested "notifikasi konsisten dengan pop up".
-                    // I will add a simple dynamic toast.
-                    showToast("Berita dihapus dari Simpanan", "neutral");
+            if (index !== -1) {
+                // HAPUS
+                saved.splice(index, 1);
+            btn.classList.remove('saved');
+            showError("Berita dihapus dari simpanan."); // Reuse showError overlay style but maybe change color if needed, or create new toast.
+            // Using standard alert/toast might be better if available. 
+            // Let's use a temporary Toast if custom-notif exists? 
+            // index.html doesnt have custom-notif structure by default?
+            // Let's check... It DOES NOT have #notifBox visible in source... 
+            // reuse showError for now or console.
+            // But user requested "notifikasi konsisten dengan pop up".
+            // I will add a simple dynamic toast.
+            showToast("Berita dihapus dari Simpanan", "neutral");
                 } else {
                     // SIMPAN
                     const judul = getProp(article, 'judul') || getProp(article, 'title');
-                    const isi = getProp(article, 'isi') || getProp(article, 'content') || "";
-                    const gambar = getProp(article, 'gambar') || getProp(article, 'image') || "";
-                    const tanggal = getProp(article, 'tanggal') || getProp(article, 'date') || "";
+            const isi = getProp(article, 'isi') || getProp(article, 'content') || "";
+            const gambar = getProp(article, 'gambar') || getProp(article, 'image') || "";
+            const tanggal = getProp(article, 'tanggal') || getProp(article, 'date') || "";
 
-                    saved.push({
-                        judul: judul,
-                        isi: isi,
-                        gambar: gambar,
-                        url: 'baca.html?title=' + encodeURIComponent(judul),
-                        tanggal: tanggal,
-                        dateAdded: new Date().toISOString()
+            saved.push({
+                judul: judul,
+            isi: isi,
+            gambar: gambar,
+            url: 'baca.html?title=' + encodeURIComponent(judul),
+            tanggal: tanggal,
+            dateAdded: new Date().toISOString()
                     });
-                    btn.classList.add('saved');
-                    showToast("Berita BERHASIL Disimpan!", "success");
+            btn.classList.add('saved');
+            showToast("Berita BERHASIL Disimpan!", "success");
                 }
 
-                localStorage.setItem('mq_saved_news', JSON.stringify(saved));
+            localStorage.setItem('mq_saved_news', JSON.stringify(saved));
             }
 
             // INITIAL CHECK (Pas render, cek apakah udah disave?)
@@ -2076,29 +2080,29 @@
             // Helper Toast -- EXISTING CODE --
             function showToast(msg, type) {
                 let box = document.getElementById('toast-box');
-                if (!box) {
-                    box = document.createElement('div');
-                    box.id = 'toast-box';
-                    box.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background:white; padding:12px 25px; border-radius:50px; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:9999; font-weight:bold; font-size:0.9rem; display:none;";
-                    document.body.appendChild(box);
+            if (!box) {
+                box = document.createElement('div');
+            box.id = 'toast-box';
+            box.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background:white; padding:12px 25px; border-radius:50px; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:9999; font-weight:bold; font-size:0.9rem; display:none;";
+            document.body.appendChild(box);
                 }
 
-                box.innerText = msg;
-                if (type === 'success') { box.style.borderLeft = "5px solid #2e7d32"; box.style.color = "#333"; }
-                else { box.style.borderLeft = "5px solid #555"; box.style.color = "#555"; }
+            box.innerText = msg;
+            if (type === 'success') {box.style.borderLeft = "5px solid #2e7d32"; box.style.color = "#333"; }
+            else {box.style.borderLeft = "5px solid #555"; box.style.color = "#555"; }
 
-                box.style.display = 'block';
-                setTimeout(() => { box.style.display = 'none'; }, 3000);
+            box.style.display = 'block';
+                setTimeout(() => {box.style.display = 'none'; }, 3000);
             }
 
             // SIDEBAR DROPDOWN TOGGLE
             function toggleDropdown(id) {
                 const el = document.getElementById(id);
-                if (el) {
-                    el.classList.toggle('active');
+            if (el) {
+                el.classList.toggle('active');
                 }
             }
-        </script>
+    </script>
 </body>
 
 </html>
