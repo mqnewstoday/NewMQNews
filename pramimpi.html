@@ -94,7 +94,6 @@
 
         /* CONTAINER UTAMA */
         /* RESET BODY */
-        /* The body rules above have been updated to include margin, padding, and overflow-x. */
         .main-content {
             /* Fix Padding: Ensure visual inset matches designs */
             padding: 80px 20px 20px;
@@ -103,8 +102,10 @@
             flex: 1;
             min-height: 80vh;
             width: 100%;
+            /* CRITICAL: Include padding in width calculation */
             box-sizing: border-box;
-            /* IMPORTANT: Include padding in width */
+            overflow-x: hidden;
+            /* Prevent internal overflows */
         }
 
         .page-desc {
@@ -114,25 +115,24 @@
             margin-bottom: 25px;
             font-style: italic;
             line-height: 1.5;
-            /* Force Word Wrap */
-            white-space: normal;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            /* Force Word Wrap - Ultimate Fix */
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
             width: 100%;
             max-width: 100%;
+            display: block;
         }
 
         /* Mobile Adjustment for Page Desc */
         @media (max-width: 600px) {
             .page-desc {
                 font-size: 0.85rem;
-                /* Smaller font */
-                line-height: 1.4;
-                /* Tighter lines */
-                margin-bottom: 20px;
-                /* Less space below */
-                padding-right: 10px;
-                /* Avoid hitting edge too hard */
+                line-height: 1.35;
+                /* Even tighter for "padet" feel */
+                margin-bottom: 15px;
+                /* Compact spacing */
+                padding-right: 5px;
             }
         }
 
