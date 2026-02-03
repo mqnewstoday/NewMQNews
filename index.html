@@ -1064,7 +1064,7 @@
 
         <div class="copyright">
             <a href="tentang-kami.html" style="text-decoration: none; color: inherit;">
-                Â© 2026 MQ News Today
+                ©2026 MQ News Today
             </a>
         </div>
     </footer>
@@ -1679,10 +1679,12 @@
             box.className = "custom-notif active";
             if (type === 'success') {
                 box.classList.add('success');
-                icon.innerHTML = 'âœ“';
+                // Icon Checkmark SVG
+                icon.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
             } else {
                 box.classList.add('error');
-                icon.innerHTML = 'âš ';
+                // Icon Warning SVG
+                icon.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
             }
 
             // Auto hide
