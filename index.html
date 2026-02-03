@@ -1740,369 +1740,241 @@
         });
     </script>
 
-
-    </script>
-
-    <!-- MAIN LOGIC RESTORED -->
+    <!-- MAIN APPLICATION LOGIC -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
-            // Toggle Sidebar (Logic Stack: Buka=Push, Tutup=Back)
-            function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const toggleBtn = document.querySelector('.menu-toggle');
+        // --- CONFIGURATION ---
+        const NEWS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
+        const BATCH_SIZE = 9;
 
-            if (sb.classList.contains('active')) {
-                sb.classList.remove('active');
-            overlay.classList.remove('active');
-            toggleBtn.classList.remove('active');
-            } else {
-                sb.classList.add('active');
-            overlay.classList.add('active');
-            toggleBtn.classList.add('active');
-            }
-        }
-            window.toggleSidebar = toggleSidebar;
+        // --- STATE ---
+        let allNews = [];
+        let activeData = [];
+        let currentPage = 1;
 
-            // getVal sudah didefinisikan di atas (line 565)
-
-            function handleEnterKey(e) { if (e.key === 'Enter') {e.preventDefault(); executeSearch(); } }
-
-            // --- GLOBAL FUNCTIONS (Harus di-bind ke window karena module) ---
-
-            // 1. Save News (Real Logic)
-            window.saveNews = function (judul, isi, gambar, url, tanggal, e) {
-                e.stopPropagation();
-            e.preventDefault();
-
-            // Ambil data lama
-            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
-
-            // Cek Duplikat
-            if (saved.some(x => x.judul === judul)) {
-                showNotif('Berita sudah tersimpan!', 'error');
-            return;
-            }
-
-            // Simpan
-            saved.push({
-                judul,
-                isi,
-                gambar,
-                url,
-                tanggal,
-                dateAdded: new Date().toISOString()
-            });
-
-            localStorage.setItem('mq_saved_news', JSON.stringify(saved));
-            showNotif('Berita berhasil disimpan!', 'success');
-        };
-
-            // 2. Handle Article Click (Guest Limit)
-            window.handleArticleClick = function (url) {
-            // Tunggu sebentar sampai auth siap jika belum (opsional, tapi sederhananya kita cek window.auth)
-            // Note: window.auth diset oleh script module.
-            const user = window.auth ? window.auth.currentUser : null;
-
-            // Kalo user login, gas terus
-            if (user) {
-                window.location.href = url;
-            return;
-            }
-
-            // Kalo tamu, cek kuota
-            let count = parseInt(localStorage.getItem('guest_read_count') || '0');
-
-            // Batas 3 artikel. Jika sudah 3, pas mau baca ke-4 ditolak.
-            // (Asumsi saat baca artikel, counter nambah. Jadi misal baca 1, count=1. Baca 3, count=3. Next click -> 3>=3 ->
-            Block)
-            if (count >= 3) {
-                document.getElementById('limitModal').style.display = 'flex';
-            } else {
-                window.location.href = url;
-            }
-        };
-
-            // 3. Show Notification
-            function showNotif(message, type) {
-            const box = document.getElementById('notifBox');
-            const text = document.getElementById('notifText');
-            const iconDiv = document.getElementById('notifIcon');
-
-            text.innerText = message;
-            box.className = "custom-notif active";
-
-            if (type === 'success') {
-                box.classList.add('success');
-            iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#2e7d32" viewBox="0 0 24 24">
-                <path
-                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-            </svg>`;
-            } else {
-                box.classList.add('error');
-            iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#d32f2f" viewBox="0 0 24 24">
-                <path
-                    d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
-            </svg>`;
-            }
-
-            setTimeout(() => {
-                box.classList.remove('active');
-            box.classList.remove('success');
-            box.classList.remove('error');
-            }, 3000);
-        }
-            window.showNotif = showNotif;
-
-
-            // 4. PWA Install Logic (Dengan Notif Konsisten)
-            let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-            deferredPrompt = e;
-            // Tampilkan tombol Install di menu "Lainnya"
-            const btn = document.getElementById('installBtn');
-            if (btn) {
-                btn.onclick = async () => {
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-
-                        if (outcome === 'accepted') {
-                            showNotif("Sedang memproses instalasi...", "success");
-                        } else {
-                            showNotif("Instalasi dibatalkan.", "error");
-                        }
-                        deferredPrompt = null;
-                    } else {
-                        // Kasus langka: prompt hilang atau sudah diinstall
-                        showNotif("Aplikasi mungkin sudah terinstall.", "error");
-                    }
-                };
-            }
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+             updateDate();
+             initApp();
         });
 
-        // Event saat sukses install
-        window.addEventListener('appinstalled', () => {
-                deferredPrompt = null;
-            showNotif("Aplikasi BERHASIL diinstall!", "success");
+        function updateDate() {
+            const el = document.getElementById('currentDate');
+            if(el) {
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                el.innerText = new Date().toLocaleDateString('id-ID', options);
+            }
+        }
 
-            // Sembunyikan tombol kalau perlu
-            const btn = document.getElementById('installBtn');
-            if (btn) btn.style.display = 'none';
-        });
+        function initApp() {
+            Papa.parse(NEWS_CSV_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    // Filter valid rows
+                    allNews = results.data.filter(i => (i.judul && i.judul.trim() !== '') || (i.title && i.title.trim() !== '')); 
+                    activeData = allNews.slice().reverse(); // Show newest first
+                    
+                    // Render Main Content
+                    renderPage(1);
+                    
+                    // Render Editor Picks (Top 4)
+                    renderEditorPicks();
+                },
+                error: (err) => {
+                    console.error("CSV Error:", err);
+                    const container = document.getElementById('news-container');
+                    if(container) container.innerHTML = "<div style='text-align:center; padding:20px;'>Gagal memuat berita. Periksa koneksi internet.</div>";
+                }
+            });
+        }
 
-            // --- [BARU] FUNGSI RENDER REKOMENDASI ---
-            function renderRelatedNews(containerID, excludeTitle = null) {
-            const container = document.getElementById(containerID);
-            if (!container) return;
+        // --- HELPER: SAFE PROPERTY GETTER ---
+        const getVal = (item, key) => {
+             if(!item) return "";
+             const found = Object.keys(item).find(k => k.toLowerCase() === key.toLowerCase());
+             return found ? item[found] : "";
+        };
 
-            container.innerHTML = ""; // Bersihkan dulu
+        // --- RENDER NEWS LIST ---
+        function renderPage(page) {
+            const container = document.getElementById('news-container');
+            if(!container) return;
+            
+            container.innerHTML = "";
+            currentPage = page;
 
-            // 1. Filter berita (supaya berita yg lagi dibaca gak muncul di rekomendasi)
-            let candidates = allNews.filter(item => {
-                const t = getVal(item, 'judul') || getVal(item, 'title');
-            return t !== excludeTitle;
+            if (activeData.length === 0) {
+                container.innerHTML = `<div class="no-data" style="text-align:center; width:100%; padding:20px;">Tidak ditemukan berita.</div>`;
+                return;
+            }
+
+            const start = (page - 1) * BATCH_SIZE;
+            const end = start + BATCH_SIZE;
+            const batch = activeData.slice(start, end);
+
+            batch.forEach(item => {
+                const html = createCardHTML(item);
+                container.insertAdjacentHTML('beforeend', html);
             });
 
-            // 2. Acak Urutan (Shuffle) biar yang muncul beda-beda
-            candidates.sort(() => 0.5 - Math.random());
+            renderPaginationControls(page);
+        }
 
-            // 3. Ambil 5 Berita Saja (Terbaru)
-            const selected = candidates.slice(0, 5);
-
-            // 4. Render ke HTML
-            selected.forEach(item => {
-                const judul = getVal(item, 'judul') || getVal(item, 'title');
+        function createCardHTML(item) {
+            const judul = getVal(item, 'judul') || getVal(item, 'title');
+            let isi = getVal(item, 'isi') || getVal(item, 'content') || "Tidak ada detail.";
             const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
-
-            // FIX GAMBAR
+            const kategori = getVal(item, 'kategori') || 'News';
             let gambar = getVal(item, 'gambar') || getVal(item, 'image');
-            if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/100x75?text=MQ"; const
-            targetUrl = 'mimpi.html?title=' + encodeURIComponent(judul); const html = ` <a href="${targetUrl}"
-                class="dream-card">
-                <div class="dream-thumb">
-                    <img src="${gambar}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
-                        <div class="play-overlay">
-                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
+
+            if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/600x400?text=MQ+News";
+
+            // Clean Content
+            if (judul && isi.toLowerCase().trim().startsWith(judul.toLowerCase().trim())) {
+                isi = isi.substring(judul.length).trim();
+                isi = isi.replace(/^[:\-\s]+/, '');
+            }
+            
+            const safeJudul = (judul || "").replace(/["']/g, "&quot;");
+            const safeIsi = (isi || "").replace(/["']/g, "&quot;").substring(0, 150);
+            const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+
+            return `
+            <article class="news-card">
+                <div class="card-img-wrap">
+                    <img src="${gambar}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400?text=Image+Error'" onclick="window.location.href='${targetUrl}'" style="cursor:pointer">
+                </div>
+                <div class="card-body">
+                    <div class="card-category-badge">${kategori}</div>
+                    <h3 class="card-title" onclick="window.location.href='${targetUrl}'" style="cursor: pointer">${judul}</h3>
+                    <p class="card-excerpt">${isi.substring(0, 150)}...</p>
+                    <div class="card-footer">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="card-date">${tanggal}</span>
+                            <button onclick="saveNews('${safeJudul}', '${safeIsi}', '${gambar}', '${targetUrl}', '${tanggal}', event)" 
+                                    style="background:none; border:none; cursor:pointer; padding:5px; color:var(--text-main); transition:0.2s;"
+                                    title="Simpan Berita">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </button>
                         </div>
+                        <a onclick="window.location.href='${targetUrl}'" class="read-btn" href="javascript:void(0)">BACA →</a>
+                    </div>
                 </div>
-                <div class="dream-info">
-                    <h4 class="dream-title">${judul}</h4>
-                    <span class="dream-date">${tanggal}</span>
-                </div>
-            </a>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
+            </article>`;
+        }
+        
+        // --- RENDER EDITOR PICKS ---
+        function renderEditorPicks() {
+            const container = document.getElementById('editor-picks-container');
+            if(!container) return;
+            
+            const picks = activeData.slice(0, 4); 
+            container.innerHTML = "";
+            
+            picks.forEach(item => {
+               const judul = getVal(item, 'judul') || getVal(item, 'title');
+               let img = getVal(item, 'gambar') || getVal(item, 'image');
+               if (!img || img.length < 5) img = "https://via.placeholder.com/300x200?text=Editor";
+               const cat = getVal(item, 'kategori') || "Pilihan";
+               const url = 'baca.html?title=' + encodeURIComponent(judul);
+               
+               const html = `
+               <article class="editor-card" onclick="window.location.href='${url}'" style="cursor:pointer; display:flex; gap:15px; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:15px;">
+                   <img src="${img}" style="width:100px; height:70px; object-fit:cover; border-radius:4px;">
+                   <div style="flex:1;">
+                       <div style="font-size:0.7rem; color:var(--primary); font-weight:bold; text-transform:uppercase; margin-bottom:4px;">${cat}</div>
+                       <h4 style="margin:0; font-family:'Cinzel', serif; font-size:0.95rem; line-height:1.4; color:var(--text-main);">${judul}</h4>
+                   </div>
+               </article>
+               `;
+               container.insertAdjacentHTML('beforeend', html);
             });
-
-            // 5. Tambahkan Tombol "LIHAT SEMUA" di Akhir
-            const viewAllHtml = `
-            <a href="pramimpi.html" class="view-all-card">
-                <svg class="view-all-icon" viewBox="0 0 24 24">
-                    <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                </svg>
-                <span class="view-all-text">LIHAT<br>SEMUA</span>
-            </a>
-        `;
-            container.insertAdjacentHTML('beforeend', viewAllHtml);
         }
 
-        // Fungsi Toggle More (Menu 4 Kotak)
-        function toggleMoreMenu() {
-            const hiddenRows = document.querySelectorAll('.hidden-row');
-            const icon = document.getElementById('iconMore');
-            const text = document.getElementById('textMore');
+        // --- PAGINATION ---
+        function renderPaginationControls(page) {
+             const container = document.getElementById('news-container');
+             const oldPag = container.querySelector('.pagination-wrapper');
+             if(oldPag) oldPag.remove();
 
-            // Cek apakah lagi ngebuka atau nutup?
-            // Kita cek salah satu item aja. Kalau hidden, berarti mau BUKA.
-            const isOpening = hiddenRows[0].style.display !== 'flex';
+             const totalPages = Math.ceil(activeData.length / BATCH_SIZE);
+             if (totalPages <= 1) return;
 
-            hiddenRows.forEach(row => {
-                row.style.display = isOpening ? 'flex' : 'none';
-            });
+             let html = '<div class="pagination-wrapper" style="grid-column:1/-1; display:flex; gap:5px; justify-content:center; margin-top:30px;">';
+             
+             if(page > 1) html += `<button onclick="goToPage(${page-1})" class="page-btn">‹</button>`;
+             
+             for(let i=1; i<=totalPages; i++) {
+                 if(i > 5 && i < totalPages) continue; 
+                 if(i === 6 && totalPages > 6) { html += `<span>...</span>`; continue; }
+                 html += `<button onclick="goToPage(${i})" class="page-btn ${i===page?'active':''}">${i}</button>`;
+             }
 
-            // Ganti Icon & Teks
-            if (isOpening) {
-                text.innerText = "TUTUP";
-                icon.innerHTML = '
-                    < path d = "M18 6L6 18M6 6l12 12" stroke = "currentColor" stroke - width="2" stroke - linecap="round"
-                stroke - linejoin="round" /> ';
-                // ^ Icon Silang (X)
-            } else {
-                text.innerText = "LAINNYA";
-                icon.innerHTML = '<rect x="3" y="3" width="7" height="7"></rect>
-                    < rect x = "14" y = "3" width = "7" height = "7" ></rect >
-        <rect x="14" y="14" width="7" height="7"></rect>
-        <rect x="3" y="14" width="7" height="7"></rect>';
-                // ^ Icon Kotak 4 (Default)
-            }
+             if(page < totalPages) html += `<button onclick="goToPage(${page+1})" class="page-btn">›</button>`;
+             html += '</div>';
+             container.insertAdjacentHTML('beforeend', html);
         }
 
-        // Jalankan init
-        init();
-    </script>
-    <script>
-            // === FITUR SIMPAN BERITA (INDEX) ===
-            function toggleSaveIndex(btn, encodedTitle) {
-                // Prevent Card Click
-                event.stopPropagation();
+        window.goToPage = function(p) { renderPage(p); };
 
-            const title = decodeURIComponent(encodedTitle);
+        // --- SIDEBAR & UI ACTIONS ---
+        window.toggleSidebar = function() {
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('overlay');
+            const btn = document.querySelector('.menu-toggle');
+            
+            sb.classList.toggle('active');
+            ov.classList.toggle('active');
+            if(btn) btn.classList.toggle('active');
+        };
 
-                // Cari data article dari allNews (Global)
-                // Helper local
-                const getProp = (itm, k) => {
-                    if (!itm) return "";
-                    const found = Object.keys(itm).find(key => key.toLowerCase() === k.toLowerCase());
-            return found ? itm[found] : "";
-                };
+        window.toggleDropdown = function(id) {
+             const el = document.getElementById(id);
+             if(el) el.classList.toggle('active');
+        };
 
-                const article = allNews.find(i => {
-                    const t = getProp(i, 'judul') || getProp(i, 'title');
-            return t === title;
-                });
+        window.executeSearch = function() {
+             const input = document.getElementById('searchInput');
+             if(!input) return;
+             const key = input.value.toLowerCase();
+             
+             if(!key.trim()) { activeData = allNews.slice().reverse(); }
+             else { activeData = allNews.filter(x => (getVal(x,'judul')).toLowerCase().includes(key)); }
+             renderPage(1);
+        };
+        
+        window.handleEnterKey = function(e) { if(e.key==='Enter') executeSearch(); };
+        
+        // --- SAVE FEATURE ---
+        window.saveNews = function(judul, isi, gambar, url, tanggal, e) {
+             if(e) { e.stopPropagation(); e.preventDefault(); }
+             let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
+             if(saved.some(x => x.judul === judul)) { showNotif("Berita sudah tersimpan.", "error"); return; }
+             saved.push({judul, isi, gambar, url, tanggal, dateAdded: new Date().toISOString()});
+             localStorage.setItem('mq_saved_news', JSON.stringify(saved));
+             showNotif("Berita berhasil disimpan!", "success");
+        };
 
-            if (!article) {
-                showError("Gagal: Data berita tidak ditemukan.");
-            return;
-                }
-
-            // Load Saved Data
-            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
-
-                // Check if exist
-                const index = saved.findIndex(x => x.judul === title);
-
-            if (index !== -1) {
-                // HAPUS
-                saved.splice(index, 1);
-            btn.classList.remove('saved');
-            showError("Berita dihapus dari simpanan."); // Reuse showError overlay style but maybe change color if needed, or create new toast.
-            // Using standard alert/toast might be better if available. 
-            // Let's use a temporary Toast if custom-notif exists? 
-            // index.html doesnt have custom-notif structure by default?
-            // Let's check... It DOES NOT have #notifBox visible in source... 
-            // reuse showError for now or console.
-            // But user requested "notifikasi konsisten dengan pop up".
-            // I will add a simple dynamic toast.
-            showToast("Berita dihapus dari Simpanan", "neutral");
-                } else {
-                    // SIMPAN
-                    const judul = getProp(article, 'judul') || getProp(article, 'title');
-            const isi = getProp(article, 'isi') || getProp(article, 'content') || "";
-            const gambar = getProp(article, 'gambar') || getProp(article, 'image') || "";
-            const tanggal = getProp(article, 'tanggal') || getProp(article, 'date') || "";
-
-            saved.push({
-                judul: judul,
-            isi: isi,
-            gambar: gambar,
-            url: 'baca.html?title=' + encodeURIComponent(judul),
-            tanggal: tanggal,
-            dateAdded: new Date().toISOString()
-                    });
-            btn.classList.add('saved');
-            showToast("Berita BERHASIL Disimpan!", "success");
-                }
-
-            localStorage.setItem('mq_saved_news', JSON.stringify(saved));
-            }
-
-            // INITIAL CHECK (Pas render, cek apakah udah disave?)
-            // Karena renderNews dipanggil berulang, kita tambahkan logika ini di dalam renderNews sebenernya lebih efisien.
-            // Tapi karena logic renderNews ada di scope tertutup? Tidak, renderNews ada di global (window.renderNews = ...).
-            // Kita modif renderNews sedikit di script utama atau insert logicnya.
-            // TAPI karena saya hanya replace HTML stringnya, saya tidak bisa inject logic JS di loop renderNews dengan mudah tanpa replace function renderNews FULL.
-
-            // SOLUSI: Fungsi helper untuk cek status saved sblm render HTML
-            function isSaved(title) {
-                let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
-                return saved.some(x => x.judul === title);
-            }
-
-            // UPDATE RENDERNEWS LINKED TO HELPER?
-            // Wait, I replaced formatting in previous chunk.
-            // I need to update the HTML generation in `renderNews` to add class 'saved' if saved.
-            // I will do that in a separate chunk/step if needed or modify the chunk above? 
-            // Chunk above is static string. 
-            // I will rely on standard toggle for now, BUT user wants visual feedback "terus menerus jadi warna merah".
-            // So I must check initial state.
-
-            // I will Inject a MutationObserver or run a checker after render?
-            // Or better: Update renderNews function fully?
-            // renderNews is huge.
-
-            // Let's add a small script that runs after renderNews updates DOM?
-            // Or update `renderNews` definition.
-
-            // Helper Toast -- EXISTING CODE --
-            function showToast(msg, type) {
-                let box = document.getElementById('toast-box');
+        function showNotif(msg, type) {
+            let box = document.getElementById('notifBox');
             if (!box) {
                 box = document.createElement('div');
-            box.id = 'toast-box';
-            box.style.cssText = "position:fixed; top:20px; left:50%; transform:translateX(-50%); background:white; padding:12px 25px; border-radius:50px; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:9999; font-weight:bold; font-size:0.9rem; display:none;";
-            document.body.appendChild(box);
-                }
-
-            box.innerText = msg;
-            if (type === 'success') {box.style.borderLeft = "5px solid #2e7d32"; box.style.color = "#333"; }
-            else {box.style.borderLeft = "5px solid #555"; box.style.color = "#555"; }
-
-            box.style.display = 'block';
-                setTimeout(() => {box.style.display = 'none'; }, 3000);
+                box.id = 'notifBox';
+                box.className = 'custom-notif'; 
+                box.innerHTML = '<div id="notifIcon"></div><span id="notifText"></span>';
+                document.body.appendChild(box);
             }
-
-            // SIDEBAR DROPDOWN TOGGLE
-            function toggleDropdown(id) {
-                const el = document.getElementById(id);
-            if (el) {
-                el.classList.toggle('active');
-                }
-            }
+            const text = document.getElementById('notifText');
+            const icon = document.getElementById('notifIcon');
+            text.innerText = msg;
+            box.className = "custom-notif active " + type;
+            icon.innerHTML = type === 'success' ? '✓' : '⚠';
+            setTimeout(() => { box.classList.remove('active'); }, 3000);
+        }
     </script>
 </body>
-
 </html>
