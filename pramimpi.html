@@ -106,12 +106,25 @@
 
         .page-desc {
             text-align: left;
-            /* Fix: Left align for better readability on mobile */
             font-size: 0.95rem;
             color: var(--text-muted);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-style: italic;
             line-height: 1.5;
+        }
+
+        /* Mobile Adjustment for Page Desc */
+        @media (max-width: 600px) {
+            .page-desc {
+                font-size: 0.85rem;
+                /* Smaller font */
+                line-height: 1.4;
+                /* Tighter lines */
+                margin-bottom: 20px;
+                /* Less space below */
+                padding-right: 10px;
+                /* Avoid hitting edge too hard */
+            }
         }
 
         /* GRID/LIST LAYOUT (Style Kartu Kecil) */
