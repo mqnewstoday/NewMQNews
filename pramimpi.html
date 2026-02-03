@@ -109,10 +109,27 @@
         }
 
         /* GRID/LIST LAYOUT (Style Kartu Kecil) */
+        /* GRID/LIST LAYOUT (Style Kartu Kecil) */
         .dream-list {
             display: flex;
             flex-direction: column;
             gap: 15px;
+        }
+
+        /* PRAMIMPI GRID DEFINITION (Mobile First: 1 Column) */
+        .pramimpi-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        /* Tablet/Desktop: Grid 2 Column */
+        @media (min-width: 640px) {
+            .pramimpi-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
         }
 
         .dream-card {
@@ -229,8 +246,9 @@
         /* FEATURED SCROLL (4:5 Ratio - IG Feed Style) */
         .featured-scroll-container {
             margin-bottom: 30px;
-            /* Bleed right on mobile */
-            margin-right: -20px;
+            width: 100%;
+            overflow: hidden;
+            /* Prevent parent scroll */
         }
 
         .featured-scroll {
@@ -394,8 +412,8 @@
             padding-right: 20px;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
-            margin-right: -20px;
-            /* Bleed right */
+            /* Safe Bleed */
+            width: 100%;
         }
 
         .filter-scroll::-webkit-scrollbar {
@@ -440,8 +458,16 @@
             margin: 0 auto;
             margin-bottom: 40px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
+            grid-template-columns: 1fr;
+            /* Mobile: Single Column */
+            gap: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 40px;
+            }
         }
 
         .footer-col h3 {
