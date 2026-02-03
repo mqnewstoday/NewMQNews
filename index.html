@@ -73,7 +73,7 @@
                 <input type="text" id="searchInput" class="search-input" placeholder="Cari berita..."
                     onkeypress="handleEnterKey(event)">
             </div>
-            <div class="close-sidebar-btn" onclick="toggleSidebar()">Ã—</div>
+            <div class="close-sidebar-btn" onclick="toggleSidebar()">&times;</div>
         </div>
 
         <div class="sidebar-menu">
@@ -81,7 +81,7 @@
             <div class="sidebar-dropdown-wrapper" id="menu-utama-dropdown">
                 <div class="sidebar-dropdown-header" onclick="toggleDropdown('menu-utama-dropdown')">
                     <span>MENU UTAMA</span>
-                    <span class="sidebar-arrow">â€º</span>
+                    <span class="sidebar-arrow">&rsaquo;</span>
                 </div>
                 <div class="sidebar-submenu">
                     <a href="#" onclick="toggleSidebar(); setCategory(null, 'Semua')">BERANDA</a>
@@ -96,7 +96,7 @@
             <div class="sidebar-dropdown-wrapper" id="mq-official-dropdown">
                 <div class="sidebar-dropdown-header" onclick="toggleDropdown('mq-official-dropdown')">
                     <span>MUHAMMAD QASIM OFFICIAL</span>
-                    <span class="sidebar-arrow">â€º</span>
+                    <span class="sidebar-arrow">&rsaquo;</span>
                     <!-- Menggunakan simbol yang sama dengan hover tapi diputar nanti -->
                 </div>
                 <div class="sidebar-submenu">
@@ -111,7 +111,7 @@
             <div class="sidebar-dropdown-wrapper" id="mukjizat-dropdown">
                 <div class="sidebar-dropdown-header" onclick="toggleDropdown('mukjizat-dropdown')">
                     <span>MUKJIZAT</span>
-                    <span class="sidebar-arrow">â€º</span>
+                    <span class="sidebar-arrow">&rsaquo;</span>
                 </div>
                 <div class="sidebar-submenu">
                     <a href="https://casereportsinregrowth.com" target="_blank">CASE REPORTS</a>
@@ -124,7 +124,7 @@
             <div class="sidebar-dropdown-wrapper" id="others-dropdown">
                 <div class="sidebar-dropdown-header" onclick="toggleDropdown('others-dropdown')">
                     <span>OTHERS</span>
-                    <span class="sidebar-arrow">â€º</span>
+                    <span class="sidebar-arrow">&rsaquo;</span>
                 </div>
                 <div class="sidebar-submenu">
                     <a href="https://saweria.co/mqnewstoday" target="_blank">SUPPORT ME</a>
@@ -137,7 +137,7 @@
 
         <div class="auth-bottom-wrapper">
             <a href="#" id="logout-btn" class="logout-link-small" style="display: none;">
-                KELUAR / LOGOUT â€º
+                KELUAR / LOGOUT &rsaquo;
             </a>
             <div class="auth-box-small" id="auth-box">
                 <a href="login.html" id="auth-link">
@@ -152,225 +152,225 @@
 
 
 
-        <!-- CUSTOM NOTIFICATION BOX -->
-        <div id="notifBox" class="custom-notif">
-            <div id="notifIcon" class="notif-icon"></div>
-            <span id="notifText" class="notif-text">Pesan notifikasi...</span>
+    <!-- CUSTOM NOTIFICATION BOX -->
+    <div id="notifBox" class="custom-notif">
+        <div id="notifIcon" class="notif-icon"></div>
+        <span id="notifText" class="notif-text">Pesan notifikasi...</span>
+    </div>
+
+    <div id="home-view">
+        <div class="category-nav">
+            <div class="nav-inner" id="nav-container">
+                <a onclick="setCategory(null, 'Semua')" class="cat-link active">Semua</a>
+                <a onclick="setCategory(null, 'Geopolitik')" class="cat-link">Geopolitik</a>
+                <a onclick="setCategory(null, 'Eskatologi')" class="cat-link">Eskatologi</a>
+                <a onclick="setCategory(null, 'Mimpi Qasim')" class="cat-link">Mimpi Qasim</a>
+                <a onclick="setCategory(null, 'Timur Tengah')" class="cat-link">Timur Tengah</a>
+                <a onclick="setCategory(null, 'Trending')" class="cat-link">Trending</a>
+            </div>
         </div>
 
-        <div id="home-view">
-            <div class="category-nav">
-                <div class="nav-inner" id="nav-container">
-                    <a onclick="setCategory(null, 'Semua')" class="cat-link active">Semua</a>
-                    <a onclick="setCategory(null, 'Geopolitik')" class="cat-link">Geopolitik</a>
-                    <a onclick="setCategory(null, 'Eskatologi')" class="cat-link">Eskatologi</a>
-                    <a onclick="setCategory(null, 'Mimpi Qasim')" class="cat-link">Mimpi Qasim</a>
-                    <a onclick="setCategory(null, 'Timur Tengah')" class="cat-link">Timur Tengah</a>
-                    <a onclick="setCategory(null, 'Trending')" class="cat-link">Trending</a>
+        <div class="date-header-container">
+            <div id="live-date" class="live-date-text">Memuat Waktu...</div>
+
+            <svg class="date-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+            </svg>
+        </div>
+
+
+        <div id="banner-container" class="showcase-wrapper" style="display: none;">
+            <div class="showcase-strip" id="banner-track">
+            </div>
+        </div>
+
+
+        <div class="quick-menu-grid">
+
+            <a href="buku.html" class="menu-item">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
                 </div>
-            </div>
+                <span class="menu-label">PDF</span>
+            </a>
 
-            <div class="date-header-container">
-                <div id="live-date" class="live-date-text">Memuat Waktu...</div>
-
-                <svg class="date-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-                </svg>
-            </div>
-
-
-            <div id="banner-container" class="showcase-wrapper" style="display: none;">
-                <div class="showcase-strip" id="banner-track">
+            <a href="pesan-tauhid.html" class="menu-item">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
                 </div>
+                <span class="menu-label">19 PESAN</span>
+            </a>
+
+            <a href="audio.html" class="menu-item">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"></path>
+                        <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                    </svg>
+                </div>
+                <span class="menu-label">AUDIO</span>
+            </a>
+
+
+            <button class="menu-item" onclick="toggleMoreMenu()" id="btnMore">
+                <div class="icon-box">
+                    <svg id="iconMore" viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                </div>
+                <span class="menu-label" id="textMore">LAINNYA</span>
+            </button>
+
+            <a href="simpan.html" class="menu-item hidden-row">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
+                <span class="menu-label">TERSIMPAN</span>
+            </a>
+
+            <!-- MUBASYIRAT (Pindah ke Hidden Row) -->
+            <a href="pramimpi.html" class="menu-item hidden-row">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                        </path>
+                    </svg>
+                </div>
+                <span class="menu-label">MUBASYIRAT</span>
+            </a>
+
+            <a href="https://chat.whatsapp.com/Cb6nVjlAtj06JRdeFzRpKw" class="menu-item hidden-row">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <span class="menu-label">JOIN GRUP</span>
+            </a>
+
+            <button class="menu-item hidden-row" id="installBtn">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                </div>
+                <span class="menu-label">INSTALL APP</span>
+            </button>
+
+            <a href="https://saweria.co/mqnewstoday" target="_blank" class="menu-item hidden-row">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                    </svg>
+                </div>
+                <span class="menu-label">SAWERIA</span>
+            </a>
+
+            <a href="transformasi.html" class="menu-item hidden-row">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                        </path>
+                    </svg>
+                </div>
+                <span class="menu-label">TRANSFORMASI</span>
+            </a>
+
+        </div>
+
+
+
+        <div id="mq-quote-widget" class="mq-quote-compact" style="display:none;">
+            <div class="quote-label">QUOTES OF THE END TIMES</div>
+
+            <blockquote id="mq-quote-text">Loading...</blockquote>
+
+            <div id="mq-quote-source">-- --</div>
+        </div>
+
+
+
+
+
+        <main class="main-container" id="mainContainer">
+            <div class="section-label">
+                <span id="current-category-label">Berita Terkini</span>
+                <div class="section-line"></div>
             </div>
-
-
-            <div class="quick-menu-grid">
-
-                <a href="buku.html" class="menu-item">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label">PDF</span>
-                </a>
-
-                <a href="pesan-tauhid.html" class="menu-item">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label">19 PESAN</span>
-                </a>
-
-                <a href="audio.html" class="menu-item">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"></path>
-                            <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label">AUDIO</span>
-                </a>
-
-
-                <button class="menu-item" onclick="toggleMoreMenu()" id="btnMore">
-                    <div class="icon-box">
-                        <svg id="iconMore" viewBox="0 0 24 24">
-                            <rect x="3" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="14" width="7" height="7"></rect>
-                            <rect x="3" y="14" width="7" height="7"></rect>
-                        </svg>
-                    </div>
-                    <span class="menu-label" id="textMore">LAINNYA</span>
-                </button>
-
-                <a href="simpan.html" class="menu-item hidden-row">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label">TERSIMPAN</span>
-                </a>
-
-                <!-- MUBASYIRAT (Pindah ke Hidden Row) -->
-                <a href="pramimpi.html" class="menu-item hidden-row">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24">
-                            <path
-                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
-                            </path>
-                        </svg>
-                    </div>
-                    <span class="menu-label">MUBASYIRAT</span>
-                </a>
-
-                <a href="https://chat.whatsapp.com/Cb6nVjlAtj06JRdeFzRpKw" class="menu-item hidden-row">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                    </div>
-                    <span class="menu-label">JOIN GRUP</span>
-                </a>
-
-                <button class="menu-item hidden-row" id="installBtn">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                    </div>
-                    <span class="menu-label">INSTALL APP</span>
-                </button>
-
-                <a href="https://saweria.co/mqnewstoday" target="_blank" class="menu-item hidden-row">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-                            <line x1="6" y1="1" x2="6" y2="4"></line>
-                            <line x1="10" y1="1" x2="10" y2="4"></line>
-                            <line x1="14" y1="1" x2="14" y2="4"></line>
-                        </svg>
-                    </div>
-                    <span class="menu-label">SAWERIA</span>
-                </a>
-
-                <a href="transformasi.html" class="menu-item hidden-row">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24">
-                            <path
-                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                            </path>
-                        </svg>
-                    </div>
-                    <span class="menu-label">TRANSFORMASI</span>
-                </a>
-
+            <div id="news-container" class="news-grid">
+                <div class="loader">Mengunduh data berita...</div>
             </div>
+            <!-- <div id="news-container" class="news-grid"></div> -->
 
-
-
-            <div id="mq-quote-widget" class="mq-quote-compact" style="display:none;">
-                <div class="quote-label">QUOTES OF THE END TIMES</div>
-
-                <blockquote id="mq-quote-text">Loading...</blockquote>
-
-                <div id="mq-quote-source">-- --</div>
-            </div>
-
-
-
-
-
-            <main class="main-container" id="mainContainer">
+            <!-- PILIHAN EDITOR SECTION (NEW) -->
+            <div class="editor-section">
                 <div class="section-label">
-                    <span id="current-category-label">Berita Terkini</span>
+                    <span>PILIHAN EDITOR</span>
                     <div class="section-line"></div>
                 </div>
-                <div id="news-container" class="news-grid">
-                    <div class="loader">Mengunduh data berita...</div>
+                <div id="editor-picks-container" class="editor-list">
+                    <div class="loader" style="color:var(--text-muted);">Memuat Pilihan Editor...</div>
                 </div>
-                <!-- <div id="news-container" class="news-grid"></div> -->
+            </div>
 
-                <!-- PILIHAN EDITOR SECTION (NEW) -->
-                <div class="editor-section">
-                    <div class="section-label">
-                        <span>PILIHAN EDITOR</span>
-                        <div class="section-line"></div>
-                    </div>
-                    <div id="editor-picks-container" class="editor-list">
-                        <div class="loader" style="color:var(--text-muted);">Memuat Pilihan Editor...</div>
-                    </div>
+
+            <!-- MUBASYIRAT SECTION (NEW) -->
+            <div class="mubasyirat-section">
+                <div class="section-label">
+                    <span>MUBASYIRAT</span>
+                    <div class="section-line"></div>
                 </div>
-
-
-                <!-- MUBASYIRAT SECTION (NEW) -->
-                <div class="mubasyirat-section">
-                    <div class="section-label">
-                        <span>MUBASYIRAT</span>
-                        <div class="section-line"></div>
-                    </div>
-                    <div class="dream-scroll-container" id="dream-container-scroll">
-                        <div class="loader" style="width:100%; text-align:center; padding:20px;">Memuat Mubasyirat...
-                        </div>
+                <div class="dream-scroll-container" id="dream-container-scroll">
+                    <div class="loader" style="width:100%; text-align:center; padding:20px;">Memuat Mubasyirat...
                     </div>
                 </div>
+            </div>
 
-                <script>
-                    document.addEventListener("DOMContentLoaded", () => {
-                        // LINK CSV RESMI DARI USER
-                        const MUBASYIRAT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=703095600&single=true&output=csv";
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    // LINK CSV RESMI DARI USER
+                    const MUBASYIRAT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=703095600&single=true&output=csv";
 
-                        function renderDreams(data) {
-                            const container = document.getElementById('dream-container-scroll');
-                            container.innerHTML = "";
+                    function renderDreams(data) {
+                        const container = document.getElementById('dream-container-scroll');
+                        container.innerHTML = "";
 
-                            // LIMIT 5 ITEM
-                            const limited = data.slice(0, 5);
+                        // LIMIT 5 ITEM
+                        const limited = data.slice(0, 5);
 
-                            limited.forEach(item => {
-                                // Support berbagai variasi key safe
-                                const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
+                        limited.forEach(item => {
+                            // Support berbagai variasi key safe
+                            const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
 
-                                const title = getK(item, 'judul') || "Tanpa Judul";
-                                // Fallback thumbnail jika kosong
-                                const thumb = getK(item, 'thumbnail') || "https://placehold.co/450x800?text=No+Image";
-                                const date = getK(item, 'tanggal') || ""; // Tanggal mungkin kosong di CSV baru
+                            const title = getK(item, 'judul') || "Tanpa Judul";
+                            // Fallback thumbnail jika kosong
+                            const thumb = getK(item, 'thumbnail') || "https://placehold.co/450x800?text=No+Image";
+                            const date = getK(item, 'tanggal') || ""; // Tanggal mungkin kosong di CSV baru
 
-                                const html = `
+                            const html = `
                         <div class="dream-card" onclick="window.location.href='mimpi.html?title=' + encodeURIComponent('${title}')">
                             <div class="dream-thumb">
                                 <img src="${thumb}" loading="lazy" onerror="this.src='https://placehold.co/450x800?text=Error'">
@@ -388,11 +388,11 @@
                             </div>
                         </div>
                         `;
-                                container.insertAdjacentHTML('beforeend', html);
-                            });
+                            container.insertAdjacentHTML('beforeend', html);
+                        });
 
-                            // TAMBAH KARTU VIEW ALL
-                            const viewAllHtml = `
+                        // TAMBAH KARTU VIEW ALL
+                        const viewAllHtml = `
                             <div class="view-all-card" onclick="window.location.href='pramimpi.html'">
                                 <svg class="view-all-icon" viewBox="0 0 24 24">
                                     <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -400,23 +400,23 @@
                                 <span class="view-all-text">LIHAT<br>SEMUA</span>
                             </div>
                         `;
-                            container.insertAdjacentHTML('beforeend', viewAllHtml);
-                        }
+                        container.insertAdjacentHTML('beforeend', viewAllHtml);
+                    }
 
-                        if (window.Papa) {
-                            Papa.parse(MUBASYIRAT_CSV_URL, {
-                                download: true, header: true, skipEmptyLines: true,
-                                complete: (res) => {
-                                    if (res.data && res.data.length > 0) renderDreams(res.data);
-                                    else container.innerHTML = "<div style='text-align:center;width:100%'>Belum ada data mimpi.</div>";
-                                },
-                                error: () => document.getElementById('dream-container-scroll').innerHTML = "<div style='text-align:center;width:100%'>Gagal memuat data.</div>"
-                            });
-                        }
-                    });
-                </script>
+                    if (window.Papa) {
+                        Papa.parse(MUBASYIRAT_CSV_URL, {
+                            download: true, header: true, skipEmptyLines: true,
+                            complete: (res) => {
+                                if (res.data && res.data.length > 0) renderDreams(res.data);
+                                else container.innerHTML = "<div style='text-align:center;width:100%'>Belum ada data mimpi.</div>";
+                            },
+                            error: () => document.getElementById('dream-container-scroll').innerHTML = "<div style='text-align:center;width:100%'>Gagal memuat data.</div>"
+                        });
+                    }
+                });
+            </script>
 
-            </main>
+        </main>
 
 
         <!-- FAQ SECTION (RELOCATED) -->
@@ -436,7 +436,8 @@
                         </svg>
                     </button>
                     <div class="faq-answer">
-                        <p>Dengan menyebut nama Allahï·», Yang Maha Pengasih lagi Maha Penyayang. Mimpi pertama yang saya
+                        <p>Dengan menyebut nama Allahï·», Yang Maha Pengasih lagi Maha Penyayang. Mimpi pertama yang
+                            saya
                             alami dalam hidup saya datang ketika saya berusia sekitar 5 tahun. Setelah itu, ketika saya
                             berusia sekitar 13 tahun baru saya bermimpi lagi. Kemudian, ketika saya berusia 27 tahun,
                             saya
@@ -486,7 +487,8 @@
                             terkejut karena perintah ini tiba-tiba datang setelah sekian tahun saya bermimpi. Saya pikir
                             lebih baik menunggu sebentar. Setelah itu, Nabi Muhammadï·º juga datang dalam mimpi saya dan
                             menyuruh saya untuk menyebarkan mimpi-mimpi yang telah ditunjukkan kepada saya dengan
-                            orang-orang untuk menyelamatkan Islam dan Pakistan. Pada bulan Desember 2014, Nabi Muhammadï·º
+                            orang-orang untuk menyelamatkan Islam dan Pakistan. Pada bulan Desember 2014, Nabi
+                            Muhammadï·º
                             memberi tahu saya dua kali dalam mimpi yang sama bahwa saya harus berbagi mimpi-mimpi yang
                             telah
                             ditunjukkan kepada saya kepada orang-orang untuk menyelamatkan Islam dan Pakistan.</p>
@@ -501,10 +503,13 @@
                             akan mempercayainya? Nabi Muhammadï·º mengatakan kepada saya dalam mimpi bahwa saya harus
                             menyebarkan mimpi-mimpi saya dengan orang lain. Sekarang, coba Anda katakan kepada saya,
                             jika
-                            nabi Muhammadï·º datang dalam mimpi Anda dan memerintahkan Anda untuk melakukan pekerjaan ini,
-                            apakah Anda akan menolaknya? Tidak ada seorang Muslim pun yang akan menolak nabi Muhammadï·º.
+                            nabi Muhammadï·º datang dalam mimpi Anda dan memerintahkan Anda untuk melakukan pekerjaan
+                            ini,
+                            apakah Anda akan menolaknya? Tidak ada seorang Muslim pun yang akan menolak nabi
+                            Muhammadï·º.
                             Semua Muslim pasti akan siap untuk mengorbankan hidup mereka, harta dan segalanya untuk nabi
-                            Muhammadï·º. Jadi, saya juga seperti itu, ketika nabi Muhammadï·º memberi perintah, maka saya
+                            Muhammadï·º. Jadi, saya juga seperti itu, ketika nabi Muhammadï·º memberi perintah, maka
+                            saya
                             katakan, bahkan saya akan memberikan hidup saya untuk beliau. Ini hanya mimpi lalu
                             komentar-komentar buruk datang. Saya juga merasa sedikit kecewa, saya merasa sangat
                             tertekan.
@@ -523,7 +528,8 @@
                         </svg>
                     </button>
                     <div class="faq-answer">
-                        <p>Dalam konteks ini, Anda dapat menyimpulkan mimpi-mimpi ini berasal dari Allahï·» dan bukan dari
+                        <p>Dalam konteks ini, Anda dapat menyimpulkan mimpi-mimpi ini berasal dari Allahï·» dan bukan
+                            dari
                             setan dari hal-hal berikut ini. Pertama-tama, yang paling saya ingat dalam mimpi saya adalah
                             untuk menjauhi syirik dan bentuk-bentuknya. Setan tidak mungkin mendatangi seseorang dalam
                             mimpi
@@ -542,7 +548,8 @@
                             An-Nas sebelum tidur agar setan menjauh dari saya. Yang kedua adalah tidak seorangpun dapat
                             berkata dusta seperti itu atas nama Allahï·» dan Rasul-Nya (Muhammadï·º) dan bahkan tidak
                             mungkin
-                            seseorang terus berbohong atas nama Allahï·» dan Rasul-Nya dan Allahï·» terus menolongnya.</p>
+                            seseorang terus berbohong atas nama Allahï·» dan Rasul-Nya dan Allahï·» terus menolongnya.
+                        </p>
                     </div>
                 </div>
 
@@ -558,11 +565,13 @@
                         <p>Allahï·» (Yang Maha Tinggi) adalah Tuhan yang memiliki kehendak, apakah Dia akan mengeluarkan
                             matahari dari timur atau dari barat. Tidak ada yang memberi kewenangan kecuali Dia. Dia
                             (Allahï·»
-                            Yang Maha Tinggi) memilih orang-orang untuk suatu tugas. Hanya Allahï·» yang lebih mengetahui
+                            Yang Maha Tinggi) memilih orang-orang untuk suatu tugas. Hanya Allahï·» yang lebih
+                            mengetahui
                             mengapa Dia memilih saya untuk pekerjaan ini. Mengapa Kepala Angkatan Darat tidak mendapat
                             mimpi-mimpi ini secara langsung? Ini hanyalah rencana Allahï·». Anda lihat, ketika Pakistan
                             didirikan, Bapak Bangsa (Muhammad Ali Jinnah) dipilih dengan rahmat-Nya untuk tugas ini.
-                            Kemudian Allahï·» menciptakan negara Pakistan melalui dirinya. Anda mungkin berpikir, kebaikan
+                            Kemudian Allahï·» menciptakan negara Pakistan melalui dirinya. Anda mungkin berpikir,
+                            kebaikan
                             seperti apa yang pernah saya lakukan atau berapa banyak perbuatan baik yang saya lakukan,
                             sehingga saya mendapat mimpi-mimpi ini sebagai balasannya. Dalam hal ini, ini semua adalah
                             kehendak Allahï·» dan rahmat-Nya bahwa saya mendapat mimpi-mimpi ini.</p>
@@ -595,7 +604,8 @@
                             dan tidak ada kemajuan yang dapat kita harapkan. Itu semua karena kita telah berhenti
                             melindungi
                             diri dari syirik dan bentuknya. Ketika Pakistan dibersihkan dari syirik dan bentuknya, maka
-                            Allahï·» akan membantu, rencana kita akan berhasil seperti yang diharapkan, dan Allahï·» akan
+                            Allahï·» akan membantu, rencana kita akan berhasil seperti yang diharapkan, dan Allahï·»
+                            akan
                             mulai
                             menghujani berkah dan rahmat-Nya.</p>
                         <p>Sebagaimana Nabi Ibrahim a.s menghancurkan berhala dan Nabi Muhammadï·º juga menghancurkan
@@ -604,7 +614,8 @@
                             saya,
                             saya bukanlah orang yang sangat religius; saya seperti yang ada dihadapan Anda. Lalu apa
                             yang
-                            datang kepada saya dalam mimpi saya, mengapa Allahï·» membantu saya, itu karena saya berusaha
+                            datang kepada saya dalam mimpi saya, mengapa Allahï·» membantu saya, itu karena saya
+                            berusaha
                             semampu saya untuk melindungi diri saya dari syirik dan bentuk-bentuknya. Jadi hanya karena
                             itu,
                             Allahï·» Yang Maha Kuasa membantu saya dan orang-orang yang mempercayai mimpi saya, belum
@@ -633,7 +644,8 @@
                             bahwa banyak negara di Timur Tengah hancur atau seperti tragedi Arab Spring (Protes di Arab
                             pada
                             tahun 2010) terjadi di tempat yang sama, mereka juga ingin melakukan sesuatu seperti itu di
-                            Pakistan. Namun kemudian Allahï·» membantu Pakistan dan seperti yang saya katakan, mimpi-mimpi
+                            Pakistan. Namun kemudian Allahï·» membantu Pakistan dan seperti yang saya katakan,
+                            mimpi-mimpi
                             ini
                             sampai kepada Kepala Angkatan Darat sehingga dia mendapatkan kesaksian, kemudian
                             lembaga-lembaga
@@ -656,9 +668,11 @@
                     <div class="faq-answer">
                         <p>Dalam Islam, mimpi memiliki arti yang sangat penting. Nabi Muhammadï·º bersabda bahwa;
                             â€˜Kenabian
-                            berakhir bersamanya, dan mata rantai wahyu pun berakhir, tetapi â€œKabar Baikâ€ (Mubasyirat)
+                            berakhir bersamanya, dan mata rantai wahyu pun berakhir, tetapi â€œKabar Baikâ€
+                            (Mubasyirat)
                             akan
-                            terus berlanjut. Para sahabat bertanya, apa yang dimaksud dengan â€œKabar Baikâ€ ini? dan Nabi
+                            terus berlanjut. Para sahabat bertanya, apa yang dimaksud dengan â€œKabar Baikâ€ ini? dan
+                            Nabi
                             Muhammadï·º menjawab bahwa itu adalah mimpi benar (nyata). Jika Anda telah mempelajari
                             sejarah,
                             Anda akan tahu bahwa Nuruddin Zangi juga bermimpi di mana ia diberi tahu tentang dua orang
@@ -679,8 +693,10 @@
                         </svg>
                     </button>
                     <div class="faq-answer">
-                        <p>Saya mengikuti agama Nabi Muhammadï·º dan Insya Allahï·» saya akan tetap teguh di atas jalan itu.
-                            Saya juga berdoa kepada Allahï·» agar saya meninggal dengan mengikuti agama Nabi Muhammadï·º.
+                        <p>Saya mengikuti agama Nabi Muhammadï·º dan Insya Allahï·» saya akan tetap teguh di atas jalan
+                            itu.
+                            Saya juga berdoa kepada Allahï·» agar saya meninggal dengan mengikuti agama Nabi
+                            Muhammadï·º.
                             Adapun
                             yang lainnya, saya adalah seorang Muslim Sunni. Saya tidak pernah benar-benar memahami
                             golongan
@@ -790,7 +806,8 @@
                             Itu
                             sama sekali tidak profesional. Postingan yang saya buat di Facebook dan video yang saya
                             unggah
-                            di YouTubeâ€”jika Anda membacanya dalam bahasa Inggris, akan tampak seperti ditulis oleh anak
+                            di YouTubeâ€”jika Anda membacanya dalam bahasa Inggris, akan tampak seperti ditulis oleh
+                            anak
                             kelas 5 atau 6 sekolah dasar. Jika sebuah agensi meluncurkan seseorang, mereka melakukannya
                             dengan cara yang profesional, memastikan tidak ada kekurangan atau celah, bahasa yang
                             profesional, dan profesional dalam segala aspek. Anda dapat melihat postingan pertama saya;
@@ -818,7 +835,8 @@
                             saya
                             sendiri. Namun ketika saya mulai menyebarkan mimpi-mimpi ini, saya sendirian saat itu.
                             Sekarang,
-                            dengan Rahmat Allahï·», Anda dapat melihat bahwa orang-orang dari seluruh dunia, bahkan banyak
+                            dengan Rahmat Allahï·», Anda dapat melihat bahwa orang-orang dari seluruh dunia, bahkan
+                            banyak
                             yang belum pernah saya temui, percaya pada mimpi-mimpi ini. Ada orang-orang yang belum
                             pernah
                             saya temui dan bahkan belum pernah saya ajak bicara. Namun mereka tidak hanya percaya pada
