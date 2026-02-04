@@ -414,7 +414,11 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function (results) {
-                        allNews = results.data;
+                        allNews = results.data.filter(item => {
+                            const key = Object.keys(item).find(k => k.toLowerCase() === 'judul' || k.toLowerCase() === 'title');
+                            const val = key ? item[key] : "";
+                            return val && val.trim().length > 0;
+                        });
                         const judulAsli = decodeURIComponent(judulDiUrl).trim();
 
                         // Helper lokal (karena getVal definisinya di tempat lain/bawah, kita buat local biar aman)
@@ -622,7 +626,7 @@
 
             let candidates = allNews.filter(item => {
                 const t = getVal(item, 'judul') || getVal(item, 'title');
-                return t !== currentTitle;
+                return t && t.trim().length > 0 && t !== currentTitle;
             });
 
             // 2. Shuffle
