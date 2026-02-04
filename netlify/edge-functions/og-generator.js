@@ -25,13 +25,52 @@ export default async (request, context) => {
             return context.next();
         }
 
-        const csvText = (await csvResponse.text()).replace(/^\uFEFF/, ''); // Strip BOM if present
+        const csvText = (await csvResponse.text()).replace(/^\uFEFF/, '');
 
-        // 3. Parsing CSV Sederhana
-        const rows = csvText.split("\n");
+        // 3. Parsing CSV Robust (Handle Newlines inside Quotes)
+        const parseCSV = (text) => {
+            const arr = [];
+            let quote = false;
+            let row = [];
+            let col = '';
+            for (let c = 0; c < text.length; c++) {
+                const char = text[c];
+                const next = text[c + 1];
+
+                if (char === '"') {
+                    if (quote && next === '"') { // Escaped quote
+                        col += '"';
+                        c++;
+                    } else {
+                        quote = !quote;
+                    }
+                } else if (char === ',' && !quote) {
+                    row.push(col);
+                    col = '';
+                } else if ((char === '\r' || char === '\n') && !quote) {
+                    // Handle CRLF or just LF or CR
+                    if (char === '\r' && next === '\n') c++;
+                    row.push(col);
+                    col = '';
+                    if (row.length > 0) arr.push(row);
+                    row = [];
+                } else {
+                    col += char;
+                }
+            }
+            if (col || row.length > 0) {
+                row.push(col);
+                arr.push(row);
+            }
+            return arr;
+        };
+
+        const rows = parseCSV(csvText);
         if (rows.length < 2) return context.next();
 
-        const headers = parseCSVRow(rows[0]);
+        const headers = rows[0];
+        // Helper parseCSVRow is no longer needed but we keep interface consistent
+        // We now iterate 'rows' directly which are already arrays.
 
         // Cari index kolom
         const titleIdx = headers.findIndex(h => h.trim().toLowerCase() === 'judul' || h.trim().toLowerCase() === 'title');
@@ -50,7 +89,7 @@ export default async (request, context) => {
         const targetSlug = normalize(titleParam);
 
         for (let i = 1; i < rows.length; i++) {
-            const rowData = parseCSVRow(rows[i]);
+            const rowData = rows[i]; // Sudah diparse jadi array
             // Pastikan baris memiliki data di kolom title
             if (!rowData[titleIdx]) continue;
 
@@ -135,23 +174,3 @@ export default async (request, context) => {
         return context.next();
     }
 };
-
-function parseCSVRow(row) {
-    const result = [];
-    let cell = "";
-    let inQuote = false;
-
-    for (let i = 0; i < row.length; i++) {
-        const char = row[i];
-        if (char === '"') {
-            inQuote = !inQuote;
-        } else if (char === ',' && !inQuote) {
-            result.push(cell.replace(/^"|"$/g, '').trim()); // Clean quotes
-            cell = "";
-        } else {
-            cell += char;
-        }
-    }
-    result.push(cell.replace(/^"|"$/g, '').trim());
-    return result;
-}
