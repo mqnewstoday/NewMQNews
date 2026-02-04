@@ -114,10 +114,11 @@ export default async (request, context) => {
 
         let updatedPage = pageToModify;
 
-        // Helper untuk replace meta tag dengan aman (case insensitive)
-        const replaceMeta = (property, content) => {
-            const regex = new RegExp(`<meta\\s+property=["']${property}["']\\s+content=["'].*?["']\\s*\\/?>`, 'i');
-            updatedPage = updatedPage.replace(regex, `<meta property="${property}" content="${content}">`);
+        // Helper untuk replace meta tag dengan aman (bisa property atau name)
+        const replaceMeta = (key, content) => {
+            const regex = new RegExp(`<meta\\s+(property|name)=["']${key}["']\\s+content=["'].*?["']\\s*\\/?>`, 'i');
+            const attr = key.startsWith('twitter:') ? 'name' : 'property';
+            updatedPage = updatedPage.replace(regex, `<meta ${attr}="${key}" content="${content}">`);
         };
 
         // A. Title Page
@@ -142,11 +143,10 @@ export default async (request, context) => {
         // Link Gambar
         replaceMeta('og:image', imgUrl);
 
-        // C. Twitter Card Tags (biasanya name="twitter:...")
-        updatedPage = updatedPage.replace(
-            /<meta\s+name=["']twitter:image["']\s+content=["'].*?["']\s*\/?>/i,
-            `<meta name="twitter:image" content="${imgUrl}">`
-        );
+        // C. Twitter Card Tags (Explicit Replacements)
+        replaceMeta('twitter:title', foundArticle.title);
+        replaceMeta('twitter:description', desc);
+        replaceMeta('twitter:image', imgUrl);
 
         updatedPage += "\n<!-- Processed by Netlify Edge Functions -->";
 
