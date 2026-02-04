@@ -146,6 +146,31 @@ body.dark-mode .sidebar a:hover {
     color: var(--primary) !important;
 }
 
+/* FIX SIDEBAR DARK MODE CONTRAST (USER REQUEST) */
+body.dark-mode .sidebar-dropdown-header {
+    color: var(--primary) !important;
+    /* Judul Menu jadi Terang/Emas/Merah */
+    border-bottom: 1px solid #222 !important;
+    background-color: #121212 !important;
+}
+
+body.dark-mode .sidebar-submenu {
+    background-color: #000000 !important;
+    /* Submenu jadi Hitam Pekat */
+}
+
+body.dark-mode .sidebar-submenu a {
+    color: #888888 !important;
+    /* Sub-item jadi abu kalem, gak silau */
+    background-color: #000000 !important;
+    border-bottom: 1px solid #111 !important;
+}
+
+body.dark-mode .sidebar-submenu a:hover {
+    color: #ffffff !important;
+    background-color: #1a1a1a !important;
+}
+
 /* 8. NAVIGASI MERAH JADI HITAM */
 body.dark-mode .category-nav {
     background: #121212 !important;
