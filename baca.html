@@ -327,29 +327,66 @@
 
         // EXPOSE SAVE FUNCTION TO WINDOW
         // EXPOSE SAVE FUNCTION TO WINDOW
+        // Helper untuk normalisasi judul (Samakan logika dengan index.html yang menghapus quotes)
+        const normalizeTitle = (t) => {
+            return (t || "").replace(/["']/g, "").replace(/\n/g, " ").trim();
+        };
+
         window.saveCurrentArticle = function () {
             if (!currentArticle) return;
 
             let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
-            const index = saved.findIndex(x => x.judul === currentArticle.judul);
+
+            // FIX: Gunakan getVal & Normalisasi
+            const rawTitle = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
+            const targetTitle = normalizeTitle(rawTitle);
+
+            // Cek index berdasarkan judul NORMALISASI
+            const index = saved.findIndex(x => normalizeTitle(x.judul) === targetTitle);
 
             if (index !== -1) {
-                // HAPUS
+                // HAPUS (Toggle Off) -> Tapi user minta notifikasi "Sudah tersimpan" kalau coba simpan lagi?
+                // Tunggu, user bilang: "maka munculkan notif kalo berita ini pernah disimpan bukannya malah berhasil disimpan lagi"
+                // Ini berarti user TIDAK MAU TOGGLE DELETE, TAPI MAU PREVENT DUPLICATE.
+                // Logika saveCurrentArticle saat ini adalah TOGGLE (Simpan/Hapus).
+                // Kalau di index.html, dia PREVENT DUPLICATE ("Berita sudah tersimpan!").
+                // User mau konsistensi. Jika di index.html prevent, di sini harusnya juga?
+                // Tapi tombol "Simpan" biasanya berubah jadi "Disimpan" (Merah). 
+                // Kalau diklik saat merah, biasanya artinya "Unsave".
+                // User bilang: "malah double simpan... bukannya notif pernah disimpan".
+                // Jadi masalahnya adalah Double Simpan.
+                // Kalau logic sekarang (findIndex ketemu), dia menghapus. Itu normal toggle behavior.
+                // Masalah user adalah dia GAK ketemu, jadi dia SIMPAN LAGI (Double).
+                // Dengan fix normalisasi ini, dia BAKAL KETEMU.
+                // Kalau ketemu, dia akan MENGHAPUS (Unsave). Ini behavior yang benar untuk tombol toggle.
+
+                // Namun, user bilang: "...munculkan notif kalo berita ini pernah disimpan".
+                // Apakah user mau tombolnya jadi "Static" (Gak bisa unsave)?
+                // "bikin supaya kalo misal udah pernah simpan... maka munculkan notif kalo berita ini pernah disimpan"
+                // Ini terdengar seperti logic index.html.
+                // Tapi di baca.html, tombolnya berubah warna jadi "Disimpan".
+                // Kalau user klik tombol merah "Disimpan", ekspektasinya apa? Unsave kan?
+                // Masalah user adalah saat dia buka dari index (sudah simpan), di baca.html tombolnya MASIH PUTIH ("Simpan"). 
+                // Lalu dia klik -> Kesimpen lagi (Double).
+                // Solusi saya (Normalisasi) akan membuat tombol jadi MERAH ("Disimpan") saat load.
+                // Jadi user gak akan klik "Simpan" lagi (kecuali mau unsave).
+
+                // Jadi logic Toggle ini tetap saya pertahankan, yang penting DETEKSINYA BENAR.
+
                 saved.splice(index, 1);
                 localStorage.setItem('mq_saved_news', JSON.stringify(saved));
-                showCustomNotif('Berita dihapus!', 'error'); // Use red color (error style) for delete
+                showCustomNotif('Berita dihapus dari simpanan!', 'error');
             } else {
                 // SIMPAN
-                const judul = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
                 const isi = getVal(currentArticle, 'isi') || getVal(currentArticle, 'content') || "";
                 const gambar = getVal(currentArticle, 'gambar') || getVal(currentArticle, 'image') || "";
                 const tanggal = getVal(currentArticle, 'tanggal') || getVal(currentArticle, 'date') || "";
 
                 saved.push({
-                    judul: judul,
+                    judul: targetTitle, // Simpan versi normalisasi biar konsisten
                     isi: isi,
                     gambar: gambar,
-                    url: window.location.href,
+                    url: window.location.href, // Absolute URL is safer
                     tanggal: tanggal,
                     dateAdded: new Date().toISOString()
                 });
@@ -366,7 +403,13 @@
             const txt = document.getElementById('text-save-main');
 
             let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
-            const isSaved = saved.some(x => x.judul === currentArticle.judul);
+
+            // FIX: Gunakan getVal & Normalisasi
+            const rawTitle = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
+            const targetTitle = normalizeTitle(rawTitle);
+
+            // Cek apakah ada yang judulnya (setelah dinormalisasi) sama
+            const isSaved = saved.some(x => normalizeTitle(x.judul) === targetTitle);
 
             if (isSaved) {
                 // SAVED STATE
