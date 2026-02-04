@@ -1208,7 +1208,7 @@
         var allNews = [];         // Semua berita mentah dari CSV
         let activeData = [];      // Berita yang sedang aktif (bisa hasil search/filter)
         let currentPage = 1;      // Halaman aktif sekarang
-        const BATCH_SIZE = 5;     // Jumlah berita per halaman (5 berita)
+        const BATCH_SIZE = 6;     // Jumlah berita per halaman (6 berita)
 
         // --- 1. INIT: AMBIL DATA ---
         // --- 1. INIT: AMBIL DATA ---
@@ -1555,13 +1555,13 @@
 
             return `
             <article class="news-card">
-                <div class="card-img-wrap">
+                <div class="card-img-wrap" style="aspect-ratio: 16/9 !important;">
                     <img src="${gambar}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400?text=Image+Error'" onclick="handleArticleClick('${targetUrl}')" style="cursor:pointer">
                 </div>
                 <div class="card-body">
                     <div class="card-category-badge">${kategori}</div>
                     <h3 class="card-title" onclick="handleArticleClick('${targetUrl}')" style="cursor: pointer">${judul}</h3>
-                    <p class="card-excerpt">${isi.substring(0, 200)}...</p>
+                    
                     <div class="card-footer">
                         <div style="display:flex; align-items:center; gap:10px;">
                             <span class="card-date">${tanggal}</span>
