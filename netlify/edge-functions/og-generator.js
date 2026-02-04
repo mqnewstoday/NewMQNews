@@ -91,8 +91,13 @@ export default async (request, context) => {
         let imgUrl = foundArticle.image;
         let debugMsg = "";
 
-        if (!imgUrl) {
-            debugMsg = "[DEBUG: Image EMPTY]";
+        if (imgIdx === -1) {
+            // Jika Header Gambar tidak ketemu, tampilkan apa saja header yang ada (limit length)
+            const headerDump = headers.map(h => h.trim()).join('|').substring(0, 30);
+            debugMsg = `[DEBUG: Header 'Gambar' Hilang. Found: ${headerDump}...]`;
+            imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
+        } else if (!imgUrl) {
+            debugMsg = `[DEBUG: Cell Empty (Col ${imgIdx})]`;
             imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
         } else if (imgUrl.length < 5) {
             debugMsg = `[DEBUG: URL Short]`;
