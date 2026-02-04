@@ -79,6 +79,54 @@
             flex-grow: 1;
             /* Pastikan dia menuhin sisa ruang */
         }
+
+        /* Custom Auth Buttons Sidebar */
+        .auth-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: 0.2s;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .auth-btn svg {
+            stroke-width: 2.5;
+        }
+
+        .auth-btn.primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+        }
+
+        .auth-btn.primary:hover {
+            opacity: 0.9;
+        }
+
+        .auth-btn.danger {
+            background: rgba(229, 57, 53, 0.1);
+            color: #e53935;
+            border: 1px solid rgba(229, 57, 53, 0.3);
+            margin-bottom: 5px;
+        }
+
+        .auth-btn.danger:hover {
+            background: rgba(229, 57, 53, 0.2);
+        }
+
+        .auth-bottom-wrapper {
+            padding: 15px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
     </style>
 </head>
 
@@ -193,14 +241,30 @@
         </div>
 
         <div class="auth-bottom-wrapper">
-            <a href="#" id="logout-btn" class="logout-link-small" style="display: none;">
-                KELUAR / LOGOUT &rsaquo;
+            <!-- Logout (Hidden by default) -->
+            <a href="#" id="logout-btn" class="auth-btn danger" style="display: none;" onclick="return false;">
+                <!-- Icon Pintu Keluar -->
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>KELUAR</span>
             </a>
-            <div class="auth-box-small" id="auth-box">
-                <a href="login.html" id="auth-link">
-                    <span id="auth-text">MASUK / DAFTAR</span>
-                </a>
-            </div>
+
+            <!-- Login/Profile -->
+            <a href="login.html" id="auth-link" class="auth-btn primary">
+                <!-- Icon Kartu ID (Inanimate) -->
+                <svg id="auth-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                    <line x1="7" y1="8" x2="17" y2="8"></line>
+                    <line x1="7" y1="12" x2="17" y2="12"></line>
+                    <line x1="7" y1="16" x2="17" y2="16"></line>
+                </svg>
+                <span id="auth-text">MASUK / DAFTAR</span>
+            </a>
         </div>
     </div>
 
