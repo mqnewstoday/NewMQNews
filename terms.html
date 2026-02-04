@@ -5,127 +5,245 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Syarat dan Ketentuan - MQ News Today</title>
+
+    <!-- FAVICON -->
+    <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
+    <link rel="shortcut icon" href="ALT_LogoMQN.png" type="image/png">
+    <link rel="apple-touch-icon" href="ALT_LogoMQN.png">
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
     <style>
+        /* =========================================
+           VARIABLES
+           ========================================= */
         :root {
-            --primary: #d32f2f;
-            --bg: #121212;
-            --text: #e0e0e0;
-            --card: #1e1e1e;
-            --border: #333;
+            --primary: #9d1b1b;
+            --gold: #c5a059;
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --header-text: #9d1b1b;
+            --border: #e2e8f0;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
+        /* DARK MODE */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-body: #121212;
+                --bg-card: #1e1e1e;
+                --text-main: #e2e8f0;
+                --text-muted: #94a3b8;
+                --border: #333333;
+                --header-text: #ffffff;
+            }
+        }
+
+        body.dark-mode {
+            --primary: #ff6b6b;
+            --gold: #ffd700;
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #333333;
+            --header-text: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* HEADER STYLE */
+        .profile-header-nav {
+            background: var(--bg-card);
+            padding: 0 15px;
+            height: 70px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--header-text);
+            font-weight: 700;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-icon-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .header-icon-btn svg {
+            width: 26px;
+            height: 26px;
+            stroke: var(--primary);
+            stroke-width: 2px;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* CONTENT */
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
         }
 
-        header {
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 20px;
-            margin-bottom: 40px;
-        }
-
-        h1 {
-            color: var(--primary);
-            font-size: 2rem;
-            margin-bottom: 10px;
+        .policy-card {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid var(--primary);
         }
 
         h2 {
-            color: #fff;
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+            margin-bottom: 15px;
             margin-top: 30px;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+        }
+
+        h1.page-title {
+            display: none;
         }
 
         p,
+        ul {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
         li {
-            color: #ccc;
-        }
-
-        a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .back-btn {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        .back-btn:hover {
-            color: #fff;
+            margin-left: 20px;
+            margin-bottom: 8px;
         }
 
         .last-updated {
             font-size: 0.8rem;
-            color: #666;
+            color: var(--text-muted);
             font-style: italic;
+            margin-bottom: 20px;
+            display: block;
         }
     </style>
 </head>
 
 <body>
 
+    <!-- HEADER -->
+    <header class="profile-header-nav">
+        <div onclick="goBack()" class="header-icon-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+        </div>
+        <h1 class="header-title">SYARAT & KETENTUAN</h1>
+        <a href="settings.html" class="header-icon-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+            </svg>
+        </a>
+    </header>
+
     <div class="container">
-        <a href="index.html" class="back-btn">&larr; Kembali ke Beranda</a>
+        <div class="policy-card">
+            <span class="last-updated">Terakhir diperbarui: 5 Februari 2026</span>
 
-        <header>
-            <h1>Syarat dan Ketentuan</h1>
-            <div class="last-updated">Terakhir diperbarui: 5 Februari 2026</div>
-        </header>
+            <section>
+                <h2>1. Pendahuluan</h2>
+                <p>Selamat datang di MQ News Today. Dengan mengakses situs web ini, Anda dianggap telah menerima syarat
+                    dan ketentuan ini. Jangan melanjutkan penggunaan MQ News Today jika Anda tidak setuju untuk
+                    mengikuti semua syarat dan ketentuan yang tercantum di halaman ini.</p>
 
-        <section>
-            <h2>1. Pendahuluan</h2>
-            <p>Selamat datang di MQ News Today. Dengan mengakses situs web ini, Anda dianggap telah menerima syarat dan
-                ketentuan ini. Jangan melanjutkan penggunaan MQ News Today jika Anda tidak setuju untuk mengikuti semua
-                syarat dan ketentuan yang tercantum di halaman ini.</p>
+                <h2>2. Lisensi</h2>
+                <p>Kecuali dinyatakan lain, MQ News Today dan/atau pemberi lisesinya memiliki hak kekayaan intelektual
+                    untuk semua materi di MQ News Today. Semua hak kekayaan intelektual dilindungi undang-undang. Anda
+                    dapat mengakses ini dari MQ News Today untuk penggunaan pribadi Anda sendiri dengan batasan yang
+                    diatur dalam syarat dan ketentuan ini.</p>
 
-            <h2>2. Lisensi</h2>
-            <p>Kecuali dinyatakan lain, MQ News Today dan/atau pemberi lisesinya memiliki hak kekayaan intelektual untuk
-                semua materi di MQ News Today. Semua hak kekayaan intelektual dilindungi undang-undang. Anda dapat
-                mengakses ini dari MQ News Today untuk penggunaan pribadi Anda sendiri dengan batasan yang diatur dalam
-                syarat dan ketentuan ini.</p>
+                <h2>3. Penggunaan yang Dilarang</h2>
+                <p>Anda dilarang untuk:</p>
+                <ul>
 
-            <h2>3. Penggunaan yang Dilarang</h2>
-            <p>Anda dilarang untuk:</p>
-            <ul>
-                <li>Mempublikasikan ulang materi dari MQ News Today tanpa izin.</li>
-                <li>Menjual, menyewakan, atau mensublisensikan materi dari MQ News Today.</li>
-                <li>Mereproduksi, menggandakan, atau menyalin materi dari MQ News Today untuk tujuan komersial.</li>
-                <li>Menggunakan situs ini dengan cara apa pun yang dapat merusak situs web atau menghalangi akses
-                    pengguna lain.</li>
-            </ul>
+                    <li>Menjual, menyewakan, atau mensublisensikan materi dari MQ News Today.</li>
+                    <li>Situs ini hanya untuk tujuan informasi dan edukasi, dilarang menggunakannya untuk tujuan
+                        tindakan ilegal.</li>
+                    <li>Menggunakan situs ini dengan cara apa pun yang dapat merusak situs web atau menghalangi akses
+                        pengguna lain.</li>
+                </ul>
 
-            <h2>4. Konten Pengguna (Komentar/Tanggapan)</h2>
-            <p>Bagian tertentu dari situs web ini mungkin menawarkan kesempatan bagi pengguna untuk memposting dan
-                bertukar pendapat. MQ News Today tidak memfilter, mengedit, menerbitkan, atau meninjau Komentar sebelum
-                kehadirannya di situs web. Komentar tidak mencerminkan pandangan dan pendapat MQ News Today, agen,
-                dan/atau afiliasinya.</p>
+                <h2>4. Konten Pengguna (Komentar/Tanggapan)</h2>
+                <p>Bagian tertentu dari situs web ini mungkin menawarkan kesempatan bagi pengguna untuk memposting dan
+                    bertukar pendapat. MQ News Today tidak memfilter, mengedit, menerbitkan, atau meninjau Komentar
+                    sebelum kehadirannya di situs web. Komentar tidak mencerminkan pandangan dan pendapat MQ News Today,
+                    agen, dan/atau afiliasinya.</p>
 
-            <h2>5. Perubahan Layanan</h2>
-            <p>Kami berhak untuk menarik atau mengubah layanan yang kami sediakan di situs web kami tanpa pemberitahuan.
-                Kami tidak akan bertanggung jawab jika karena alasan apa pun situs web kami tidak tersedia kapan saja
-                atau untuk periode apa pun.</p>
+                <h2>5. Perubahan Layanan</h2>
+                <p>Kami berhak untuk menarik atau mengubah layanan yang kami sediakan di situs web kami tanpa
+                    pemberitahuan. Kami tidak akan bertanggung jawab jika karena alasan apa pun situs web kami tidak
+                    tersedia kapan saja atau untuk periode apa pun.</p>
 
-            <h2>6. Hukum yang Mengatur</h2>
-            <p>Syarat dan ketentuan ini diatur oleh dan ditafsirkan sesuai dengan hukum Negara Indonesia dan Anda tunduk
-                pada yurisdiksi non-eksklusif pengadilan negara bagian atau federal yang berlokasi di Indonesia untuk
-                penyelesaian sengketa apa pun.</p>
-        </section>
+                <h2>6. Hukum yang Mengatur</h2>
+                <p>Syarat dan ketentuan ini diatur oleh dan ditafsirkan sesuai dengan hukum Negara Indonesia dan Anda
+                    tunduk pada yurisdiksi non-eksklusif pengadilan negara bagian atau federal yang berlokasi di
+                    Indonesia untuk penyelesaian sengketa apa pun.</p>
+            </section>
+        </div>
     </div>
 
+    <script>
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
 </body>
 
 </html>
