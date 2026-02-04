@@ -32,17 +32,7 @@
             --border: #e2e8f0;
         }
 
-        /* DARK MODE - detected simply via body class or system preference if implemented later */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-body: #121212;
-                --bg-card: #1e1e1e;
-                --text-main: #e2e8f0;
-                --text-muted: #94a3b8;
-                --border: #333333;
-                --header-text: #ffffff;
-            }
-        }
+
 
         body.dark-mode {
             --primary: #ff6b6b;
@@ -169,6 +159,15 @@
 </head>
 
 <body>
+    <script src="theme-init.js"></script>
+    <script>
+        // Fallback or explicit check if theme-init misses
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    </script>
 
     <!-- HEADER -->
     <header class="profile-header-nav">
