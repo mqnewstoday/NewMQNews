@@ -108,7 +108,8 @@ export default async (request, context) => {
         }
 
         // Jika gambar masih tidak muncul di WA, deskripsi ini akan memberitahu alasannya
-        const desc = `Baca selengkapnya tentang ${foundArticle.title}. ${foundArticle.date} ${debugMsg}`;
+        // TARUH DEBUG DI DEPAN BIAR GAK KEPOTONG
+        const desc = `${debugMsg} Baca selengkapnya tentang ${foundArticle.title}. ${foundArticle.date}`;
         replaceMeta('og:description', desc);
 
         // Link Gambar
