@@ -92,14 +92,19 @@ export default async (request, context) => {
         let debugMsg = "";
 
         if (!imgUrl) {
-            debugMsg = "[DEBUG: Image Column Empty]";
+            debugMsg = "[DEBUG: Image EMPTY]";
             imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
         } else if (imgUrl.length < 5) {
-            debugMsg = `[DEBUG: Url too short '${imgUrl}']`;
+            debugMsg = `[DEBUG: URL Short]`;
             imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
         } else {
             // Validasi sederhana URL
-            if (!imgUrl.startsWith('http')) debugMsg = "[DEBUG: URL not http]";
+            if (!imgUrl.startsWith('http')) {
+                debugMsg = "[DEBUG: Not HTTP]";
+            } else {
+                // SUCCESS case: Print start of URL to confirm
+                debugMsg = `[DEBUG: IMG OK (${imgUrl.substring(0, 20)}...)]`;
+            }
         }
 
         // Jika gambar masih tidak muncul di WA, deskripsi ini akan memberitahu alasannya
