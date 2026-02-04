@@ -126,34 +126,17 @@ export default async (request, context) => {
         // B. Open Graph Tags
         replaceMeta('og:title', foundArticle.title);
 
-        // DEBUG MODE: Tambahkan info status gambar ke deskripsi agar terlihat di WA
         let imgUrl = foundArticle.image;
-        let debugMsg = "";
 
-        if (imgIdx === -1) {
-            // Jika Header Gambar tidak ketemu, tampilkan apa saja header yang ada (limit length)
-            const headerDump = headers.map(h => h.trim()).join('|').substring(0, 30);
-            debugMsg = `[DEBUG: Header 'Gambar' Hilang. Found: ${headerDump}...]`;
-            imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
-        } else if (!imgUrl) {
-            debugMsg = `[DEBUG: Cell Empty (Col ${imgIdx})]`;
+        // Validasi URL Gambar
+        if (imgIdx === -1 || !imgUrl) {
             imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
         } else if (imgUrl.length < 5) {
-            debugMsg = `[DEBUG: URL Short]`;
             imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
-        } else {
-            // Validasi sederhana URL
-            if (!imgUrl.startsWith('http')) {
-                debugMsg = "[DEBUG: Not HTTP]";
-            } else {
-                // SUCCESS case: Print start of URL to confirm
-                debugMsg = `[DEBUG: IMG OK (${imgUrl.substring(0, 20)}...)]`;
-            }
         }
 
-        // Jika gambar masih tidak muncul di WA, deskripsi ini akan memberitahu alasannya
-        // TARUH DEBUG DI DEPAN BIAR GAK KEPOTONG
-        const desc = `${debugMsg} Baca selengkapnya tentang ${foundArticle.title}. ${foundArticle.date}`;
+        // Build Deskripsi Tanpa Debug Message (Clean Version)
+        const desc = `Baca selengkapnya tentang ${foundArticle.title}. ${foundArticle.date}`;
         replaceMeta('og:description', desc);
 
         // Link Gambar
