@@ -1182,7 +1182,11 @@
                     skipEmptyLines: true,
                     complete: function (results) {
                         try {
-                            allNews = results.data;
+                            allNews = results.data.filter(item => {
+                                const t = getVal(item, 'judul') || getVal(item, 'title');
+                                return t && t.trim().length > 0;
+                            });
+
                             if (!allNews || allNews.length === 0) {
                                 throw new Error("Data CSV Kosong / Format Salah");
                             }
@@ -1244,11 +1248,12 @@
             let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
             const isSaved = (t) => saved.some(x => x.judul === t);
 
-            // Ambil 3 Berita Terbaru
-            let source = allNews.slice().reverse();
+            // Ambil 3 Berita Terbaru (Filter yang judulnya ada)
+            let source = allNews.slice().reverse().filter(item => {
+                const j = getVal(item, 'judul') || getVal(item, 'title');
+                return j && j.trim().length > 0;
+            });
 
-            // Filter yang punya gambar valid (Opsional, tapi diminta "Pilihan Editor")
-            // Kita ambil saja 3 teratas agar konsisten dengan "Berita Terkini"
             const selected = source.slice(0, 3);
 
             selected.forEach(item => {
@@ -1435,7 +1440,7 @@
 
             // Tombol Prev
             if (page > 1) {
-                buttonsHTML += `<button onclick="goToPage(${page - 1})" class="page-btn" aria-label="Previous">â€¹</button>`;
+                buttonsHTML += `<button onclick="goToPage(${page - 1})" class="page-btn" aria-label="Previous">&lsaquo;</button>`;
             }
 
             // Logic Smart Pagination (biar gak kepanjangan kalau halaman banyak)
@@ -1454,7 +1459,7 @@
 
             // Tombol Next
             if (page < totalPages) {
-                buttonsHTML += `<button onclick="goToPage(${page + 1})" class="page-btn" aria-label="Next">â€º</button>`;
+                buttonsHTML += `<button onclick="goToPage(${page + 1})" class="page-btn" aria-label="Next">&rsaquo;</button>`;
             }
 
             const wrapper = `
