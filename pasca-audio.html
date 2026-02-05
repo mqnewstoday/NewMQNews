@@ -394,9 +394,9 @@
                     const norm = {};
                     Object.keys(item).forEach(k => norm[k.toLowerCase().trim()] = item[k]);
                     return {
-                        judul: norm['judul'] || norm['title'] || norm['name'],
-                        link_audio: norm['link_audio'] || norm['audio'] || norm['url'],
-                        gambar: norm['gambar'] || norm['image'] || norm['thumb'],
+                        judul: norm['judul'] || norm['title'],
+                        link_audio: norm['embed_link'] || norm['link_audio'] || norm['audio'] || norm['url'],
+                        gambar: norm['thumbnail'] || norm['gambar'] || norm['image'],
                         deskripsi: norm['deskripsi'] || norm['desc']
                     };
                 }).filter(t => t.judul && t.link_audio); // Filter invalid rows
