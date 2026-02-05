@@ -244,70 +244,6 @@
                 opacity: 0.6;
             }
         }
-
-        /* FOOTER GLOBAL MINI PLAYER (Sticky) */
-        #global-mini-player {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border);
-            padding: 10px 20px;
-            display: none;
-            /* Hidden by default */
-            align-items: center;
-            justify-content: space-between;
-            z-index: 999;
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
-            animation: slideUp 0.3s ease;
-        }
-
-        body.dark-mode #global-mini-player {
-            background: rgba(30, 30, 30, 0.95);
-        }
-
-        .g-mini-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .g-mini-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 6px;
-            object-fit: cover;
-        }
-
-        .g-mini-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .g-mini-title {
-            font-weight: bold;
-            font-size: 0.9rem;
-            color: var(--primary);
-        }
-
-        .g-mini-sub {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
     </style>
 </head>
 
@@ -349,30 +285,6 @@
         </div>
     </div>
 
-    <!-- GLOBAL MINI PLAYER (Sticky Footer if state exists) -->
-    <div id="global-mini-player">
-        <div class="g-mini-info" onclick="goToPlayer()">
-            <img id="gm-img" class="g-mini-img" src="" alt="">
-            <div class="g-mini-text">
-                <span id="gm-title" class="g-mini-title">Judul Audio</span>
-                <span class="g-mini-sub">Sedang Memutar...</span>
-            </div>
-        </div>
-        <div style="display:flex; gap:10px;">
-            <!-- Just a button to open player -->
-            <button onclick="goToPlayer()"
-                style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">
-                BUKA
-            </button>
-            <button onclick="closeGlobalPlayer()" style="background:none; border:none; cursor:pointer;">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--text-muted)" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-    </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1549454662&single=true&output=csv";
@@ -387,7 +299,6 @@
             } catch (e) {
                 container.innerHTML = `<div style="text-align:center; padding:20px;">Gagal memuat data. Periksa koneksi internet.</div>`;
             }
-            checkGlobalState();
         }
 
         function renderList(data) {
@@ -455,30 +366,6 @@
             if (count === 0) {
                 container.innerHTML = `<div style="text-align:center;">Format CSV tidak sesuai (Kolom 'Judul' tidak ditemukan).</div>`;
             }
-        }
-
-        // --- GLOBAL PLAYER LOGIC (Mimic Persistence) ---
-        function checkGlobalState() {
-            const saved = localStorage.getItem('mq_audio_state');
-            if (saved) {
-                const state = JSON.parse(saved);
-                // If it was playing recently (last 1 hour)
-                if (state.currentTrack && (Date.now() - state.lastUpdate < 3600000)) {
-                    document.getElementById('global-mini-player').style.display = 'flex';
-                    document.getElementById('gm-title').innerText = state.currentTrack.judul;
-                    document.getElementById('gm-img').src = state.currentTrack.gambar || 'ALT_LogoMQN.png';
-                }
-            }
-        }
-
-        function goToPlayer() {
-            // Go to player page, it will auto-resume based on localStorage
-            window.location.href = 'pasca-audio.html';
-        }
-
-        function closeGlobalPlayer() {
-            document.getElementById('global-mini-player').style.display = 'none';
-            // Optionally clear state? No, simply hide UI.
         }
 
         init();

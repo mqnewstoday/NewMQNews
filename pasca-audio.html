@@ -127,12 +127,41 @@
             overflow: hidden;
             border: 4px solid var(--bg-card);
             margin-bottom: 30px;
+            background: var(--input-bg);
+            /* Placeholder bg */
+        }
+
+        /* Skeleton Animation Class */
+        .skeleton-loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        body.dark-mode .skeleton-loading {
+            background: linear-gradient(90deg, #2d2d2d 25%, #3d3d3d 50%, #2d2d2d 75%);
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         .art-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .art-box img.loaded {
+            opacity: 1;
         }
 
         .track-info-large {
@@ -150,9 +179,23 @@
             line-height: 1.3;
         }
 
+        .large-title.skeleton-text {
+            height: 2rem;
+            width: 80%;
+            margin: 0 auto 10px;
+            border-radius: 4px;
+        }
+
         .large-desc {
             font-size: 0.9rem;
             color: var(--text-muted);
+        }
+
+        .large-desc.skeleton-text {
+            height: 1rem;
+            width: 60%;
+            margin: 0 auto;
+            border-radius: 4px;
         }
 
         /* CONTROLS AREA */
@@ -258,7 +301,7 @@
                 <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
         </a>
-        <div class="header-title">NOW PLAYING</div>
+        <div class="header-title">PLAYER</div>
         <a href="settings.html" class="header-icon-btn">
             <svg viewBox="0 0 24 24">
                 <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
@@ -270,12 +313,13 @@
 
     <div id="player-wrapper">
         <div class="player-art-area">
-            <div class="art-box">
-                <img id="full-img" src="" alt="Album Art">
+            <div class="art-box skeleton-loading">
+                <img id="full-img" src="" alt="Album Art"
+                    onload="this.classList.add('loaded'); this.parentElement.classList.remove('skeleton-loading')">
             </div>
             <div class="track-info-large">
-                <h2 id="full-title" class="large-title">Memuat...</h2>
-                <p id="full-desc" class="large-desc">Mohon tunggu</p>
+                <h2 id="full-title" class="large-title skeleton-loading skeleton-text"></h2>
+                <p id="full-desc" class="large-desc skeleton-loading skeleton-text"></p>
             </div>
         </div>
 
@@ -342,7 +386,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1549454662&single=true&output=csv";
-        const STORAGE_KEY = 'mq_audio_state';
+        // Removed persistent storage key
+        // const STORAGE_KEY = 'mq_audio_state'; 
 
         let allTracks = [];
         let currentTrack = null;
@@ -354,33 +399,24 @@
 
             // Get ID from URL
             const params = new URLSearchParams(window.location.search);
-            const titleParam = params.get('bg'); // Using 'bg' to obscure a bit or just 'title'
+            const titleParam = params.get('bg');
 
             if (titleParam) {
-                // Find track by exact title or similar
                 const found = allTracks.find(t => t.judul === decodeURIComponent(titleParam));
                 if (found) {
                     loadTrack(found);
-                    // Check if we should resume from local state if it matches
-                    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-                    if (saved.currentTrack && saved.currentTrack.judul === found.judul) {
-                        audio.currentTime = saved.currentTime || 0;
-                    }
-                    togglePlay(); // Auto play if opened directly
+                    // togglePlay(); // Optional: Autoplay or User MUST click play? 
+                    // To be safe and "aesthetic" let's not auto-blast audio, let user click play.
+                    // Or usually users expect playback on click from previous page.
+                    // Let's autoplay since they clicked "Play" or the card.
+                    togglePlay();
                 }
             } else {
-                // No param? Load last played or first
-                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-                if (saved.currentTrack) {
-                    loadTrack(saved.currentTrack);
-                    audio.currentTime = saved.currentTime || 0;
-                } else if (allTracks.length > 0) {
+                // No param? Just load first track without playing
+                if (allTracks.length > 0) {
                     loadTrack(allTracks[0]);
                 }
             }
-
-            // PERMANENT SYNC
-            setInterval(syncState, 1000);
         });
 
         async function loadData() {
@@ -389,7 +425,7 @@
                 const text = await res.text();
                 const result = Papa.parse(text, { header: true, skipEmptyLines: true });
 
-                // NORMALIZE DATA ONCE (Updated Fuzzy Matching)
+                // NORMALIZE DATA
                 allTracks = result.data.map(item => {
                     let title = "", audioUrl = "", thumb = "", desc = "";
 
@@ -404,7 +440,6 @@
                         else if ((k.includes('deskripsi') || k.includes('desc') || k.includes('ket')) && !desc) desc = v;
                     });
 
-                    // Fix Google Drive Link
                     if (thumb && thumb.includes('drive.google.com') && thumb.includes('/file/d/')) {
                         const matches = thumb.match(/\/d\/(.+?)\//);
                         if (matches && matches[1]) {
@@ -418,9 +453,8 @@
                         gambar: thumb,
                         deskripsi: desc
                     };
-                }).filter(t => t.judul && t.link_audio); // Filter invalid rows
+                }).filter(t => t.judul && t.link_audio);
 
-                console.log("Player Data Loaded:", allTracks);
             } catch (e) {
                 console.error("Failed to load CSV", e);
             }
@@ -428,16 +462,27 @@
 
         function loadTrack(track) {
             currentTrack = track;
-            document.getElementById('full-title').innerText = track.judul;
-            document.getElementById('full-desc').innerText = track.deskripsi || "Audio MQ News";
-            document.getElementById('full-img').src = track.gambar || 'ALT_LogoMQN.png';
 
-            // Avoid reloading if src is same (prevent glitch)
+            // Remove skeleton text classes
+            const titleEl = document.getElementById('full-title');
+            const descEl = document.getElementById('full-desc');
+
+            titleEl.classList.remove('skeleton-loading', 'skeleton-text');
+            descEl.classList.remove('skeleton-loading', 'skeleton-text');
+
+            titleEl.innerText = track.judul;
+            descEl.innerText = track.deskripsi || "Audio MQ News";
+
+            // Image loading handled by onload in HTML. reset loaded class if src changes to show skeleton again?
+            const img = document.getElementById('full-img');
+            img.classList.remove('loaded');
+            img.parentElement.classList.add('skeleton-loading');
+            img.src = track.gambar || 'ALT_LogoMQN.png';
+
             if (audio.src !== track.link_audio) {
                 audio.src = track.link_audio;
             }
 
-            // Update UI
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: track.judul,
@@ -457,7 +502,6 @@
                 document.getElementById('play-icon').style.display = 'block';
                 document.getElementById('pause-icon').style.display = 'none';
             }
-            syncState();
         }
 
         function seekRelative(sec) {
@@ -476,9 +520,6 @@
             seekSlider.value = percent;
             document.getElementById('curr-time').innerText = formatTime(audio.currentTime);
             document.getElementById('total-time').innerText = formatTime(audio.duration);
-
-            // Sync minimal state for other pages
-            /* We don't want to spam localStorage too much, but for "seamless" feel */
         });
 
         audio.addEventListener('play', () => {
@@ -491,16 +532,7 @@
             document.getElementById('pause-icon').style.display = 'none';
         });
 
-        function syncState() {
-            if (!currentTrack) return;
-            const state = {
-                currentTrack: currentTrack,
-                currentTime: audio.currentTime,
-                isPlaying: !audio.paused,
-                lastUpdate: Date.now()
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        }
+        // Removed syncState function
 
         function formatTime(s) {
             if (isNaN(s)) return "0:00";
