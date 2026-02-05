@@ -53,7 +53,6 @@
             height: 100vh;
             width: 100vw;
             overflow: hidden;
-            /* Player page logic */
             display: flex;
             flex-direction: column;
         }
@@ -117,24 +116,44 @@
             overflow-y: auto;
         }
 
+        /* FIXED 1:1 RATIO ARTWORK */
         .art-box {
-            /* 1:1 Aspect Ratio logic */
-            width: 70vw;
-            max-width: 350px;
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            /* Limit max size */
+            margin: 0 auto 30px;
+            /* Center horizontally */
+
+            /* FORCE SQUARE RATIO STRICTLY */
             aspect-ratio: 1 / 1;
-            height: auto;
-            /* Let aspect-ratio decide */
 
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             border: 4px solid var(--bg-card);
-            margin-bottom: 30px;
             background: var(--input-bg);
-            /* Placeholder bg */
+            flex-shrink: 0;
+            /* Prevent shrinking */
         }
 
-        /* Skeleton Animation Class */
+        .art-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            /* Lock image to box */
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .art-box img.loaded {
+            opacity: 1;
+        }
+
+        /* Skeleton Animation */
         .skeleton-loading {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
@@ -155,22 +174,11 @@
             }
         }
 
-        .art-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .art-box img.loaded {
-            opacity: 1;
-        }
-
         .track-info-large {
             text-align: center;
             width: 100%;
             max-width: 400px;
+            margin-top: 10px;
         }
 
         .large-title {
@@ -274,7 +282,6 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            /* Reduced gap to fit 3 buttons */
             flex-wrap: wrap;
         }
 
@@ -282,12 +289,9 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            /* Reduced gap */
             font-size: 0.75rem;
-            /* Smaller Font */
             font-weight: bold;
             padding: 8px 15px;
-            /* Smaller Padding */
             border-radius: 50px;
             border: 1px solid var(--border);
             cursor: pointer;
@@ -301,12 +305,14 @@
             height: 16px;
         }
 
-        /* Custom Notif Box */
+        /* CUSTOM NOTIF: TOP POSITION AS REQUESTED */
         .custom-notif {
             position: fixed;
-            bottom: 30px;
+            top: 20px;
+            /* From TOP now */
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
+            transform: translateX(-50%) translateY(-100px);
+            /* Start hidden above */
             background: #333;
             color: white;
             padding: 12px 24px;
@@ -327,17 +333,16 @@
 
         .custom-notif.active {
             transform: translateX(-50%) translateY(0);
+            /* Slide into view */
             opacity: 1;
         }
 
         .custom-notif.success {
             background: #10b981;
-            /* Green */
         }
 
         .custom-notif.error {
             background: #ef4444;
-            /* Red */
         }
     </style>
 </head>
@@ -453,8 +458,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1549454662&single=true&output=csv";
-        // Key Storage untuk Audio
-        const STORAGE_SAVE_KEY = 'mq_saved_audio';
+
+        // CORRECT KEY MATCHING SIMPAN.HTML
+        const STORAGE_SAVE_KEY = 'bookmarks_audio';
 
         let allTracks = [];
         let currentTrack = null;
@@ -536,22 +542,18 @@
 
             const img = document.getElementById('full-img');
             img.classList.remove('loaded');
-            img.parentElement.classList.add('skeleton-loading');
+
+            // Set source first
             img.src = track.gambar || 'ALT_LogoMQN.png';
+
+            // Re-apply skeleton until load
+            img.parentElement.classList.add('skeleton-loading');
 
             if (audio.src !== track.link_audio) {
                 audio.src = track.link_audio;
             }
 
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: track.judul,
-                    artist: "Muhammad Qasim",
-                    artwork: [{ src: track.gambar || 'ALT_LogoMQN.png', sizes: '512x512', type: 'image/png' }]
-                });
-            }
-
-            // Update Save Button State
+            // Update Save Button State immediately after loading track
             updateSaveButtonUI();
         }
 
@@ -611,8 +613,6 @@
             link.click();
         }
 
-        // --- NEW FUNCTIONS ---
-
         function copyLink() {
             const link = window.location.href;
             navigator.clipboard.writeText(link).then(() => {
@@ -625,22 +625,26 @@
         function toggleSave() {
             if (!currentTrack) return;
 
+            // KEY MUST MATCH SIMPAN.HTML 'bookmarks_audio'
             let saved = JSON.parse(localStorage.getItem(STORAGE_SAVE_KEY) || '[]');
-            const index = saved.findIndex(s => s.judul === currentTrack.judul);
+
+            // DATA STRUCTURE MUST MATCH SIMPAN.HTML: title, desc, thumb
+            // Check existence by title
+            const index = saved.findIndex(s => s.title === currentTrack.judul);
 
             if (index !== -1) {
-                // Hapus
+                // DELETE
                 saved.splice(index, 1);
                 localStorage.setItem(STORAGE_SAVE_KEY, JSON.stringify(saved));
                 showCustomNotif("Audio dihapus dari simpanan.", 'error');
             } else {
-                // Simpan
+                // SAVE
+                // Important: simpan.html expects 'title', 'desc', 'thumb'
                 saved.push({
-                    judul: currentTrack.judul,
-                    gambar: currentTrack.gambar,
-                    link_audio: currentTrack.link_audio,
-                    deskripsi: currentTrack.deskripsi,
-                    url: window.location.href, // Simpan URL halaman ini
+                    title: currentTrack.judul,
+                    desc: currentTrack.deskripsi,
+                    thumb: currentTrack.gambar,
+                    audio: currentTrack.link_audio, // saving extra data just in case
                     dateAdded: new Date().toISOString()
                 });
                 localStorage.setItem(STORAGE_SAVE_KEY, JSON.stringify(saved));
@@ -653,14 +657,16 @@
             if (!currentTrack) return;
 
             const saved = JSON.parse(localStorage.getItem(STORAGE_SAVE_KEY) || '[]');
-            const isSaved = saved.some(s => s.judul === currentTrack.judul);
+
+            // Check by title (because we saved it as 'title', but currentTrack has 'judul')
+            const isSaved = saved.some(s => s.title === currentTrack.judul);
 
             const btn = document.getElementById('btn-save');
             const icon = document.getElementById('icon-save');
             const text = document.getElementById('text-save');
 
             if (isSaved) {
-                btn.style.background = "#e53935"; // Merah
+                btn.style.background = "#e53935"; // Red
                 btn.style.color = "white";
                 btn.style.borderColor = "#e53935";
 
