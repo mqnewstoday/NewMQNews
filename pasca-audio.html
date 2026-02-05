@@ -389,14 +389,23 @@
                 const text = await res.text();
                 const result = Papa.parse(text, { header: true, skipEmptyLines: true });
 
-                // NORMALIZE DATA ONCE
+                // NORMALIZE DATA ONCE (Updated Fuzzy Matching)
                 allTracks = result.data.map(item => {
-                    const norm = {};
-                    Object.keys(item).forEach(k => norm[k.toLowerCase().trim()] = item[k]);
+                    let title = "", audioUrl = "", thumb = "", desc = "";
 
-                    let thumb = norm['thumbnail'] || norm['gambar'] || norm['image'] || "";
+                    Object.keys(item).forEach(key => {
+                        const k = key.toLowerCase();
+                        const v = item[key];
+                        if (!v) return;
+
+                        if ((k.includes('judul') || k.includes('title')) && !title) title = v;
+                        else if ((k.includes('embed') || k.includes('audio') || k.includes('link')) && !audioUrl) audioUrl = v;
+                        else if ((k.includes('thumb') || k.includes('gambar') || k.includes('img') || k.includes('foto')) && !thumb) thumb = v;
+                        else if ((k.includes('deskripsi') || k.includes('desc') || k.includes('ket')) && !desc) desc = v;
+                    });
+
                     // Fix Google Drive Link
-                    if (thumb.includes('drive.google.com') && thumb.includes('/file/d/')) {
+                    if (thumb && thumb.includes('drive.google.com') && thumb.includes('/file/d/')) {
                         const matches = thumb.match(/\/d\/(.+?)\//);
                         if (matches && matches[1]) {
                             thumb = `https://drive.google.com/uc?export=view&id=${matches[1]}`;
@@ -404,10 +413,10 @@
                     }
 
                     return {
-                        judul: norm['judul'] || norm['title'],
-                        link_audio: norm['embed_link'] || norm['link_audio'] || norm['audio'] || norm['url'],
+                        judul: title,
+                        link_audio: audioUrl,
                         gambar: thumb,
-                        deskripsi: norm['deskripsi'] || norm['desc']
+                        deskripsi: desc
                     };
                 }).filter(t => t.judul && t.link_audio); // Filter invalid rows
 

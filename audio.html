@@ -401,14 +401,19 @@
 
             let count = 0;
             data.forEach(item => {
-                // NORMALIZE KEYS (Handle Case Sensitivity: Judul vs judul)
-                const norm = {};
+                // FUZZY MATCHING STRATEGY ("Sapu Jagat")
+                let title = "", thumbUrl = "", desc = "";
+
                 Object.keys(item).forEach(key => {
-                    norm[key.toLowerCase().trim()] = item[key];
+                    const k = key.toLowerCase();
+                    const v = item[key];
+                    if (!v) return;
+
+                    if ((k.includes('judul') || k.includes('title')) && !title) title = v;
+                    else if ((k.includes('thumb') || k.includes('gambar') || k.includes('img'))) thumbUrl = v;
+                    else if ((k.includes('deskripsi') || k.includes('desc')) && !desc) desc = v;
                 });
 
-                // Check Mandatory Fields
-                const title = norm['judul'] || norm['title'] || norm['name'];
                 if (!title) return;
 
                 count++;
@@ -416,16 +421,25 @@
                 const card = document.createElement('div');
                 card.className = 'audio-card';
                 card.onclick = () => {
-                    // Navigate to Player Page
                     window.location.href = `pasca-audio.html?bg=${encodeURIComponent(title)}`;
                 };
 
-                const thumb = (norm['gambar'] && norm['gambar'].trim() !== "") ? norm['gambar'] : 'ALT_LogoMQN.png';
-                const desc = norm['deskripsi'] || norm['desc'] || 'Audio Muhammad Qasim';
+                // Fix Google Drive Links if detected
+                if (thumbUrl && thumbUrl.includes('drive.google.com') && thumbUrl.includes('/file/d/')) {
+                    const matches = thumbUrl.match(/\/d\/(.+?)\//);
+                    if (matches && matches[1]) {
+                        thumbUrl = `https://drive.google.com/uc?export=view&id=${matches[1]}`;
+                    }
+                }
+
+                const finalThumb = (thumbUrl && thumbUrl.trim() !== "") ? thumbUrl : 'ALT_LogoMQN.png';
+                if (!desc) desc = 'Audio Muhammad Qasim';
+
+                console.log(`[Card] Title: ${title} | Thumb: ${finalThumb}`);
 
                 card.innerHTML = `
                     <div class="card-thumb">
-                        <img src="${thumb}" loading="lazy" alt="Thumb" onerror="this.src='ALT_LogoMQN.png'">
+                        <img src="${finalThumb}" loading="lazy" alt="Thumb" onerror="this.onerror=null;this.src='ALT_LogoMQN.png';">
                         <div class="thumb-overlay">
                             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
