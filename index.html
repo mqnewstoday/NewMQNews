@@ -3,157 +3,81 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- Meta Tags standard and SEO -->
-    <meta name="description"
-        content="Portal Berita & Informasi Terpercaya - Menyajikan berita terkini, geopolitik, eskatologi, mimpi Muhammad Qasim, dan informasi penting lainnya.">
-    <meta name="keywords"
-        content="berita terkini, geopolitik, eskatologi, muhammad qasim, mimpi qasim, akhir zaman, berita islam, news today">
-    <meta name="author" content="MQ News Today">
-
-    <!-- Open Graph for Social Media -->
-    <meta property="og:title" content="MQ News Today - Truth & Clarity">
-    <meta property="og:description"
-        content="Portal Berita Terpercaya seputar Geopolitik, Eskatologi, dan Berita Dunia Islam.">
-    <meta property="og:image" content="https://mqnewstoday.com/ALT_LogoMQN.png">
-    <meta property="og:url" content="https://mqnewstoday.com">
-    <meta property="og:type" content="website">
-
-    <title>MQ News Today - Truth & Clarity</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
     <link rel="shortcut icon" href="ALT_LogoMQN.png" type="image/png">
+    <title>MQ News Today</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Merriweather:wght@300;400;700&display=swap"
         rel="stylesheet">
-
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Theme CSS -->
     <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="LogoMQN144.png" sizes="any">
 
+    <meta name="theme-color" content="#9d1b1b">
+
+    <link rel="apple-touch-icon" href="ALT_LogoMQN.png">
+
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="MQ News Today - Truth & Clarity">
+    <meta property="og:description" content="Berita dan Analisis Mendalam seputar Geopolitik, Eskatologi, dan Islam.">
+    <meta property="og:image" content="ALT_LogoMQN.png">
+    <meta property="og:url" content="https://mqnewstoday.my.id">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MQ News Today">
+
+    <!-- Schema for Google Site Name -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "MQ News Today",
+      "alternateName": ["MQNewsToday", "MQ News"],
+      "url": "https://mqnewstoday.my.id"
+    }
+    </script>
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5035531780463708"
+        crossorigin="anonymous"></script>
     <style>
-        /* CSS RESET & VARS di theme.css */
-
-        /* Override / Custom Styles Specific to Index */
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            padding-top: 60px;
-            /* Space for Header */
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        /* FIX SETTINGS ICON STYLE (Override .sidebar a inheritance) */
+        .sidebar .settings-icon-btn {
+            padding: 8px !important;
+            /* Padding nyaman untuk touch */
+            border: none !important;
+            width: auto !important;
+            justify-content: center !important;
+            margin-right: 5px !important;
+            /* Jarak kecil ke Search Bar */
+            background: rgba(255, 255, 255, 0.05);
+            /* Sedikit bg biar rapi */
+            border-radius: 50%;
+            height: 40px;
+            width: 40px;
         }
 
-        /* --- SKELETON LOADING --- */
-        .skeleton {
-            background: #e0e0e0;
-            border-radius: 4px;
-            animation: pulse 1.5s infinite ease-in-out;
+        .sidebar .settings-icon-btn::after {
+            display: none !important;
+            /* Hapus panah kuning warisan */
         }
 
-        .dark-mode .skeleton {
-            background: #2d2d2d;
+        .sidebar .settings-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            padding-left: 8px !important;
+            /* Cegah efek geser */
+            transform: rotate(45deg);
+            /* Efek putar dikit */
         }
 
-        @keyframes pulse {
-            0% {
-                opacity: 0.6;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0.6;
-            }
-        }
-
-        /* --- CARD STYLES --- */
-        /* See specific styles below in JS rendering or global overrides */
-
-        .card-img-wrap {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-            background: #eee;
-        }
-
-        .card-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .news-card:hover .card-img {
-            transform: scale(1.05);
-            /* Zoom Effect */
-        }
-
-        .card-category-float {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            z-index: 5;
-            background: var(--primary);
-            color: #fff;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-            letter-spacing: 0.5px;
-        }
-
-        .card-body {
-            padding: 12px !important;
-            /* Reduced Padding */
-            display: flex;
-            flex-direction: column;
+        /* Search Box Reset Margin */
+        .sidebar-header .search-box {
+            margin: 0 !important;
             flex-grow: 1;
-        }
-
-        .card-title {
-            font-size: 0.95rem !important;
-            font-weight: 700;
-            line-height: 1.4;
-            margin: 0 0 10px 0 !important;
-            /* TRUNCATE MULTI LINE */
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            line-clamp: 3;
-            /* Max 3 Baris */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .card-footer {
-            margin-top: auto;
-            /* Push to bottom */
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-date {
-            font-size: 0.75rem !important;
-            color: #888;
-        }
-
-        .read-btn {
-            font-size: 0.75rem !important;
-            padding: 4px 10px !important;
+            /* Pastikan dia menuhin sisa ruang */
         }
 
         /* Custom Auth Buttons Sidebar */
@@ -214,9 +138,71 @@
             overflow: hidden;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            /* Pastikan dia menuhin sisa ruang */
+        }
+
+        .card-img-wrap {
+            position: relative;
+            /* Anchor for floating badge */
+            width: 100%;
+            /* Aspect Ratio handled inline 16/9 */
+        }
+
+        .card-category-float {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 5;
+            background: var(--primary);
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            letter-spacing: 0.5px;
+        }
+
+        .card-body {
+            padding: 12px !important;
+            /* Reduced Padding */
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 0.95rem !important;
+            font-weight: 700;
+            line-height: 1.4;
+            margin: 0 0 10px 0 !important;
+            /* TRUNCATE MULTI LINE */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            /* Max 3 Baris */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer {
+            margin-top: auto;
+            /* Push to bottom */
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-date {
+            font-size: 0.75rem !important;
+            color: #888;
+        }
+
+        .read-btn {
+            font-size: 0.75rem !important;
+            padding: 4px 10px !important;
         }
     </style>
 </head>
@@ -327,9 +313,6 @@
                     <a href="https://chat.whatsapp.com/Cb6nVjlAtj06JRdeFzRpKw" target="_blank">BERGABUNG KE GRUP</a>
                     <a href="https://wa.me/6285705856030" target="_blank">KONTAK KAMI</a>
                     <a href="tentang-kami.html">TENTANG KAMI</a>
-                    <a href="privacy-policy.html">KEBIJAKAN PRIVASI</a>
-                    <a href="disclaimer.html">DISCLAIMER</a>
-                    <a href="terms.html">SYARAT & KETENTUAN</a>
                 </div>
             </div>
         </div>
@@ -541,58 +524,879 @@
                 <span id="current-category-label">Berita Terkini</span>
                 <div class="section-line"></div>
             </div>
-
-            <!-- Loader -->
-            <div id="loader" class="loader"></div>
-
-            <!-- News Grid -->
             <div id="news-container" class="news-grid">
-                <!-- Data akan dirender di sini via JS -->
+                <div class="loader">Mengunduh data berita...</div>
+            </div>
+            <!-- <div id="news-container" class="news-grid"></div> -->
+
+            <!-- PILIHAN EDITOR SECTION (NEW) -->
+            <div class="editor-section">
+                <div class="section-label">
+                    <span>PILIHAN EDITOR</span>
+                    <div class="section-line"></div>
+                </div>
+                <div id="editor-picks-container" class="editor-list">
+                    <div class="loader" style="color:var(--text-muted);">Memuat Pilihan Editor...</div>
+                </div>
             </div>
 
+
+            <!-- MUBASYIRAT SECTION (NEW) -->
+            <div class="mubasyirat-section">
+                <div class="section-label">
+                    <span>MUBASYIRAT</span>
+                    <div class="section-line"></div>
+                </div>
+                <div class="dream-scroll-container" id="dream-container-scroll">
+                    <div class="loader" style="width:100%; text-align:center; padding:20px;">Memuat Mubasyirat...
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    // LINK CSV RESMI DARI USER
+                    const MUBASYIRAT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=703095600&single=true&output=csv";
+
+                    function renderDreams(data) {
+                        const container = document.getElementById('dream-container-scroll');
+                        container.innerHTML = "";
+
+                        // LIMIT 5 ITEM
+                        const limited = data.slice(0, 5);
+
+                        limited.forEach(item => {
+                            // Support berbagai variasi key safe
+                            const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
+
+                            const title = getK(item, 'judul') || "Tanpa Judul";
+                            // Fallback thumbnail jika kosong
+                            const thumb = getK(item, 'thumbnail') || "https://placehold.co/450x800?text=No+Image";
+                            const date = getK(item, 'tanggal') || ""; // Tanggal mungkin kosong di CSV baru
+
+                            const html = `
+                        <div class="dream-card" onclick="window.location.href='mimpi.html?title=' + encodeURIComponent('${title}')">
+                            <div class="dream-thumb">
+                                <img src="${thumb}" loading="lazy" onerror="this.src='https://placehold.co/450x800?text=Error'">
+                                <div class="dream-overlay"></div>
+                                <div class="play-overlay">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                            </div>
+                            <div class="dream-info">
+                                <div class="dream-title">${title}</div>
+                                ${date ? `<div class="dream-date">
+                                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    ${date}
+                                </div>` : ''}
+                            </div>
+                        </div>
+                        `;
+                            container.insertAdjacentHTML('beforeend', html);
+                        });
+
+                        // TAMBAH KARTU VIEW ALL
+                        const viewAllHtml = `
+                            <div class="view-all-card" onclick="window.location.href='pramimpi.html'">
+                                <svg class="view-all-icon" viewBox="0 0 24 24">
+                                    <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <span class="view-all-text">LIHAT<br>SEMUA</span>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', viewAllHtml);
+                    }
+
+                    if (window.Papa) {
+                        Papa.parse(MUBASYIRAT_CSV_URL, {
+                            download: true, header: true, skipEmptyLines: true,
+                            complete: (res) => {
+                                if (res.data && res.data.length > 0) renderDreams(res.data);
+                                else container.innerHTML = "<div style='text-align:center;width:100%'>Belum ada data mimpi.</div>";
+                            },
+                            error: () => document.getElementById('dream-container-scroll').innerHTML = "<div style='text-align:center;width:100%'>Gagal memuat data.</div>"
+                        });
+                    }
+                });
+            </script>
+
+            <!-- FAQ SECTION (RELOCATED INSIDE MAIN) -->
+            <section class="faq-section" style="margin-top: 10px;">
+                <h2
+                    style="text-align: center; font-family: 'Cinzel', serif; font-size: 1.5rem; margin-bottom: 30px; color: var(--text-main); line-height: 1.4;">
+                    PERTANYAAN YANG PALING SERING DIAJUKAN KEPADA MUHAMMAD QASIM
+                </h2>
+
+                <div class="faq-container">
+                    <!-- FAQ 1 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Kapan Anda mulai bermimpi seperti ini?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Dengan menyebut nama Allah SWT, Yang Maha Pengasih lagi Maha Penyayang. Mimpi pertama
+                                yang
+                                saya
+                                alami dalam hidup saya datang ketika saya berusia sekitar 5 tahun. Setelah itu, ketika
+                                saya
+                                berusia sekitar 13 tahun baru saya bermimpi lagi. Kemudian, ketika saya berusia 27
+                                tahun,
+                                saya
+                                mulai terus menerus bermimpi dan rangkaian mimpi ini terus berlanjut sampai saat ini.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Apakah Anda menyebarkan mimpi-mimpi ini hanya untuk mendapatkan popularitas?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Saya telah mengalami mimpi-mimpi ini terus menerus sejak usia saya 17 tahun. Sebelumnya,
+                                saya
+                                tidak pernah menceritakan mimpi-mimpi ini kepada siapapun. Jika saya memiliki
+                                kepentingan
+                                atau
+                                mencari keuntungan pribadi, seperti ingin menjadi terkenal atau lainnya, maka seseorang
+                                biasanya
+                                melakukan hal-hal seperti itu di masa mudanya. Ketika mereka ingin terkenal dan ingin
+                                didengar
+                                orang, mereka melakukan hal-hal seperti itu di usia muda. Jika saya menyebarkan
+                                mimpi-mimpi
+                                ini
+                                untuk alasan pribadi, saya akan melakukannya ketika saya masih muda. Kini, seiring
+                                bertambahnya
+                                usia, berbagi mimpi-mimpi ini tidak lagi berarti bagi saya, dan saya juga tidak mendapat
+                                banyak
+                                manfaat dari menyebarkan mimpi-mimpi ini.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 3 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Apa alasan Anda Menyebarkan mimpi-mimpi ini?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Pada tanggal 20 April, atau mungkin 22 April 2014, saya bermimpi untuk pertama kalinya,
+                                di
+                                mana
+                                saya diperintahkan oleh Allah SWT untuk berbagi mimpi-mimpi saya kepada orang lain. Saat
+                                itu
+                                saya
+                                terkejut karena perintah ini tiba-tiba datang setelah sekian tahun saya bermimpi. Saya
+                                pikir
+                                lebih baik menunggu sebentar. Setelah itu, Nabi Muhammad SAW juga datang dalam mimpi
+                                saya
+                                dan
+                                menyuruh saya untuk menyebarkan mimpi-mimpi yang telah ditunjukkan kepada saya dengan
+                                orang-orang untuk menyelamatkan Islam dan Pakistan. Pada bulan Desember 2014, Nabi
+                                Muhammad SAW
+                                memberi tahu saya dua kali dalam mimpi yang sama bahwa saya harus berbagi mimpi-mimpi
+                                yang
+                                telah
+                                ditunjukkan kepada saya kepada orang-orang untuk menyelamatkan Islam dan Pakistan.</p>
+                            <p>Ketika saya mendapat mimpi ini, saya tidak tahu mengapa mimpi-mimpi ini datang kepada
+                                saya?
+                                Apa
+                                maksud dan tujuan mimpi-mimpi itu datang kepada saya dan setelah bertahun-tahun, saya
+                                diperintahkan untuk menyebarkan mimpi-mimpi ini dengan semua orang, jadi pada saat itu
+                                saya
+                                tidak mengetahuinya. Itu adalah hal yang mengejutkan bagi saya juga. Saya seperti tidak
+                                percaya,
+                                bahkan anggota keluarga saya sendiri tidak percaya pada mimpi-mimpi ini, bagaimana orang
+                                lain
+                                akan mempercayainya? Nabi Muhammad SAW mengatakan kepada saya dalam mimpi bahwa saya
+                                harus
+                                menyebarkan mimpi-mimpi saya dengan orang lain. Sekarang, coba Anda katakan kepada saya,
+                                jika
+                                nabi Muhammad SAW datang dalam mimpi Anda dan memerintahkan Anda untuk melakukan
+                                pekerjaan
+                                ini,
+                                apakah Anda akan menolaknya? Tidak ada seorang Muslim pun yang akan menolak nabi
+                                Muhammad SAW.
+                                Semua Muslim pasti akan siap untuk mengorbankan hidup mereka, harta dan segalanya untuk
+                                nabi
+                                Muhammad SAW. Jadi, saya juga seperti itu, ketika nabi Muhammad SAW memberi perintah,
+                                maka
+                                saya
+                                katakan, bahkan saya akan memberikan hidup saya untuk beliau. Ini hanya mimpi lalu
+                                komentar-komentar buruk datang. Saya juga merasa sedikit kecewa, saya merasa sangat
+                                tertekan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 4 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Mimpi bisa juga datang dari setan. Bagaimana kami tahu bahwa mimpi Anda berasal dari
+                                Allah SWT
+                                dan bukan dari setan?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Dalam konteks ini, Anda dapat menyimpulkan mimpi-mimpi ini berasal dari Allah SWT dan
+                                bukan
+                                dari
+                                setan dari hal-hal berikut ini. Pertama-tama, yang paling saya ingat dalam mimpi saya
+                                adalah
+                                untuk menjauhi syirik dan bentuk-bentuknya. Setan tidak mungkin mendatangi seseorang
+                                dalam
+                                mimpi
+                                dan menyuruhnya untuk tidak melakukan kesyirikan. Dan beriman kepada Keesaan Allah SWT
+                                (Yang
+                                Maha
+                                Agung). Dan kedua, bahwa saya memuji dan memuliakan Allah SWT pada pagi dan sore hari.
+                                Jadi
+                                setan
+                                tidak mungkin memberi tahu seseorang dalam mimpi bahwa Anda harus memuji dan memuliakan
+                                Allah SWT
+                                setiap pagi dan sore hari. Dan kemudian hal ketiga yang dikatakan kepada saya adalah,
+                                untuk
+                                mengirimkan shalawat dan salam kepada nabi Muhammad SAW. Dia yang merupakan setan, tidak
+                                mungkin
+                                memberitahu salah satu dari ketiga perbuatan ini kepada siapapun dalam mimpi. Saya juga
+                                pernah
+                                bermimpi pada tahun 2008 bahwa saya harus membaca Surah Al-Ikhlas, Surah Al-Falaq dan
+                                Surah
+                                An-Nas sebelum tidur agar setan menjauh dari saya. Yang kedua adalah tidak seorangpun
+                                dapat
+                                berkata dusta seperti itu atas nama Allah SWT dan Rasul-Nya (Muhammad SAW) dan bahkan
+                                tidak
+                                mungkin
+                                seseorang terus berbohong atas nama Allah SWT dan Rasul-Nya dan Allah SWT terus
+                                menolongnya.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 5 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Mengapa hanya Anda yang melihat mimpi-mimpi ini?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Allah SWT (Yang Maha Tinggi) adalah Tuhan yang memiliki kehendak, apakah Dia akan
+                                mengeluarkan
+                                matahari dari timur atau dari barat. Tidak ada yang memberi kewenangan kecuali Dia. Dia
+                                (Allah SWT
+                                Yang Maha Tinggi) memilih orang-orang untuk suatu tugas. Hanya Allah SWT yang lebih
+                                mengetahui
+                                mengapa Dia memilih saya untuk pekerjaan ini. Mengapa Kepala Angkatan Darat tidak
+                                mendapat
+                                mimpi-mimpi ini secara langsung? Ini hanyalah rencana Allah SWT. Anda lihat, ketika
+                                Pakistan
+                                didirikan, Bapak Bangsa (Muhammad Ali Jinnah) dipilih dengan rahmat-Nya untuk tugas ini.
+                                Kemudian Allah SWT menciptakan negara Pakistan melalui dirinya. Anda mungkin berpikir,
+                                kebaikan
+                                seperti apa yang pernah saya lakukan atau berapa banyak perbuatan baik yang saya
+                                lakukan,
+                                sehingga saya mendapat mimpi-mimpi ini sebagai balasannya. Dalam hal ini, ini semua
+                                adalah
+                                kehendak Allah SWT dan rahmat-Nya bahwa saya mendapat mimpi-mimpi ini.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 6 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Apa yang akan terjadi pada Pakistan di masa depan? Apakah kita akan maju atau tidak?
+                                (Berdasarkan mimpi)</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Dengar, apa yang telah ditunjukkan kepada saya dalam mimpi saya adalah, sampai negara ini
+                                dibersihkan dari syirik dan bentuknya, pertolongan Allah SWT tidak akan datang. Sekarang
+                                Anda
+                                katakan kepada saya, apa arti kata Pakistan? Itu tempat yang suci. Tempat yang murni,
+                                berarti
+                                tempat dimana tidak ada kesyirikan. Allah SWT tidak akan membantu Pakistan, sampai
+                                syirik
+                                dan
+                                bentuknya disingkirkan dari negara ini. Sekarang, apa yang telah terjadi, sudah 27
+                                tahun,
+                                banyak
+                                pemimpin politik telah datang (memerintah), darurat militer pernah diberlakukan, kita
+                                melihat
+                                berbagai bentuk pemerintahan, dan mereka semua berusaha membawa kemajuan dan kemakmuran
+                                untuk
+                                Pakistan, tetapi kemakmuran itu tidak pernah terwujud. Semua rencana yang dibuat tidak
+                                berhasil
+                                dan tidak ada kemajuan yang dapat kita harapkan. Itu semua karena kita telah berhenti
+                                melindungi
+                                diri dari syirik dan bentuknya. Ketika Pakistan dibersihkan dari syirik dan bentuknya,
+                                maka
+                                Allah SWT akan membantu, rencana kita akan berhasil seperti yang diharapkan, dan Allah
+                                SWT
+                                akan
+                                mulai
+                                menghujani berkah dan rahmat-Nya.</p>
+                            <p>Sebagaimana Nabi Ibrahim a.s menghancurkan berhala dan Nabi Muhammad SAW juga
+                                menghancurkan
+                                berhala
+                                saat menaklukkan Mekkah dan membersihkan tempat itu dari kesyirikan. Sekarang Anda lihat
+                                saya,
+                                saya bukanlah orang yang sangat religius; saya seperti yang ada dihadapan Anda. Lalu apa
+                                yang
+                                datang kepada saya dalam mimpi saya, mengapa Allah SWT membantu saya, itu karena saya
+                                berusaha
+                                semampu saya untuk melindungi diri saya dari syirik dan bentuk-bentuknya. Jadi hanya
+                                karena
+                                itu,
+                                Allah SWT Yang Maha Kuasa membantu saya dan orang-orang yang mempercayai mimpi saya,
+                                belum
+                                pernah
+                                saya temui sebelumnya, saya bahkan tidak mengenal mereka, mereka mempercayai mimpi-mimpi
+                                ini,
+                                dari seluruh dunia dan mereka menerjemahkannya ke dalam bahasa mereka sendiri dan mereka
+                                menyebarkannya. Jika saya melakukannya, itu tidak mungkin tanpa bantuan Allah SWT.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 7 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Kapan mimpi Anda akan terwujud?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Dalam mimpi saya, tanda pertama dari mimpi saya adalah, akan ada upaya untuk membuat
+                                Pakistan
+                                tidak stabil dan membaginya menjadi beberapa bagian. Semoga Allah SWT tidak membiarkan
+                                hal
+                                seperti
+                                itu terjadi di Pakistan. Namun, mereka yang menjadi musuh Pakistan, seperti yang Anda
+                                katakan
+                                bahwa banyak negara di Timur Tengah hancur atau seperti tragedi Arab Spring (Protes di
+                                Arab
+                                pada
+                                tahun 2010) terjadi di tempat yang sama, mereka juga ingin melakukan sesuatu seperti itu
+                                di
+                                Pakistan. Namun kemudian Allah SWT membantu Pakistan dan seperti yang saya katakan,
+                                mimpi-mimpi
+                                ini
+                                sampai kepada Kepala Angkatan Darat sehingga dia mendapatkan kesaksian, kemudian
+                                lembaga-lembaga
+                                Pakistan membuat rencana sesuai dengan mimpi untuk menyelamatkan Pakistan. Kemudian
+                                Allah
+                                SWT
+                                membantu Pakistan, dan kita tidak hanya berhasil menyelamatkan Pakistan tetapi Pakistan
+                                maju
+                                dengan sangat cepat. Kemudian semua perbendaharaan Allah SWT dan kedamaian serta
+                                berkah-Nya
+                                mulai
+                                berdatangan di Pakistan.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 8 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Menurut Anda, apa arti mimpi?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Dalam Islam, mimpi memiliki arti yang sangat penting. Nabi Muhammad SAW bersabda bahwa;
+                                â€˜Kenabian
+                                berakhir bersamanya, dan mata rantai wahyu pun berakhir, tetapi â€œKabar Baikâ€
+                                (Mubasyirat)
+                                akan
+                                terus berlanjut. Para sahabat bertanya, apa yang dimaksud dengan â€œKabar Baikâ€ ini?
+                                dan
+                                Nabi
+                                Muhammad SAW menjawab bahwa itu adalah mimpi benar (nyata). Jika Anda telah mempelajari
+                                sejarah,
+                                Anda akan tahu bahwa Nuruddin Zangi juga bermimpi di mana ia diberi tahu tentang dua
+                                orang
+                                yang
+                                bermaksud untuk menggali makam Nabi Muhammad SAW. Ia kemudian mencari di seluruh Madinah
+                                dan
+                                menemukan orang-orang itu lalu memenggal kepala mereka. Ditemukan bahwa mereka memang
+                                hampir
+                                mencapai makam beliau yang diberkahi. Dari sini, Anda dapat memahami pentingnya mimpi
+                                dalam
+                                Islam.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 9 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Anda termasuk dari golongan (Mazhab) yang mana?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Saya mengikuti agama Nabi Muhammad SAW dan Insya Allah SWT saya akan tetap teguh di atas
+                                jalan
+                                itu.
+                                Saya juga berdoa kepada Allah SWT agar saya meninggal dengan mengikuti agama Nabi
+                                Muhammad SAW.
+                                Adapun
+                                yang lainnya, saya adalah seorang Muslim Sunni. Saya tidak pernah benar-benar memahami
+                                golongan
+                                (Mazhab) ini. Dalam mimpi saya, saya telah diperlihatkan bahwa jalan Nabi Muhammad SAW
+                                adalah
+                                jalan
+                                terbaik. Saya mencoba mengikuti jalan itu, dan seluruh upaya saya adalah untuk mencapai
+                                Allah SWT,
+                                Tuhan seluruh alam dengan mengikuti jalan itu.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 10 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Pernahkah Anda menyampaikan mimpi-mimpi ini kepada tokoh penting?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Saya sendiri pernah saya menyampaikan mimpi-mimpi saya melalui email ke berbagai
+                                organisasi
+                                pemerintah dan situs web militer. Kemudian, pada bulan Desember s/d Januari 2015, saya
+                                mulai
+                                menyebarkan mimpi-mimpi ini secara terbuka di internet dan setelah itu, orang-orang
+                                mulai
+                                mempercayainya. Jika Anda perhatikan, Anda akan melihat bahwa saya tidak memiliki
+                                kepentingan
+                                pribadi dalam hal ini. Jika saya memiliki kepentingan 1% saja, saya akan menyampaikan
+                                secara
+                                langsung di YouTube dengan orang-orang seperti Saudara Waqas dan Imran; saya akan
+                                melakukannya
+                                sendiri.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 11 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Apa kata ulama tentang mimpi Anda?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Saya dan teman-teman saya mengirim email ke banyak ulama terkenal di media sosial,
+                                menyampaikan
+                                mimpi-mimpi ini kepada mereka, tetapi saya tidak menerima tanggapan apapun dari mereka.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 12 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Apakah akan ada perang lagi antara Pakistan dan India di masa depan?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Perang yang sangat dahsyat akan dikenakan atas Pakistan, yang dikenal sebagai
+                                â€œGhazwatul
+                                Hindâ€
+                                yang dinubuatkan dalam hadist. Dalam perang ini, Pakistan akan berada di satu pihak
+                                sendirian,
+                                dan musuh-musuh Islam dan musuh Pakistan akan berada di pihak yang lain. Dalam perang
+                                ini,
+                                Allah SWT akan membantu Pakistan dengan sekitar 3000 jet tempur hitam, dan Pakistan akan
+                                memenangkan perang ini dengan pertolongan Allah SWT. Setelah itu, Pakistan akan bergerak
+                                ke
+                                Timur
+                                Tengah, mengalahkan negara-negara adidaya seperti Rusia dan Amerika. Dan tidak hanya
+                                itu,
+                                Pakistan juga akan merebut kembali wilayah-wilayah yang hilang dari umat Islam di Timur
+                                Tengah
+                                dan Turki. Pakistan kemudian akan membangun kembali wilayah-wilayah ini dan menyebarkan
+                                Islam
+                                sejati Nabi Muhammad SAW.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 13 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Menurut mimpi Anda, apa hal terburuk yang akan terjadi, dan apa kabar baiknya?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Hal terburuk adalah kehancuran umat Islam, di mana mereka terus menderita, yaitu yang
+                                disebut
+                                Perang Dunia III. Perang itu dimulai di Timur Tengah, dan bahkan Muslim akan kehilangan
+                                Turki.
+                                Banyak wilayah di Timur Tengah yang hilang, dan saya telah melihat pemandangan yang
+                                sangat
+                                menyedihkan akibat perang ini dalam mimpi saya. Kabar baiknya adalah, Allah SWT membantu
+                                Pakistan.
+                                Dalam mimpi saya, saya telah melihat tiga benteng, salah satunya adalah Pakistan. Allah
+                                SWT
+                                membantu Pakistan dan akhirnya Pakistan menguasai seluruh dunia, yang kemudian dipenuhi
+                                dengan
+                                kedamaian.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 14 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Apakah Anda diorbitkan oleh sebuah Agensi?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Anda dapat melihat postingan pertama saya di internet; itu masih ada di sana. Dengan
+                                melihat
+                                postingan itu, Anda dapat dengan mudah mengetahui bahwa saya bukan orang yang cukup
+                                pintar.
+                                Itu
+                                sama sekali tidak profesional. Postingan yang saya buat di Facebook dan video yang saya
+                                unggah
+                                di YouTubeâ€”jika Anda membacanya dalam bahasa Inggris, akan tampak seperti ditulis oleh
+                                anak
+                                kelas 5 atau 6 sekolah dasar. Jika sebuah agensi meluncurkan seseorang, mereka
+                                melakukannya
+                                dengan cara yang profesional, memastikan tidak ada kekurangan atau celah, bahasa yang
+                                profesional, dan profesional dalam segala aspek. Anda dapat melihat postingan pertama
+                                saya;
+                                seluruh riwayatnya tersedia di internet. Anda dapat memeriksanya sendiri. Hal penting
+                                lainnya
+                                adalah, jika sebuah agensi ingin mengorbitkan seseorang, mereka akan memilih orang yang
+                                terkenal, seseorang yang sudah memiliki pengikut. Mengapa mereka memilih seseorang
+                                seperti
+                                saya
+                                untuk diorbitkan dengan cara seperti itu? Bahkan saya tidak dikenal di lingkungan saya
+                                sendiri.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 15 -->
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Apakah orang-orang percaya pada mimpi Anda atau tidak?</span>
+                            <svg class="faq-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Anda dapat melihat bahwa saya adalah orang biasa, hampir tidak dikenal bahkan di
+                                lingkungan
+                                saya
+                                sendiri. Namun ketika saya mulai menyebarkan mimpi-mimpi ini, saya sendirian saat itu.
+                                Sekarang,
+                                dengan Rahmat Allah SWT, Anda dapat melihat bahwa orang-orang dari seluruh dunia, bahkan
+                                banyak
+                                yang belum pernah saya temui, percaya pada mimpi-mimpi ini. Ada orang-orang yang belum
+                                pernah
+                                saya temui dan bahkan belum pernah saya ajak bicara. Namun mereka tidak hanya percaya
+                                pada
+                                mimpi-mimpi saya, mereka juga telah menerjemahkannya ke dalam bahasa mereka, membuat
+                                video,
+                                dan
+                                mengunggahnya. Ini tidak dapat terjadi tanpa pertolongan Allah SWT.</p>
+                            <p>Sebagian orang mengatakan bahwa apa yang dipikirkan di siang hari sama dengan apa yang
+                                dimimpikan
+                                di malam hari. Akan tetapi, saat ini banyak ulama yang tugasnya hanya membimbing manusia
+                                dalam
+                                hal agama dan berdakwah, tetapi hanya sedikit yang mengalami mimpi seperti itu.
+                                Mimpi-mimpi
+                                itu
+                                jumlahnya sangat banyak, jadi ini adalah bukti bahwa belum tentu apa yang dipikirkan
+                                atau
+                                dilakukan seseorang di siang hari sama dengan apa yang dimimpikannya di malam hari.
+                                Allah
+                                SWT
+                                selalu menciptakan sesuatu yang unik, dan jika mimpi-mimpi tersebut belum pernah dialami
+                                atau
+                                diciptakan oleh siapa pun sebelumnya, berarti mimpi-mimpi itu memang istimewa dan
+                                berasal
+                                dari
+                                Allah SWT.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
         </main>
-    </div>
 
-    <!-- TENTANG KAMI, WA, dll di footer? User tidak minta. -->
+        <!-- STYLES FOR FAQ (Embedded for Speed) -->
+        <style>
+            .faq-item {
+                margin-bottom: 12px;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                overflow: hidden;
+                background: var(--bg-card);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+                transition: all 0.3s ease;
+            }
 
-    <div class="footer-simple">
-        &copy; 2025 MQ News Today. All rights reserved.
-    </div>
+            body.dark-mode .faq-item {
+                border-color: rgba(255, 255, 255, 0.1);
+            }
 
-    <!-- MODAL LOGOUT -->
-    <div class="logout-modal" id="logoutModal">
-        <div class="modal-content">
-            <h3 class="modal-title">Konfirmasi Keluar</h3>
-            <p class="modal-desc">Anda yakin ingin keluar dari akun?</p>
+            .faq-question {
+                width: 100%;
+                text-align: left;
+                background: none;
+                border: none;
+                padding: 15px 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                cursor: pointer;
+                font-family: 'Lato', sans-serif;
+                font-weight: 700;
+                font-size: 1rem;
+                color: var(--text-main);
+                transition: background 0.2s;
+            }
+
+            .faq-question:hover {
+                background-color: rgba(0, 0, 0, 0.03);
+            }
+
+            body.dark-mode .faq-question:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+
+            .faq-icon {
+                width: 20px;
+                height: 20px;
+                fill: var(--primary);
+                transition: transform 0.3s ease;
+            }
+
+            .faq-answer {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+                background-color: rgba(0, 0, 0, 0.02);
+            }
+
+            body.dark-mode .faq-answer {
+                background-color: rgba(255, 255, 255, 0.02);
+            }
+
+            .faq-answer p {
+                padding: 15px 20px;
+                margin: 0;
+                font-size: 0.95rem;
+                line-height: 1.6;
+                color: var(--text-muted);
+            }
+
+            /* Active State */
+            .faq-item.active {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                /* More pop */
+                border-color: var(--primary);
+                /* Highlight border */
+            }
+
+            .faq-item.active .faq-icon {
+                transform: rotate(45deg);
+                /* Spin to X or Minus */
+                fill: #d32f2f;
+            }
+
+            .faq-item.active .faq-question {
+                color: var(--primary);
+            }
+
+            .faq-item.active .faq-answer {
+                max-height: 1000px;
+                /* Arbitrary large height for animation */
+                transition: max-height 0.5s ease-in-out;
+            }
+
+            .hidden-row {
+                display: none;
+            }
+        </style>
+
+        <!-- SCRIPT FOR FAQ (Simple Toggle) -->
+        <script>
+            document.querySelectorAll('.faq-question').forEach(button => {
+                button.addEventListener('click', () => {
+                    const item = button.parentElement;
+                    const isActive = item.classList.contains('active');
+
+                    if (!isActive) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            });
+        </script>
+
+    </div><!-- END DESKTOP MAIN WRAPPER -->
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="MQ_LogoSecond.png" alt="Logo White">
+                </div>
+                <p>
+                    MQ News Today berdedikasi untuk menyajikan informasi yang sering luput dari media arus utama.
+                    Fokus pada kebenaran dan analisis mendalam.
+                </p>
+            </div>
+
+            <div class="footer-col">
+                <h3>Kategori</h3>
+                <div class="footer-links">
+                    <a href="#" onclick="setCategory(null, 'Semua')">Beranda</a>
+                    <a href="#" onclick="setCategory(null, 'Geopolitik')">Geopolitik</a>
+                    <a href="#" onclick="setCategory(null, 'Eskatologi')">Eskatologi</a>
+                    <a href="#" onclick="setCategory(null, 'Mimpi Qasim')">Mimpi Qasim</a>
+                    <a href="#" onclick="setCategory(null, 'Timur Tengah')">Timur Tengah</a>
+                    <a href="#" onclick="setCategory(null, 'Trending')">Trending</a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h3>Hubungi Kami</h3>
+                <a href="https://wa.me/6285705856030" target="_blank" class="footer-wa-link">
+                    (+62) 857-0585-6030
+                </a>
+            </div>
+
+            <div class="footer-col">
+                <h3>Informasi & Legal</h3>
+                <div class="footer-links">
+                    <a href="tentang-kami.html">Tentang Kami</a>
+                    <a href="privacy-policy.html">Kebijakan Privasi</a>
+                    <a href="disclaimer.html">Disclaimer</a>
+                    <a href="terms.html">Syarat & Ketentuan</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="social-icons-group article-mode">
+
+            <a href="https://x.com/MQNewsToday" target="_blank" class="soc-link" aria-label="X Twitter">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+            </a>
+
+            <a href="https://www.instagram.com/mqnews.today?igsh=Z2hlM3pyeno3ZDY2" target="_blank" class="soc-link"
+                aria-label="Instagram">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+            </a>
+
+            <a href="https://www.tiktok.com/@mqnews.today?_r=1&_t=ZS-92THjGhQHkD" target="_blank" class="soc-link"
+                aria-label="TikTok">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+                </svg>
+            </a>
+
+            <a href="https://www.youtube.com/@MQNewsToday" target="_blank" class="soc-link" aria-label="YouTube">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+            </a>
+
+        </div>
+
+
+        <div class="copyright">
+            <a href="tentang-kami.html" style="text-decoration: none; color: inherit;">
+                ©2026 MQ News Today
+            </a>
+        </div>
+    </footer>
+
+
+    <div id="logoutModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <h3 class="modal-title">Konfirmasi</h3>
+            <p class="modal-desc">Apakah Anda yakin ingin keluar dari akun?</p>
             <div class="modal-actions">
-                <button class="btn-cancel" id="btnCancelLogout">Batal</button>
-                <button class="btn-confirm" id="btnConfirmLogout">Keluar</button>
+                <button id="btnCancelLogout" class="modal-btn btn-cancel">Batal</button>
+                <button id="btnConfirmLogout" class="modal-btn btn-yes">Ya, Keluar</button>
             </div>
         </div>
     </div>
 
-    <!-- FIREBASE SCRIPTS -->
+    <div id="limitModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <h3 class="modal-title" style="color: var(--primary);">Batas Akses Tamu</h3>
+            <p class="modal-desc">Anda telah membaca <strong>3 berita gratis</strong>. Silakan masuk atau daftar
+                untuk
+                akses tanpa batas.</p>
+            <div class="modal-actions">
+                <button onclick="document.getElementById('limitModal').style.display='none'"
+                    class="modal-btn btn-cancel">Nanti Saja</button>
+                <button onclick="window.location.href='login.html'" class="modal-btn btn-yes">Masuk /
+                    Daftar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notifBox" class="custom-notif">
+        <div id="notifIcon"></div>
+        <span id="notifText">Pesan notifikasi...</span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+    <!-- FIREBASE INIT MODULE -->
     <script type="module">
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-        import { app } from "./firebase-config.js";
+        import { auth } from "./firebase-config.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const auth = getAuth(app);
+        // Expose auth to global window so non-module scripts can use it
+        window.auth = auth;
 
-        // UI ELEMENTS
-        const authLink = document.getElementById('auth-link');
-        const authIcon = document.getElementById('auth-icon');
-        const authText = document.getElementById('auth-text');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        // CHECK AUTH STATE
+        // AUTH LISTENER: Update Sidebar UI
         onAuthStateChanged(auth, (user) => {
             const link = document.getElementById('auth-link');
             const text = document.getElementById('auth-text');
-
+            const logoutBtn = document.getElementById('logout-btn');
 
             if (user) {
                 // USER LOGIN
-                text.innerText = "PROFIL SAYA";
+                const name = user.displayName || user.email.split('@')[0];
+                text.innerText = "HALO, " + name.toUpperCase();
                 link.href = "profil.html"; // Arahkan ke profil
 
                 if (logoutBtn) {
@@ -654,83 +1458,225 @@
                     skipEmptyLines: true,
                     complete: function (results) {
                         try {
-                            if (results.data && results.data.length > 0) {
-                                allNews = results.data.filter(item => {
-                                    const judul = getVal(item, 'judul') || getVal(item, 'title');
-                                    return judul && judul.trim() !== "";
-                                });
+                            allNews = results.data.filter(item => {
+                                const t = getVal(item, 'judul') || getVal(item, 'title');
+                                return t && t.trim().length > 0;
+                            });
 
-                                // REVERSE: Berita terbaru di atas (asumsi data sheet urut kronologis input)
-                                allNews.reverse();
-
-                                activeData = allNews; // Default: tampilkan semua
-                                renderPage(1);        // Render halaman 1
-                                document.getElementById('loader').style.display = 'none';
-
-                                // AUTO-LOAD WIDGET (Panggil fungsi widget setelah data siap)
-                                if (typeof loadRandomQuote === 'function') {
-                                    loadRandomQuote();
-                                }
-                            } else {
-                                document.getElementById('news-container').innerHTML = '<div class="no-data">Tidak ada berita ditemukan.</div>';
-                                document.getElementById('loader').style.display = 'none';
+                            if (!allNews || allNews.length === 0) {
+                                throw new Error("Data CSV Kosong / Format Salah");
                             }
-                        } catch (err) {
-                            console.error("Error processing data:", err);
-                            document.getElementById('news-container').innerHTML = '<div class="no-data">Gagal memproses data.</div>';
-                            document.getElementById('loader').style.display = 'none';
+
+                            // Debug Check
+                            // console.log("Data loaded:", allNews.length);
+
+                            activeData = allNews.slice().reverse();
+
+                            // Render Utama with protection
+                            try { resetRender(); } catch (e) { console.error("Render Error:", e); }
+
+                            if (typeof updateClock === 'function') updateClock();
+
+                            // Render Pilihan Editor with protection
+                            if (typeof renderEditorPicks === 'function') {
+                                renderEditorPicks();
+                            }
+                        } catch (parseLogicErr) {
+                            showError("Data Error: " + parseLogicErr.message);
                         }
                     },
                     error: function (err) {
-                        console.error("Papa Parse Error:", err);
-                        document.getElementById('news-container').innerHTML = '<div class="no-data">Gagal membaca data CSV.</div>';
-                        document.getElementById('loader').style.display = 'none';
+                        showError("Papa Parse Error: " + err.message);
                     }
                 });
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                document.getElementById('news-container').innerHTML = '<div class="no-data">Gagal mengambil data dari server. Periksa koneksi internet Anda.</div>';
-                document.getElementById('loader').style.display = 'none';
+            } catch (err) {
+                console.error(err);
+                showError("Koneksi Gagal: " + err.message);
             }
         }
 
-        // Helper biar aman ambil key (case-insensitive & trim)
-        function getVal(item, keyName) {
-            const lowerKey = keyName.toLowerCase();
-            const foundKey = Object.keys(item).find(k => k.toLowerCase().includes(lowerKey));
-            return foundKey ? item[foundKey] : "";
+        function showError(msg) {
+            const nc = document.getElementById('news-container');
+            if (nc) nc.innerHTML = `<div class='no-data' style='color:red;'>${msg}</div>`;
         }
 
-        // --- 2. RENDER & PAGINATION LOGIC ---
+        // Global Helper: Case Insensitive Getter (PENTING: JANGAN DIHAPUS)
+        const getVal = (obj, str) => {
+            if (!obj) return "";
+            const key = Object.keys(obj).find(k => k.toLowerCase() === str.toLowerCase());
+            return key ? obj[key] : "";
+        };
 
-        // Fungsi Ganti Kategori
-        window.setCategory = function (element, category) {
-            // Update Active Style
-            document.querySelectorAll('.cat-link').forEach(el => el.classList.remove('active'));
-            if (element) {
-                element.classList.add('active');
-            } else {
-                // Kalo dipanggil manual (misal dari sidebar), cari elemen yg cocok
-                const target = Array.from(document.querySelectorAll('.cat-link')).find(el => el.innerText === category);
-                if (target) target.classList.add('active');
+        // Fungsi Render PILIHAN EDITOR (Global Scope)
+        window.renderEditorPicks = function () {
+            const container = document.getElementById('editor-picks-container');
+            if (!container) return;
+
+            container.innerHTML = "";
+
+            // Pastikan allNews ada
+            if (!allNews || allNews.length === 0) {
+                container.innerHTML = '<div class="loader" style="color:red;">Menunggu data...</div>';
+                return;
             }
 
-            // Update Label
-            const labelEl = document.getElementById('current-category-label');
-            if (labelEl) labelEl.innerText = category === 'Semua' ? 'Berita Terkini' : category;
+            // Load Saved Data for checking
+            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
+            const isSaved = (t) => saved.some(x => x.judul === t);
 
-            // Filter Data
-            if (category === 'Semua') {
-                activeData = allNews;
-            } else {
-                activeData = allNews.filter(item => {
-                    const cat = getVal(item, 'kategori') || "";
-                    return cat.toLowerCase().includes(category.toLowerCase());
-                });
+            // Ambil 3 Berita Terbaru (Filter yang judulnya ada)
+            let source = allNews.slice().reverse().filter(item => {
+                const j = getVal(item, 'judul') || getVal(item, 'title');
+                return j && j.trim().length > 0;
+            });
+
+            const selected = source.slice(0, 3);
+
+            selected.forEach(item => {
+                const judul = getVal(item, 'judul') || getVal(item, 'title');
+                const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
+                let gambar = getVal(item, 'gambar') || getVal(item, 'image') || getVal(item, 'thumbnail');
+
+                if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/150x100?text=MQ";
+
+                const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+                const savedClass = isSaved(judul) ? 'saved' : '';
+
+                const html = `
+                <a href="${targetUrl}" class="editor-card">
+                    <div class="editor-thumb">
+                        <img src="${gambar}" loading="lazy" alt="thumb" onerror="this.src='https://via.placeholder.com/150x100?text=Err'">
+                    </div>
+                    <div class="editor-info">
+                        <h4 class="editor-title">${judul}</h4>
+                        <span class="editor-date">${tanggal}</span>
+                    </div>
+                </a>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        };
+
+        // --- SCRIPT JAM REDAKSI ---
+        function updateClock() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('id-ID', options);
+            const timeStr = now.toLocaleTimeString('id-ID'); // Jam:Menit:Detik
+
+            const el = document.getElementById('live-date');
+            if (el) el.innerText = `${dateStr} | ${timeStr} WIB`;
+        }
+        setInterval(updateClock, 1000); // Update tiap detik
+        updateClock(); // Jalanin langsung pas load
+
+        // --- SCRIPT BANNER OTOMATIS (GOOGLE SHEET) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. MASUKKAN LINK CSV SHEET "BANNER" LU DI SINI:
+            const BANNER_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=530510330&single=true&output=csv";
+
+            const container = document.getElementById('banner-container');
+            const track = document.getElementById('banner-track');
+
+            // Fungsi Parse CSV (Sama kayak berita)
+            function parseCSV(text) {
+                const rows = text.split('\n').slice(1); // Buang header baris 1
+                return rows.map(row => {
+                    // Split koma (regex ini menangani koma di dalam tanda kutip)
+                    const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+                    if (!cols) return null;
+                    return {
+                        img: cols[0]?.replace(/"/g, '').trim(),
+                        caption: cols[1]?.replace(/"/g, '').trim(),
+                        link: cols[2]?.replace(/"/g, '').trim()
+                    };
+                }).filter(item => item && item.img); // Hanya ambil yg ada gambarnya
             }
 
-            // Reset ke Halaman 1
-            currentPage = 1;
+            // Fungsi Render Banner (Versi Aman & Support Link Lokal)
+            async function loadBanner() {
+                try {
+                    const res = await fetch(BANNER_SHEET_URL);
+                    const text = await res.text();
+                    let data = parseCSV(text); // Tetap pakai parseCSV kamu
+
+                    // LIMIT CUMA 3 GAMBAR
+                    if (data.length > 3) data = data.slice(0, 3);
+
+                    if (data.length > 0) {
+                        // Tampilkan Container
+                        container.style.display = 'block';
+                        track.innerHTML = ''; // Bersihkan
+
+                        data.forEach((item, index) => {
+                            const activeClass = index === 0 ? 'active' : '';
+
+                            // --- LOGIKA BARU: CEK LINK LOKAL vs LUAR ---
+                            let tag = 'div';
+                            let hrefAttr = '';
+                            let styleAttr = '';
+
+                            // Cek kolom link ada isinya gak?
+                            if (item.link && item.link.trim() !== '') {
+                                tag = 'a'; // Jadiin link
+
+                                // Cek apakah link luar (http) atau lokal?
+                                const target = item.link.includes('http') ? '_blank' : '_self';
+
+                                hrefAttr = `href="${item.link}" target="${target}"`;
+                                styleAttr = 'style="cursor:pointer; display:block; text-decoration:none;"';
+                            }
+                            // --------------------------------------------
+
+                            const html = `
+                        <${tag} ${hrefAttr} ${styleAttr} class="banner-slide ${activeClass}" data-index="${index}">
+                            <img src="${item.img}" alt="Banner ${index + 1}">
+                            ${item.caption ? `<div class="banner-caption">${item.caption}</div>` : ''}
+                        </${tag}>
+                    `;
+                            track.innerHTML += html;
+                        });
+
+                        // Jalankan Auto Slide (Tetap pakai fungsi kamu)
+                        if (data.length > 1) startSlider();
+                    }
+
+                } catch (err) {
+                    console.error("Gagal muat banner:", err);
+                    container.style.display = 'none';
+                }
+            }
+
+
+            // Logika Auto Slide (Fade Effect)
+            function startSlider() {
+                const slides = document.querySelectorAll('.banner-slide');
+                let current = 0;
+
+                setInterval(() => {
+                    // Sembunyikan yg sekarang
+                    slides[current].classList.remove('active');
+
+                    // Pindah ke selanjutnya
+                    current = (current + 1) % slides.length;
+
+                    // Munculkan yg baru
+                    slides[current].classList.add('active');
+                }, 5000); // Ganti tiap 5 Detik
+            }
+
+            // JALANKAN!
+            loadBanner();
+        });
+
+
+
+
+        // --- 2. SISTEM RENDER & PAGINATION (INTI BARU) ---
+
+        // Reset layar sebelum menampilkan hasil baru
+        function resetRender() {
+            currentPage = 1; // Reset ke halaman 1
             renderPage(currentPage);
         }
 
@@ -853,331 +1799,213 @@
                             <button onclick="saveNews('${safeJudul}', '${safeIsi}', '${gambar}', '${targetUrl}', '${tanggal}', event)" 
                                     style="background:none; border:none; cursor:pointer; padding:4px; color:var(--text); transition:0.2s;"
                                     title="Simpan Berita">
-                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
                                 </svg>
                             </button>
                         </div>
-                        <a href="baca.html?title=${encodeURIComponent(judul)}" class="read-btn">BACA &rarr;</a>
+
+                        <a onclick="handleArticleClick('${targetUrl}')" class="read-btn" href="javascript:void(0)">BACA &rarr;</a>
                     </div>
                 </div>
-            </article>
-            `;
-        }
-
-        // --- HANDLE CLICK ARTIKEL (Limit Guest) ---
-        window.handleArticleClick = function (targetUrl) {
-            // Cek status login via Firebase Auth (tapi karena async, kita cek localStorage flag dulu biar cepet)
-            // Atau kita cek session simple. Di sini kita asumsi limit baca ada di localStorage 'guest_read_count'
-
-            // Logic:
-            // 1. Kalau user login (ada auth), bebas.
-            // 2. Kalau guest, cek limit.
-
-            // Karena auth firebase butuh waktu load, kita cek elemen UI 'auth-text' (agak hacky tapi works buat MVP frontend)
-            const authText = document.getElementById('auth-text');
-            const isLoggedIn = authText && authText.innerText.includes('PROFIL');
-
-            if (isLoggedIn) {
-                // User member -> Lanjut
-                window.location.href = targetUrl;
-            } else {
-                // Guest -> Cek limit
-                let count = parseInt(localStorage.getItem('guest_read_count') || "0");
-
-                if (count >= 3) {
-                    // Limit habis -> Arahkan ke login tapi simpan URL biar nanti bisa redirect balik (opsional)
-                    sessionStorage.setItem('last_read_url', targetUrl);
-                    alert("Limit bacaan gratis Anda habis (3 artikel). Silakan login untuk akses tanpa batas.");
-                    window.location.href = "login.html";
-                } else {
-                    // Masih ada kuota -> Tambah count, lalu lanjut
-                    localStorage.setItem('guest_read_count', count + 1);
-                    window.location.href = targetUrl;
-                }
-            }
-        };
-
-        // --- FUNGSI SAVE NEWS (Sama kayak di baca.html) ---
-        window.saveNews = function (judul, isi, gambar, url, tanggal, event) {
-            // Stop propagasi biar gak nge-klik kartu (masuk ke baca)
-            if (event) event.stopPropagation();
-
-            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
-
-            // Cek duplikat
-            const exists = saved.some(item => item.judul === judul);
-
-            if (exists) {
-                showCustomNotif('Berita sudah tersimpan!', 'error');
-            } else {
-                saved.push({
-                    judul: judul,
-                    isi: isi,
-                    gambar: gambar,
-                    url: url, // Link relative
-                    tanggal: tanggal,
-                    dateAdded: new Date().toISOString()
-                });
-                localStorage.setItem('mq_saved_news', JSON.stringify(saved));
-                showCustomNotif('Berita berhasil disimpan!', 'success');
-            }
-        };
-
-        // Custom Notification Function
-        function showCustomNotif(msg, type) {
-            const notifBox = document.getElementById('notifBox');
-            const notifText = document.getElementById('notifText');
-            const notifIcon = document.getElementById('notifIcon');
-
-            notifText.innerText = msg;
-            notifBox.className = 'custom-notif show'; // Reset class
-
-            if (type === 'success') {
-                notifBox.classList.add('success');
-                // Icon Centang
-                notifIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-            } else {
-                notifBox.classList.add('error');
-                // Icon Silang
-                notifIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
-            }
-
-            // Hide after 3s
-            setTimeout(() => {
-                notifBox.classList.remove('show');
-            }, 3000);
+            </article>`;
         }
 
 
-        // --- 3. INIT SCRIPT SEARCH (Popup Sidebar) ---
+        // --- 3. FITUR SEARCH & KATEGORI (DIUPDATE UNTUK LOAD MORE) ---
+        function setCategory(el, cat) {
+            // UI Update
+            currentFilter = cat;
+            document.querySelectorAll('.cat-link').forEach(link => link.classList.remove('active'));
+            if (el) el.classList.add('active');
+            else document.querySelectorAll('.cat-link').forEach(l => { if (l.innerText.toUpperCase() === cat.toUpperCase()) l.classList.add('active') });
+            document.getElementById('current-category-label').innerText = cat === 'Semua' ? 'Berita Terkini' : cat;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // FILTER DATA (Masuk ke activeData)
+            if (cat === 'Semua') {
+                activeData = allNews.slice().reverse();
+            } else {
+                activeData = allNews.filter(i => (getVal(i, 'kategori') || '').toLowerCase().includes(cat.toLowerCase().trim())).slice().reverse();
+            }
+
+            // RENDER ULANG (Reset ke 9 awal)
+            resetRender();
+        }
+
+        function executeSearch() {
+            const key = document.getElementById('searchInput').value.toLowerCase();
+
+            // FILTER DATA BERDASARKAN KEYWORD
+            if (!key.trim()) {
+                activeData = allNews.slice().reverse();
+                document.getElementById('current-category-label').innerText = "Berita Terkini";
+            } else {
+                activeData = allNews.filter(i =>
+                    (getVal(i, 'judul') || '').toLowerCase().includes(key) ||
+                    (getVal(i, 'isi') || '').toLowerCase().includes(key)
+                );
+                document.getElementById('current-category-label').innerText = `Hasil Cari: "${key}"`;
+            }
+
+            // Tutup sidebar setelah search
+            if (document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+
+            // RENDER ULANG HASIL CARI (Reset ke 9 awal)
+            resetRender();
+
+            setTimeout(() => { document.getElementById('mainContainer').scrollIntoView({ behavior: 'smooth' }); }, 100);
+            document.getElementById('searchInput').blur();
+            document.getElementById('searchInput').value = "";
+        }
+
+        // --- 4. MISSING UI FUNCTIONS (RESTORED) ---
+
+        window.toggleSidebar = function () {
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('overlay');
+            const btn = document.querySelector('.menu-toggle');
+
+            sb.classList.toggle('active');
+            ov.classList.toggle('active');
+            if (btn) btn.classList.toggle('active');
+        };
+
+        window.handleArticleClick = function (url) {
+            window.location.href = url;
+        };
+
         window.handleEnterKey = function (e) {
             if (e.key === 'Enter') executeSearch();
-        }
+        };
 
-        window.executeSearch = function () {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            if (!query) return;
+        window.toggleMoreMenu = function () {
+            const hiddenItems = document.querySelectorAll('.hidden-row');
+            const btnText = document.getElementById('textMore');
+            const btnIcon = document.getElementById('iconMore');
 
-            // Tutup sidebar (mobile UX)
-            toggleSidebar();
+            // Cek state (apakah sedang terbuka?)
+            const isOpen = btnText.innerText === 'TUTUP';
 
-            // Ubah Label
-            document.getElementById('current-category-label').innerText = `Hasil Pencarian: "${query}"`;
-
-            // Filter
-            activeData = allNews.filter(item => {
-                const judul = getVal(item, 'judul').toLowerCase();
-                const isi = getVal(item, 'isi').toLowerCase();
-                return judul.includes(query) || isi.includes(query);
+            hiddenItems.forEach(item => {
+                // Toggle display
+                // Asumsi: hidden-row di CSS di-set display: none secara default
+                if (isOpen) {
+                    item.style.display = 'none';
+                } else {
+                    item.style.display = 'flex'; // Menu item biasanya flex
+                }
             });
 
-            renderPage(1);
-        }
-
-
-        // --- 4. TOGGLE SIDEBAR & DROPDOWN ---
-        window.toggleSidebar = function () {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
+            if (!isOpen) {
+                // BUKA MENU
+                btnText.innerText = 'TUTUP';
+                // Ganti Icon jadi X
+                btnIcon.innerHTML = `
+                    <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+                    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+                `;
+            } else {
+                // TUTUP MENU
+                btnText.innerText = 'LAINNYA';
+                // Balikin Icon Grid
+                btnIcon.innerHTML = `
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                `;
+            }
+        };
 
         window.toggleDropdown = function (id) {
             const el = document.getElementById(id);
-            el.classList.toggle('active');
-        }
-
-        // --- 5. MORE MENU (QUICK MENU) ---
-        window.toggleMoreMenu = function () {
-            const rows = document.querySelectorAll('.hidden-row');
-            const btnText = document.getElementById('textMore');
-            const isHidden = rows[0].style.display === 'none' || getComputedStyle(rows[0]).display === 'none';
-
-            if (isHidden) {
-                // Show
-                rows.forEach(r => r.style.display = 'flex');
-                btnText.innerText = "TUTUP";
-                // Animation logic handled by CSS transition if added, or simple display toggle
-            } else {
-                // Hide
-                rows.forEach(r => r.style.display = 'none');
-                btnText.innerText = "LAINNYA";
+            if (el) {
+                el.classList.toggle('active');
             }
-        }
-
-        // --- 6. QUOTES WIDGET LOGIC ---
-        // (Copied simple logic from original index)
-        const quotes = [
-            { text: "Islam akan bangkit kembali dari Pakistan.", source: "Muhammad Qasim" },
-            { text: "Dunia akan menyaksikan peristiwa besar yang belum pernah terjadi sebelumnya.", source: "Mubasyirat" },
-            { text: "Perbanyaklah dzikir dan doa di masa-masa sulit ini.", source: "Pesan Spiritual" },
-            { text: "Keadilan akan ditegakkan, dan kebatilan akan musnah.", source: "Janji Allah" }
-        ];
-
-        function loadRandomQuote() {
-            const quoteEl = document.getElementById('mq-quote-text');
-            const sourceEl = document.getElementById('mq-quote-source');
-            const container = document.getElementById('mq-quote-widget');
-
-            if (!quoteEl) return;
-
-            const random = quotes[Math.floor(Math.random() * quotes.length)];
-            quoteEl.innerText = `"${random.text}"`;
-            sourceEl.innerText = `— ${random.source}`;
-            container.style.display = 'block';
-        }
-
-        // --- 7. AUTO SLIDER LOGIC ---
-        let slideIndex = 0;
-        let slideInterval;
-
-        function startSlider() {
-            // console.log("Starting Slider..."); 
-            slideInterval = setInterval(nextSlide, 5000); // 5 detik
-        }
-
-        function nextSlide() {
-            const slides = document.querySelectorAll('.banner-slide');
-            if (slides.length === 0) return;
-
-            slides[slideIndex].classList.remove('active');
-            slideIndex = (slideIndex + 1) % slides.length;
-            slides[slideIndex].classList.add('active');
-        }
-
-        // Initialize Parsing
-        init();
-
-        // Load Search Recent? (Optional - skipped for clean MVP)
-
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script>
-        // --- SCRIPT EDITOR CHOICE (Berita Pilihan) ---
-        // Kita pakai sheet yang sama (index 0) tapi filter kategori 'Pilihan' atau ambil 3 terbaru random 
-        // IMPLEMENTASI: Ambil 5 Berita Terbaru secara acak untuk widget "Editor's Choice" (Contoh)
-
-        // NOTE: Karena user tidak minta widget khusus editor choice di layout baru ini, kita skip dulu.
-        // Jika mau diaktifkan, uncomment kode di bawah.
-        /*
-        const loadEditorChoice = (data) => {
-            const container = document.getElementById('editor-list'); 
-            if(!container) return; // Kalau elemen gak ada di HTML baru
-
-            // Ambil 5 random
-            const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 5);
-            
-            container.innerHTML = '';
-            shuffled.forEach(item => {
-                const judul = getVal(item, 'judul');
-                const tanggal = getVal(item, 'tanggal');
-                const html = `
-                <a href="baca.html?title=${encodeURIComponent(judul)}" class="editor-item">
-                    <div class="editor-num">#</div>
-                    <div class="editor-info">
-                        <h4 class="editor-title">${judul}</h4>
-                        <span class="editor-date">${tanggal}</span>
-                    </div>
-                </a>
-                `;
-                container.insertAdjacentHTML('beforeend', html);
-            });
         };
-        */
 
-        // --- SCRIPT JAM REDAKSI ---
-        function updateClock() {
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dateStr = now.toLocaleDateString('id-ID', options);
-            const timeStr = now.toLocaleTimeString('id-ID'); // Jam:Menit:Detik
+        window.saveNews = function (judul, isi, gambar, url, tanggal, e) {
+            if (e) { e.stopPropagation(); e.preventDefault(); }
+            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
 
-            const el = document.getElementById('live-date');
-            if (el) el.innerText = `${dateStr} | ${timeStr} WIB`;
+            // Cek duplikasi
+            if (saved.some(x => x.judul === judul)) {
+                showSavedNotification("Berita sudah tersimpan!", "error");
+                return;
+            }
+
+            saved.push({ judul, isi, gambar, url, tanggal, dateAdded: new Date().toISOString() });
+            localStorage.setItem('mq_saved_news', JSON.stringify(saved));
+            showSavedNotification("Berita berhasil disimpan!", "success");
+        };
+
+        function showSavedNotification(msg, type) {
+            let box = document.getElementById('notifBox');
+            if (!box) {
+                // Buat elemen notifikasi jika belum ada
+                box = document.createElement('div');
+                box.id = 'notifBox';
+                box.className = 'custom-notif';
+                box.innerHTML = '<div id="notifIcon"></div><span id="notifText"></span>';
+                document.body.appendChild(box);
+            }
+            const text = document.getElementById('notifText');
+            const icon = document.getElementById('notifIcon');
+
+            text.innerText = msg;
+
+            // Reset class
+            box.className = "custom-notif active";
+            if (type === 'success') {
+                box.classList.add('success');
+                // Icon Checkmark SVG
+                icon.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            } else {
+                box.classList.add('error');
+                // Icon Warning SVG
+                icon.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+            }
+
+            // Auto hide
+            setTimeout(() => { box.classList.remove('active'); }, 3000);
         }
-        setInterval(updateClock, 1000); // Update tiap detik
-        updateClock(); // Jalanin langsung pas load
 
-        // --- SCRIPT BANNER OTOMATIS (GOOGLE SHEET) ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. MASUKKAN LINK CSV SHEET "BANNER" LU DI SINI:
-            const BANNER_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=530510330&single=true&output=csv";
+        // CRITICAL: Call init() to load news data
+        if (typeof init === 'function') {
+            init();
+        }
 
-            const container = document.getElementById('banner-container');
-            const track = document.getElementById('banner-track');
+        // --- PWA INSTALL LOGIC ---
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
 
-            // Fungsi Parse CSV (Sama kayak berita)
-            function parseCSV(text) {
-                const rows = text.split('\n').slice(1); // Buang header baris 1
-                return rows.map(row => {
-                    // Split koma (regex ini menangani koma di dalam tanda kutip)
-                    const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                    if (!cols) return null;
-                    return {
-                        img: cols[0]?.replace(/"/g, '').trim(),
-                        caption: cols[1]?.replace(/"/g, '').trim(),
-                        link: cols[2]?.replace(/"/g, '').trim()
-                    };
-                }).filter(item => item && item.img); // Hanya ambil yg ada gambarnya
-            }
-
-            // Fungsi Render Banner (Versi Aman & Support Link Lokal)
-            async function loadBanner() {
-                try {
-                    const res = await fetch(BANNER_SHEET_URL);
-                    const text = await res.text();
-                    let data = parseCSV(text); // Tetap pakai parseCSV kamu
-
-                    // LIMIT CUMA 3 GAMBAR
-                    if (data.length > 3) data = data.slice(0, 3);
-
-                    if (data.length > 0) {
-                        // Tampilkan Container
-                        container.style.display = 'block';
-                        track.innerHTML = ''; // Bersihkan
-
-                        data.forEach((item, index) => {
-                            const activeClass = index === 0 ? 'active' : '';
-
-                            // --- LOGIKA BARU: CEK LINK LOKAL vs LUAR ---
-                            let tag = 'div';
-                            let hrefAttr = '';
-                            let styleAttr = '';
-
-                            // Cek kolom link ada isinya gak?
-                            if (item.link && item.link.trim() !== '') {
-                                tag = 'a'; // Jadiin link
-
-                                // Cek apakah link luar (http) atau lokal?
-                                const target = item.link.includes('http') ? '_blank' : '_self';
-
-                                hrefAttr = `href="${item.link}" target="${target}"`;
-                                styleAttr = 'style="cursor:pointer; display:block; text-decoration:none;"';
-                            }
-                            // --------------------------------------------
-
-                            const html = `
-                        <${tag} ${hrefAttr} ${styleAttr} class="banner-slide ${activeClass}" data-index="${index}">
-                            <img src="${item.img}" alt="Banner ${index + 1}">
-                            ${item.caption ? `<div class="banner-caption">${item.caption}</div>` : ''}
-                        </${tag}>
-                    `;
-                            track.innerHTML += html;
-                        });
-
-                        // Jalankan Auto Slide (Tetap pakai fungsi kamu)
-                        if (data.length > 1) startSlider();
-                    }
-
-                } catch (err) {
-                    console.error("Gagal muat banner:", err);
-                    container.style.display = 'none';
-                }
-            }
-
-
-            loadBanner();
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            console.log("PWA: beforeinstallprompt fired");
         });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    // Show the install prompt
+                    deferredPrompt.prompt();
+                    // Wait for the user to respond to the prompt
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`PWA: User response to install prompt: ${outcome}`);
+                    // We've used the prompt, and can't use it again, throw it away
+                    deferredPrompt = null;
+                } else {
+                    // Trigger Custom Notification (Reuse showSavedNotification for consistency)
+                    showSavedNotification("Aplikasi mungkin sudah terinstall atau browser tidak mendukung.", "error");
+                }
+            });
+        }
+
     </script>
 </body>
 
