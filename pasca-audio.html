@@ -517,3 +517,270 @@
             </div>
         </div>
     </div>
+
+    <!-- MAIN AUDIO ELEMENT -->
+    <audio id="main-audio" preload="auto"></audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1549454662&single=true&output=csv";
+
+        // CORRECT KEY MATCHING SIMPAN.HTML
+        const STORAGE_SAVE_KEY = 'bookmarks_audio';
+
+        let allTracks = [];
+        let currentTrack = null;
+        const audio = document.getElementById('main-audio');
+
+        // INIT
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
+
+            // Get ID from URL
+            const params = new URLSearchParams(window.location.search);
+            const titleParam = params.get('bg');
+
+            if (titleParam) {
+                const found = allTracks.find(t => t.judul === decodeURIComponent(titleParam));
+                if (found) {
+                    loadTrack(found);
+                    togglePlay();
+                }
+            } else {
+                if (allTracks.length > 0) {
+                    loadTrack(allTracks[0]);
+                }
+            }
+        });
+
+        async function loadData() {
+            try {
+                const res = await fetch(SHEET_CSV_URL);
+                const text = await res.text();
+                const result = Papa.parse(text, { header: true, skipEmptyLines: true });
+
+                // NORMALIZE DATA
+                allTracks = result.data.map(item => {
+                    let title = "", audioUrl = "", thumb = "", desc = "";
+
+                    Object.keys(item).forEach(key => {
+                        const k = key.toLowerCase();
+                        const v = item[key];
+                        if (!v) return;
+
+                        if ((k.includes('judul') || k.includes('title')) && !title) title = v;
+                        else if ((k.includes('embed') || k.includes('audio') || k.includes('link')) && !audioUrl) audioUrl = v;
+                        else if ((k.includes('thumb') || k.includes('gambar') || k.includes('img') || k.includes('foto')) && !thumb) thumb = v;
+                        else if ((k.includes('deskripsi') || k.includes('desc') || k.includes('ket')) && !desc) desc = v;
+                    });
+
+                    if (thumb && thumb.includes('drive.google.com') && thumb.includes('/file/d/')) {
+                        const matches = thumb.match(/\/d\/(.+?)\//);
+                        if (matches && matches[1]) {
+                            thumb = `https://drive.google.com/uc?export=view&id=${matches[1]}`;
+                        }
+                    }
+
+                    return {
+                        judul: title,
+                        link_audio: audioUrl,
+                        gambar: thumb,
+                        deskripsi: desc
+                    };
+                }).filter(t => t.judul && t.link_audio);
+
+            } catch (e) {
+                console.error("Failed to load CSV", e);
+            }
+        }
+
+        function loadTrack(track) {
+            currentTrack = track;
+
+            const titleEl = document.getElementById('full-title');
+            const descEl = document.getElementById('full-desc');
+
+            titleEl.classList.remove('skeleton-loading', 'skeleton-text');
+            descEl.classList.remove('skeleton-loading', 'skeleton-text');
+
+            titleEl.innerText = track.judul;
+            descEl.innerText = track.deskripsi || "Audio MQ News";
+
+            const img = document.getElementById('full-img');
+            img.classList.remove('loaded');
+
+            // Set source first
+            img.src = track.gambar || 'ALT_LogoMQN.png';
+
+            // Re-apply skeleton until load
+            img.parentElement.classList.add('skeleton-loading');
+
+            if (audio.src !== track.link_audio) {
+                audio.src = track.link_audio;
+            }
+
+            // Update Save Button State immediately after loading track
+            updateSaveButtonUI();
+        }
+
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                document.getElementById('play-icon').style.display = 'none';
+                document.getElementById('pause-icon').style.display = 'block';
+            } else {
+                audio.pause();
+                document.getElementById('play-icon').style.display = 'block';
+                document.getElementById('pause-icon').style.display = 'none';
+            }
+        }
+
+        function seekRelative(sec) {
+            audio.currentTime += sec;
+        }
+
+        const seekSlider = document.getElementById('seek-slider');
+        seekSlider.addEventListener('input', () => {
+            const time = (seekSlider.value / 100) * audio.duration;
+            audio.currentTime = time;
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            if (!audio.duration) return;
+            const percent = (audio.currentTime / audio.duration) * 100;
+            seekSlider.value = percent;
+            document.getElementById('curr-time').innerText = formatTime(audio.currentTime);
+            document.getElementById('total-time').innerText = formatTime(audio.duration);
+        });
+
+        audio.addEventListener('play', () => {
+            document.getElementById('play-icon').style.display = 'none';
+            document.getElementById('pause-icon').style.display = 'block';
+        });
+
+        audio.addEventListener('pause', () => {
+            document.getElementById('play-icon').style.display = 'block';
+            document.getElementById('pause-icon').style.display = 'none';
+        });
+
+        function formatTime(s) {
+            if (isNaN(s)) return "0:00";
+            const min = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return min + ":" + (sec < 10 ? "0" + sec : sec);
+        }
+
+        function downloadCurrent() {
+            if (!currentTrack) return;
+            const link = document.createElement('a');
+            link.href = currentTrack.link_audio;
+            link.download = currentTrack.judul + ".mp3";
+            link.target = "_blank";
+            link.click();
+        }
+
+        function copyLink() {
+            const link = window.location.href;
+            navigator.clipboard.writeText(link).then(() => {
+                showCustomNotif("Link berhasil disalin!", 'success');
+            }).catch(() => {
+                showCustomNotif("Gagal menyalin link.", 'error');
+            });
+        }
+
+        function toggleSave() {
+            if (!currentTrack) return;
+
+            // KEY MUST MATCH SIMPAN.HTML 'bookmarks_audio'
+            let saved = JSON.parse(localStorage.getItem(STORAGE_SAVE_KEY) || '[]');
+
+            // DATA STRUCTURE MUST MATCH SIMPAN.HTML: title, desc, thumb
+            // Check existence by title
+            const index = saved.findIndex(s => s.title === currentTrack.judul);
+
+            if (index !== -1) {
+                // DELETE
+                saved.splice(index, 1);
+                localStorage.setItem(STORAGE_SAVE_KEY, JSON.stringify(saved));
+                showCustomNotif("Audio dihapus dari simpanan.", 'error');
+            } else {
+                // SAVE
+                // Important: simpan.html expects 'title', 'desc', 'thumb'
+                saved.push({
+                    title: currentTrack.judul,
+                    desc: currentTrack.deskripsi,
+                    thumb: currentTrack.gambar,
+                    audio: currentTrack.link_audio, // saving extra data just in case
+                    dateAdded: new Date().toISOString()
+                });
+                localStorage.setItem(STORAGE_SAVE_KEY, JSON.stringify(saved));
+                showCustomNotif("Audio berhasil disimpan!", 'success');
+            }
+            updateSaveButtonUI();
+        }
+
+        function updateSaveButtonUI() {
+            if (!currentTrack) return;
+
+            const saved = JSON.parse(localStorage.getItem(STORAGE_SAVE_KEY) || '[]');
+
+            // Check by title (because we saved it as 'title', but currentTrack has 'judul')
+            const isSaved = saved.some(s => s.title === currentTrack.judul);
+
+            const btn = document.getElementById('btn-save');
+            const icon = document.getElementById('icon-save');
+            const text = document.getElementById('text-save');
+
+            if (isSaved) {
+                btn.style.background = "#e53935"; // Red
+                btn.style.color = "white";
+                btn.style.borderColor = "#e53935";
+
+                icon.style.fill = "white";
+                icon.style.stroke = "white";
+
+                text.innerText = "TERSIMPAN";
+            } else {
+                btn.style.background = "transparent";
+                btn.style.color = "var(--text-main)";
+                btn.style.borderColor = "var(--border)";
+
+                icon.style.fill = "none";
+                icon.style.stroke = "currentColor";
+
+                text.innerText = "SIMPAN";
+            }
+        }
+
+        function showCustomNotif(msg, type) {
+            const box = document.getElementById('notifBox');
+            const text = document.getElementById('notifText');
+            const iconDiv = document.getElementById('notifIcon');
+
+            text.innerText = msg;
+
+            // Force reset class to trigger animation again if needed
+            box.className = 'custom-notif';
+            void box.offsetWidth;
+            box.classList.add('active');
+
+            if (type === 'success') {
+                box.classList.add('success');
+                iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#2e7d32" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+            } else {
+                box.classList.add('error');
+                iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#d32f2f" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>`;
+            }
+
+            setTimeout(() => {
+                box.classList.remove('active');
+                box.classList.remove('success');
+                box.classList.remove('error');
+                iconDiv.innerHTML = ''; // clear icon
+            }, 3000);
+        }
+
+    </script>
+</body>
+
+</html>
