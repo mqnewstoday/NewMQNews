@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Player Audio - MQ News</title>
+
+    <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* CONFIG (Sama dengan audio.html) */
+        :root {
+            --primary: #9d1b1b;
+            --gold: #c5a059;
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --header-text: #9d1b1b;
+            --input-bg: #f1f5f9;
+        }
+
+        body.dark-mode {
+            --primary: #ff6b6b;
+            --gold: #ffd700;
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #333333;
+            --header-text: #ffffff;
+            --input-bg: #2d2d2d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            /* Player page logic */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        .profile-header-nav {
+            background: var(--bg-card);
+            padding: 0 15px;
+            height: 60px;
+            flex-shrink: 0;
+            z-index: 100;
+            border-bottom: 3px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--header-text);
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .header-icon-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .header-icon-btn svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--primary);
+            stroke-width: 2px;
+            fill: none;
+        }
+
+        /* PLAYER CONTAINER */
+        #player-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .player-art-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .art-box {
+            width: 70vw;
+            height: 70vw;
+            max-width: 320px;
+            max-height: 320px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 4px solid var(--bg-card);
+            margin-bottom: 30px;
+        }
+
+        .art-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .track-info-large {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .large-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .large-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* CONTROLS AREA */
+        .controls-area {
+            flex-shrink: 0;
+            padding: 20px 30px 40px 30px;
+            background: var(--bg-card);
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .seek-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .time-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            width: 45px;
+            text-align: center;
+        }
+
+        input[type=range] {
+            flex: 1;
+        }
+
+        .main-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+
+        .btn-ctrl svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--text-main);
+        }
+
+        .btn-play-pause {
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(157, 27, 27, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-play-pause svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+
+        .btn-ctrl {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* ACTIONS */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-main);
+        }
+    </style>
+</head>
+
+<body>
+    <script src="theme-init.js"></script>
+    <script>
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+    </script>
+
+    <header class="profile-header-nav">
+        <a href="audio.html" class="header-icon-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+        </a>
+        <div class="header-title">NOW PLAYING</div>
+        <a href="settings.html" class="header-icon-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+            </svg>
+        </a>
+    </header>
+
+    <div id="player-wrapper">
+        <div class="player-art-area">
+            <div class="art-box">
+                <img id="full-img" src="" alt="Album Art">
+            </div>
+            <div class="track-info-large">
+                <h2 id="full-title" class="large-title">Memuat...</h2>
+                <p id="full-desc" class="large-desc">Mohon tunggu</p>
+            </div>
+        </div>
+
+        <div class="controls-area">
+            <div class="seek-wrapper">
+                <span id="curr-time" class="time-label">0:00</span>
+                <input type="range" id="seek-slider" min="0" max="100" value="0">
+                <span id="total-time" class="time-label">0:00</span>
+            </div>
+
+            <div class="main-controls">
+                <button class="btn-ctrl" onclick="seekRelative(-10)">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z" />
+                        <text x="12" y="16" font-family="Arial" font-size="7" text-anchor="middle"
+                            fill="currentColor">10</text>
+                    </svg>
+                </button>
+                <button class="btn-play-pause" onclick="togglePlay()">
+                    <svg id="play-icon" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <svg id="pause-icon" viewBox="0 0 24 24" style="display:none;">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                </button>
+                <button class="btn-ctrl" onclick="seekRelative(10)">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M10 18l8.5-6L10 6v12zM19 6v12h2V6h-2z" style="display:none" />
+                        <path
+                            d="M11.5 8C16.15 8 20.08 11.03 21.13 15.3l-2.37.78C17.7 12.81 14.69 10.5 11.15 10.5c-1.96 0-3.73.72-5.12 1.88L2.41 16H11v-9l-3.6 3.6 1.41-1.41L11.5 8z"
+                            transform="scale(-1, 1) translate(-24, 0)" /><text x="12" y="16" font-family="Arial"
+                            font-size="7" text-anchor="middle" fill="currentColor">10</text>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-action" onclick="downloadCurrent()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    UNDUH
+                </button>
+                <button class="btn-action" onclick="shareCurrent()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                    BAGIKAN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="main-audio" preload="auto"></audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1549454662&single=true&output=csv";
+        const STORAGE_KEY = 'mq_audio_state';
+
+        let allTracks = [];
+        let currentTrack = null;
+        const audio = document.getElementById('main-audio');
+
+        // INIT
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
+
+            // Get ID from URL
+            const params = new URLSearchParams(window.location.search);
+            const titleParam = params.get('bg'); // Using 'bg' to obscure a bit or just 'title'
+
+            if (titleParam) {
+                // Find track by exact title or similar
+                const found = allTracks.find(t => t.judul === decodeURIComponent(titleParam));
+                if (found) {
+                    loadTrack(found);
+                    // Check if we should resume from local state if it matches
+                    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                    if (saved.currentTrack && saved.currentTrack.judul === found.judul) {
+                        audio.currentTime = saved.currentTime || 0;
+                    }
+                    togglePlay(); // Auto play if opened directly
+                }
+            } else {
+                // No param? Load last played or first
+                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                if (saved.currentTrack) {
+                    loadTrack(saved.currentTrack);
+                    audio.currentTime = saved.currentTime || 0;
+                } else if (allTracks.length > 0) {
+                    loadTrack(allTracks[0]);
+                }
+            }
+
+            // PERMANENT SYNC
+            setInterval(syncState, 1000);
+        });
+
+        async function loadData() {
+            try {
+                const res = await fetch(SHEET_CSV_URL);
+                const text = await res.text();
+                const result = Papa.parse(text, { header: true, skipEmptyLines: true });
+                allTracks = result.data;
+            } catch (e) {
+                console.error("Failed to load CSV", e);
+            }
+        }
+
+        function loadTrack(track) {
+            currentTrack = track;
+            document.getElementById('full-title').innerText = track.judul;
+            document.getElementById('full-desc').innerText = track.deskripsi || "Audio MQ News";
+            document.getElementById('full-img').src = track.gambar || 'ALT_LogoMQN.png';
+
+            // Avoid reloading if src is same (prevent glitch)
+            if (audio.src !== track.link_audio) {
+                audio.src = track.link_audio;
+            }
+
+            // Update UI
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: track.judul,
+                    artist: "Muhammad Qasim",
+                    artwork: [{ src: track.gambar || 'ALT_LogoMQN.png', sizes: '512x512', type: 'image/png' }]
+                });
+            }
+        }
+
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                document.getElementById('play-icon').style.display = 'none';
+                document.getElementById('pause-icon').style.display = 'block';
+            } else {
+                audio.pause();
+                document.getElementById('play-icon').style.display = 'block';
+                document.getElementById('pause-icon').style.display = 'none';
+            }
+            syncState();
+        }
+
+        function seekRelative(sec) {
+            audio.currentTime += sec;
+        }
+
+        const seekSlider = document.getElementById('seek-slider');
+        seekSlider.addEventListener('input', () => {
+            const time = (seekSlider.value / 100) * audio.duration;
+            audio.currentTime = time;
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            if (!audio.duration) return;
+            const percent = (audio.currentTime / audio.duration) * 100;
+            seekSlider.value = percent;
+            document.getElementById('curr-time').innerText = formatTime(audio.currentTime);
+            document.getElementById('total-time').innerText = formatTime(audio.duration);
+
+            // Sync minimal state for other pages
+            /* We don't want to spam localStorage too much, but for "seamless" feel */
+        });
+
+        audio.addEventListener('play', () => {
+            document.getElementById('play-icon').style.display = 'none';
+            document.getElementById('pause-icon').style.display = 'block';
+        });
+
+        audio.addEventListener('pause', () => {
+            document.getElementById('play-icon').style.display = 'block';
+            document.getElementById('pause-icon').style.display = 'none';
+        });
+
+        function syncState() {
+            if (!currentTrack) return;
+            const state = {
+                currentTrack: currentTrack,
+                currentTime: audio.currentTime,
+                isPlaying: !audio.paused,
+                lastUpdate: Date.now()
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function formatTime(s) {
+            if (isNaN(s)) return "0:00";
+            const min = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return min + ":" + (sec < 10 ? "0" + sec : sec);
+        }
+
+        function downloadCurrent() {
+            if (!currentTrack) return;
+            const link = document.createElement('a');
+            link.href = currentTrack.link_audio;
+            link.download = currentTrack.judul + ".mp3";
+            link.target = "_blank";
+            link.click();
+        }
+
+        function shareCurrent() {
+            if (navigator.share && currentTrack) {
+                navigator.share({
+                    title: currentTrack.judul,
+                    text: 'Dengarkan Audio: ' + currentTrack.judul,
+                    url: window.location.href
+                });
+            } else {
+                alert('Link disalin ke clipboard!');
+                navigator.clipboard.writeText(window.location.href);
+            }
+        }
+    </script>
+</body>
+
+</html>
