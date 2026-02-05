@@ -393,10 +393,20 @@
                 allTracks = result.data.map(item => {
                     const norm = {};
                     Object.keys(item).forEach(k => norm[k.toLowerCase().trim()] = item[k]);
+
+                    let thumb = norm['thumbnail'] || norm['gambar'] || norm['image'] || "";
+                    // Fix Google Drive Link
+                    if (thumb.includes('drive.google.com') && thumb.includes('/file/d/')) {
+                        const matches = thumb.match(/\/d\/(.+?)\//);
+                        if (matches && matches[1]) {
+                            thumb = `https://drive.google.com/uc?export=view&id=${matches[1]}`;
+                        }
+                    }
+
                     return {
                         judul: norm['judul'] || norm['title'],
                         link_audio: norm['embed_link'] || norm['link_audio'] || norm['audio'] || norm['url'],
-                        gambar: norm['thumbnail'] || norm['gambar'] || norm['image'],
+                        gambar: thumb,
                         deskripsi: norm['deskripsi'] || norm['desc']
                     };
                 }).filter(t => t.judul && t.link_audio); // Filter invalid rows
