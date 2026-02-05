@@ -391,38 +391,56 @@
         }
 
         function renderList(data) {
+            console.log("Audio Data Loaded:", data); // DEBUG
             container.innerHTML = "";
-            if (data.length === 0) {
+
+            if (!data || data.length === 0) {
                 container.innerHTML = `<div style="text-align:center;">Tidak ada audio ditemukan.</div>`;
                 return;
             }
 
+            let count = 0;
             data.forEach(item => {
-                if (!item.judul) return;
+                // NORMALIZE KEYS (Handle Case Sensitivity: Judul vs judul)
+                const norm = {};
+                Object.keys(item).forEach(key => {
+                    norm[key.toLowerCase().trim()] = item[key];
+                });
+
+                // Check Mandatory Fields
+                const title = norm['judul'] || norm['title'] || norm['name'];
+                if (!title) return;
+
+                count++;
 
                 const card = document.createElement('div');
                 card.className = 'audio-card';
                 card.onclick = () => {
                     // Navigate to Player Page
-                    window.location.href = `pasca-audio.html?bg=${encodeURIComponent(item.judul)}`;
+                    window.location.href = `pasca-audio.html?bg=${encodeURIComponent(title)}`;
                 };
 
-                const thumb = item.gambar && item.gambar.trim() !== "" ? item.gambar : 'ALT_LogoMQN.png';
+                const thumb = (norm['gambar'] && norm['gambar'].trim() !== "") ? norm['gambar'] : 'ALT_LogoMQN.png';
+                const desc = norm['deskripsi'] || norm['desc'] || 'Audio Muhammad Qasim';
 
                 card.innerHTML = `
                     <div class="card-thumb">
-                        <img src="${thumb}" loading="lazy" alt="Thumb">
+                        <img src="${thumb}" loading="lazy" alt="Thumb" onerror="this.src='ALT_LogoMQN.png'">
                         <div class="thumb-overlay">
                             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="card-title">${item.judul}</div>
-                        <div class="card-desc">${item.deskripsi || 'Audio Muhammad Qasim'}</div>
+                        <div class="card-title">${title}</div>
+                        <div class="card-desc">${desc}</div>
                     </div>
                 `;
                 container.appendChild(card);
             });
+
+            if (count === 0) {
+                container.innerHTML = `<div style="text-align:center;">Format CSV tidak sesuai (Kolom 'Judul' tidak ditemukan).</div>`;
+            }
         }
 
         // --- GLOBAL PLAYER LOGIC (Mimic Persistence) ---

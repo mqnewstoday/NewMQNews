@@ -388,7 +388,20 @@
                 const res = await fetch(SHEET_CSV_URL);
                 const text = await res.text();
                 const result = Papa.parse(text, { header: true, skipEmptyLines: true });
-                allTracks = result.data;
+
+                // NORMALIZE DATA ONCE
+                allTracks = result.data.map(item => {
+                    const norm = {};
+                    Object.keys(item).forEach(k => norm[k.toLowerCase().trim()] = item[k]);
+                    return {
+                        judul: norm['judul'] || norm['title'] || norm['name'],
+                        link_audio: norm['link_audio'] || norm['audio'] || norm['url'],
+                        gambar: norm['gambar'] || norm['image'] || norm['thumb'],
+                        deskripsi: norm['deskripsi'] || norm['desc']
+                    };
+                }).filter(t => t.judul && t.link_audio); // Filter invalid rows
+
+                console.log("Player Data Loaded:", allTracks);
             } catch (e) {
                 console.error("Failed to load CSV", e);
             }
