@@ -201,6 +201,7 @@
                         <th>WA</th>
                         <th>STATUS</th>
                         <th>TANGGAL</th>
+                        <th>AKSI</th>
                     </tr>
                 </thead>
                 <tbody id="user-list">
@@ -222,7 +223,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCMDVcDKxaf3v7iHZYpQ1k6k0G55yW9njQ",
@@ -300,6 +301,12 @@
                             </span>
                         </td>
                         <td style="color:#64748b; font-size:0.8rem;">${dateStr}</td>
+                        <td>
+                            <button onclick="deleteUser('${doc.id}', '${data.email}')" 
+                                style="background:#d32f2f; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:0.75rem;">
+                                HAPUS
+                            </button>
+                        </td>
                     `;
                     list.appendChild(tr);
                 });
@@ -310,9 +317,25 @@
 
             } catch (err) {
                 console.error(err);
-                list.innerHTML = '<tr><td colspan="5" style="color:red; text-align:center;">Gagal memuat data: ' + err.message + '</td></tr>';
+                list.innerHTML = '<tr><td colspan="6" style="color:red; text-align:center;">Gagal memuat data: ' + err.message + '</td></tr>';
             }
         }
+
+        // --- FUNGSI HAPUS USER ---
+        window.deleteUser = async function (uid, email) {
+            if (!confirm(`Yakin ingin menghapus data user ini?\nEmail: ${email}\n\nPERHATIAN: Ini hanya menghapus di Database, pastikan Anda sudah menghapus di Firebase Authentication Console jika perlu.`)) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, "users", uid));
+                alert("Data user berhasil dihapus!");
+                loadUserList(); // Refresh tabel
+            } catch (err) {
+                console.error("Gagal hapus:", err);
+                alert("Gagal menghapus: " + err.message);
+            }
+        };
     </script>
 </body>
 
