@@ -170,13 +170,18 @@
             width: 100%;
         }
 
+        /* --- RESPONSIVE LAYOUT SYSTEM (Mobile First) --- */
         .transform-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: transparent;
+            /* Wrapper is invisible now */
+            box-shadow: none;
+            padding: 0;
+            border: none;
             animation: fadeIn 0.5s ease;
+            margin-top: 20px;
         }
 
         @keyframes fadeIn {
@@ -191,11 +196,37 @@
             }
         }
 
+        .sidebar-wrapper {
+            display: contents;
+            /* Ungroup for mobile flex ordering */
+        }
+
         .card-image {
+            order: 1;
+            /* First */
             width: 100%;
             height: auto;
-            display: block;
-            border-bottom: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* Aspect-ratio removed per user request */
+        }
+
+        /* Update Card Body to look like a card on mobile */
+        .card-body {
+            order: 2;
+            /* Second */
+            background: var(--card);
+            /* Restore card look here */
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        /* Provide order for Gallery */
+        .tinder-wrapper {
+            order: 3;
+            /* Third (Bottom) */
         }
 
         .card-body {
