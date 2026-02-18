@@ -164,6 +164,18 @@
         </div>
     </div>
 
+    <!-- MODAL CONFIRM DELETE COMMENT (NEW) -->
+    <div id="deleteConfirmModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <div class="custom-modal-title">HAPUS KOMENTAR?</div>
+            <div class="custom-modal-text">Tindakan ini tidak dapat dibatalkan.</div>
+            <div class="custom-modal-buttons">
+                <button class="btn-modal btn-modal-cancel" onclick="closeDeleteConfirm()">Batal</button>
+                <button class="btn-modal btn-modal-confirm" id="btn-conf-del">Hapus</button>
+            </div>
+        </div>
+    </div>
+
 
     <div id="article-view" style="display: block; min-height: 80vh;">
         <div class="article-header">
@@ -736,6 +748,31 @@
 
         // Jalankan init
         init();
+
+
+        // --- CUSTOM DELETE CONFIRMATION LOGIC ---
+        let pendingDeleteId = null;
+
+        window.showConfirmDelete = function (commentId) {
+            pendingDeleteId = commentId;
+            const modal = document.getElementById('deleteConfirmModal');
+            modal.classList.add('active');
+        }
+
+        window.closeDeleteConfirm = function () {
+            pendingDeleteId = null;
+            const modal = document.getElementById('deleteConfirmModal');
+            modal.classList.remove('active');
+        }
+
+        // Bind confirm button
+        document.getElementById('btn-conf-del').addEventListener('click', async () => {
+            if (pendingDeleteId && window.commentManager) {
+                const tempId = pendingDeleteId;
+                closeDeleteConfirm(); // Close first
+                await window.commentManager.performDelete(tempId);
+            }
+        });
 
     </script>
     <!-- Script goBack Updated for Smart Back -->

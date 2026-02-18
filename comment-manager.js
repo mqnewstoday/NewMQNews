@@ -251,8 +251,18 @@ class CommentManager {
     }
 
     async deleteComment(commentId) {
-        if (!confirm("Hapus komentar ini?")) return;
+        // Use custom confirmation if available (set by the page)
+        if (window.showConfirmDelete) {
+            window.showConfirmDelete(commentId);
+            return;
+        }
 
+        // Fallback to standard confirm
+        if (!confirm("Hapus komentar ini?")) return;
+        await this.performDelete(commentId);
+    }
+
+    async performDelete(commentId) {
         try {
             await deleteDoc(doc(db, "comments", commentId));
 

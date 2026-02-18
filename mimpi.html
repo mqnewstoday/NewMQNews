@@ -475,6 +475,18 @@
         <span id="notifText">Pesan</span>
     </div>
 
+    <!-- MODAL CONFIRM DELETE COMMENT (NEW) -->
+    <div id="deleteConfirmModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <div class="custom-modal-title">HAPUS KOMENTAR?</div>
+            <div class="custom-modal-text">Tindakan ini tidak dapat dibatalkan.</div>
+            <div class="custom-modal-buttons">
+                <button class="btn-modal btn-modal-cancel" onclick="closeDeleteConfirm()">Batal</button>
+                <button class="btn-modal btn-modal-confirm" id="btn-conf-del">Hapus</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Init Script -->
     <script src="theme-init.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -751,6 +763,31 @@
 
         // RUN
         fetchDream();
+
+
+        // --- CUSTOM DELETE CONFIRMATION LOGIC ---
+        let pendingDeleteId = null;
+
+        window.showConfirmDelete = function (commentId) {
+            pendingDeleteId = commentId;
+            const modal = document.getElementById('deleteConfirmModal');
+            modal.classList.add('active');
+        }
+
+        window.closeDeleteConfirm = function () {
+            pendingDeleteId = null;
+            const modal = document.getElementById('deleteConfirmModal');
+            modal.classList.remove('active');
+        }
+
+        // Bind confirm button
+        document.getElementById('btn-conf-del').addEventListener('click', async () => {
+            if (pendingDeleteId && window.commentManager) {
+                const tempId = pendingDeleteId;
+                closeDeleteConfirm(); // Close first
+                await window.commentManager.performDelete(tempId);
+            }
+        });
 
     </script>
     <script>
