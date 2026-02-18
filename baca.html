@@ -283,17 +283,12 @@
             </div>
         </div>
     </div>
+    </div>
+    <!-- END ARTICLE VIEW -->
 
-    <!-- COMMENT SECTION (Moved Inside Main Wrapper or styled same) -->
-    <!-- Based on structure, #article-view is the main wrapper with max-width? -->
-    <!-- No, #article-view min-height 80vh. Inside elements use max-width:800px margin:0 auto. -->
-    <!-- The comments-container ALREADY has max-width:800px margin:0 auto. -->
-    <!-- The issue might be the parent div closing prematurely or padding. -->
-    <!-- Let's check the structure: -->
-    <!-- <div id="article-view"> ... content ... <div class="social-share-area">...</div> </div> -->
-    <!-- We pasted comments-container AFTER social-share-area but BEFORE closing #article-view div. -->
-
-    <div id="comments-container" style="max-width:800px; margin:0 auto; padding:0 20px 40px;"></div>
+    <!-- COMMENT SECTION (OUTSIDE ARTICLE VIEW, BUT SAME WIDTH) -->
+    <div class="content-wrapper" style="max-width:800px; margin:0 auto; padding:0 20px 40px; width: 100%;">
+        <div id="comments-container"></div>
     </div>
 
 
