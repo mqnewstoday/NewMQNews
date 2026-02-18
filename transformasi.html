@@ -332,52 +332,73 @@
             font-style: italic;
         }
 
-        /* --- DESKTOP BALANCE LAYOUT --- */
+        /* --- DESKTOP BALANCE LAYOUT (SIDEBAR STYLE) --- */
         @media (min-width: 1024px) {
             .content-wrapper {
                 max-width: 1200px;
-                /* Wider canvas */
                 padding: 40px;
             }
 
-            .card-body {
-                display: grid;
-                grid-template-columns: 1.6fr 1fr;
-                /* Text wider than gallery */
+            /* Container becomes a Flex Row */
+            .transform-card {
+                display: flex;
+                align-items: flex-start;
+                /* Aligns top */
                 gap: 50px;
-                align-items: start;
+                background: transparent;
+                /* Remove card bg to blends better */
+                box-shadow: none;
+                /* Cleaner look */
+                padding: 0;
+            }
+
+            /* Main Image becomes Sticky Sidebar */
+            .card-image {
+                width: 350px;
+                /* Fixed pleasant width */
+                height: auto;
+                aspect-ratio: 4/5;
+                object-fit: cover;
+                border-radius: 20px;
+                position: sticky;
+                top: 100px;
+                flex-shrink: 0;
+                /* Don't shrink */
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            }
+
+            /* Content Body takes rest of space */
+            .card-body {
+                flex-grow: 1;
+                padding: 0;
+                /* Reset padding */
+                display: block;
+                /* Reset grid from previous attempt */
             }
 
             .card-title {
-                grid-column: 1 / -1;
-                /* Full width title */
-                font-size: 2.5rem;
-                margin-bottom: 40px;
-                text-align: center;
-                /* Center big title */
-                border-left: none;
-                /* Remove side border for centered look */
-                border-bottom: 4px solid var(--gold);
-                /* Use bottom border instead */
-                padding-bottom: 15px;
-                padding-left: 0;
+                font-size: 3rem;
+                text-align: left;
+                /* Back to left alignment */
+                margin-top: 0;
+                padding-left: 20px;
+                border-left: 5px solid var(--gold);
+                border-bottom: none;
+                margin-bottom: 30px;
             }
 
             .card-text {
-                font-size: 1.1rem;
-                /* Better readability */
+                font-size: 1.15rem;
                 line-height: 1.8;
+                text-align: justify;
+                padding: 0 10px;
             }
 
+            /* Gallery stays at bottom of text, centered */
             .tinder-wrapper {
-                margin: 0;
+                margin: 60px auto 0;
                 width: 100%;
-                max-width: 400px;
-                position: sticky;
-                /* Sticky gallery while reading */
-                top: 100px;
-                justify-self: center;
-                /* Center in its column */
+                max-width: 450px;
             }
         }
     </style>
