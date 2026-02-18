@@ -152,13 +152,13 @@ class BookmarkManager {
             <div id="auth-popup-overlay" class="custom-modal-overlay">
                 <div class="custom-modal-box">
                     <div style="margin-bottom:15px; color:var(--primary);">
-                         <svg viewBox="0 0 24 24" width="50" height="50" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M18 8l2 2 4-4"></path>
+                         <!-- Lock Icon (Non-animate) -->
+                         <svg viewBox="0 0 24 24" width="50" height="50" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                          </svg>
                     </div>
-                    <h3 class="modal-title">Fitur Member</h3>
+                    <h3 class="modal-title">Fitur Login</h3>
                     <p class="modal-desc">Login untuk menyimpan artikel dan mengaksesnya di semua perangkat Anda.</p>
                     <div class="modal-actions">
                         <button id="btn-cancel-auth" class="modal-btn btn-cancel">Nanti</button>
