@@ -148,7 +148,7 @@ class CommentManager {
         const currentUser = auth.currentUser;
         if (currentUser && data.uid === currentUser.uid) {
             deleteBtn = `
-            <button onclick="commentManager.deleteComment('${docSnapshot.id}')" 
+            <button onclick="window.commentManager.deleteComment('${docSnapshot.id}')" 
                 style="border:none; background:transparent; cursor:pointer; font-size:1.2rem; padding:5px; color:#d32f2f; transition:transform 0.2s;" 
                 onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"
                 title="Hapus Komentar">
