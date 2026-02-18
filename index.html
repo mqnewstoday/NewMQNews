@@ -302,6 +302,17 @@
                     <a href="transformasi.html?category=FEET%20INCREASE">FEET INCREASE</a>
                 </div>
             </div>
+            <!-- ADMIN DROPDOWN (Hidden by default) -->
+            <div class="sidebar-dropdown-wrapper" id="admin-dropdown" style="display:none;">
+                <div class="sidebar-dropdown-header" onclick="toggleDropdown('admin-dropdown')">
+                    <span style="color:var(--gold); font-weight:bold;">KONTROL ADMIN</span>
+                    <span class="sidebar-arrow">&rsaquo;</span>
+                </div>
+                <div class="sidebar-submenu">
+                    <a href="admin.html" style="color:var(--gold);">DATABASE USER</a>
+                </div>
+            </div>
+
             <!-- OTHERS DROPDOWN -->
             <div class="sidebar-dropdown-wrapper" id="others-dropdown">
                 <div class="sidebar-dropdown-header" onclick="toggleDropdown('others-dropdown')">
@@ -1411,12 +1422,20 @@
             const link = document.getElementById('auth-link');
             const text = document.getElementById('auth-text');
             const logoutBtn = document.getElementById('logout-btn');
+            const adminMenu = document.getElementById('admin-dropdown');
 
             if (user) {
                 // USER LOGIN
                 const name = user.displayName || user.email.split('@')[0];
                 text.innerText = "HALO, " + name.toUpperCase();
                 link.href = "profil.html"; // Arahkan ke profil
+
+                // SHOW ADMIN MENU IF UID MATCHES
+                if (user.uid === "hUyS8nHwwcOBU6cgPvAbO7cKDTj2") {
+                    if (adminMenu) adminMenu.style.display = "block";
+                } else {
+                    if (adminMenu) adminMenu.style.display = "none";
+                }
 
                 if (logoutBtn) {
                     logoutBtn.style.display = "flex";
@@ -1430,6 +1449,7 @@
                 text.innerText = "MASUK / DAFTAR";
                 link.href = "login.html";
                 if (logoutBtn) logoutBtn.style.display = "none";
+                if (adminMenu) adminMenu.style.display = "none";
             }
         });
 

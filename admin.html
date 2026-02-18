@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - MQ News Today</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="theme.css">
+    <style>
+        :root {
+            --primary: #9d1b1b;
+            --gold: #c5a059;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #334155;
+            --border: #e2e8f0;
+        }
+
+        body.dark-mode {
+            --primary: #ff6b6b;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #e2e8f0;
+            --border: #333333;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .user-table-card {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.02);
+            padding: 15px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .verified {
+            background: rgba(46, 125, 50, 0.1);
+            color: #2e7d32;
+        }
+
+        .unverified {
+            background: rgba(211, 47, 47, 0.1);
+            color: #d32f2f;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+            color: #64748b;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            margin-left: 10px;
+            color: var(--text);
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="theme-init.js"></script>
+
+    <div class="admin-container">
+        <a href="index.html" class="btn-back">← KEMBALI KE BERANDA</a>
+
+        <header>
+            <h1 class="title">KONTROL DATABASE USER</h1>
+            <div id="admin-info" style="font-size: 0.8rem; color: #64748b;">Memverifikasi Akses...</div>
+        </header>
+
+        <div class="stats-grid" id="stats-area" style="display:none;">
+            <div class="stat-card">
+                <span class="stat-val" id="total-users">0</span>
+                <span class="stat-label">Total Terdaftar</span>
+            </div>
+            <div class="stat-card" style="border-left: 5px solid #2e7d32;">
+                <span class="stat-val" id="verified-users">0</span>
+                <span class="stat-label">Terverifikasi</span>
+            </div>
+            <div class="stat-card" style="border-left: 5px solid #d32f2f;">
+                <span class="stat-val" id="pending-users">0</span>
+                <span class="stat-label">Menunggu Link</span>
+            </div>
+        </div>
+
+        <div class="user-table-card" id="table-area" style="display:none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>NAMA</th>
+                        <th>EMAIL</th>
+                        <th>WA</th>
+                        <th>STATUS</th>
+                        <th>TANGGAL</th>
+                    </tr>
+                </thead>
+                <tbody id="user-list">
+                    <!-- Data ditaruh disini -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="access-denied" style="display:none; text-align:center; padding:100px 20px;">
+            <h2 style="color:var(--primary);">AKSES DITOLAK</h2>
+            <p>Anda tidak memiliki otoritas untuk melihat halaman ini.</p>
+            <a href="index.html" class="btn-primary"
+                style="display:inline-block; margin-top:20px; padding:10px 40px; text-decoration:none;">KE BERANDA</a>
+        </div>
+
+        <div class="loading" id="loader">Sedang memvalidasi otoritas Admin...</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMDVcDKxaf3v7iHZYpQ1k6k0G55yW9njQ",
+            authDomain: "mq-news-today.firebaseapp.com",
+            projectId: "mq-news-today",
+            storageBucket: "mq-news-today.firebasestorage.app",
+            messagingSenderId: "310073854630",
+            appId: "1:310073854630:web:25dac91125b3be85f94267",
+            measurementId: "G-0VMCLH4RD5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- KONFIGURASI ADMIN ---
+        const ADMIN_UID = "hUyS8nHwwcOBU6cgPvAbO7cKDTj2";
+
+        onAuthStateChanged(auth, async (user) => {
+            const loader = document.getElementById('loader');
+            const tableArea = document.getElementById('table-area');
+            const statsArea = document.getElementById('stats-area');
+            const deniedView = document.getElementById('access-denied');
+            const adminInfo = document.getElementById('admin-info');
+
+            if (user && user.uid === ADMIN_UID) {
+                // AKSES DIBERIKAN
+                adminInfo.innerText = "Login as: " + (user.email);
+                loader.style.display = "none";
+                tableArea.style.display = "block";
+                statsArea.style.display = "grid";
+
+                loadUserList();
+            } else {
+                // AKSES DITOLAK
+                loader.style.display = "none";
+                deniedView.style.display = "block";
+            }
+        });
+
+        async function loadUserList() {
+            const list = document.getElementById('user-list');
+            list.innerHTML = '<tr><td colspan="5" style="text-align:center;">Memuat Data User...</td></tr>';
+
+            try {
+                const q = query(collection(db, "users"), orderBy("bergabung", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                list.innerHTML = '';
+                let total = 0;
+                let verifiedCount = 0;
+                let pendingCount = 0;
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const isVerif = data.emailVerified === true;
+
+                    total++;
+                    if (isVerif) verifiedCount++;
+                    else pendingCount++;
+
+                    const dateStr = data.bergabung ? new Date(data.bergabung.seconds * 1000).toLocaleDateString('id-ID') : '-';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight:bold;">${data.nama || '-'}</td>
+                        <td>
+                            ${data.email || '-'} 
+                            <button class="copy-btn" onclick="navigator.clipboard.writeText('${data.email}')">Copy</button>
+                        </td>
+                        <td>${data.no_hp || '-'}</td>
+                        <td>
+                            <span class="status-badge ${isVerif ? 'verified' : 'unverified'}">
+                                ${isVerif ? 'TERVERIFIKASI' : 'BELUM KLIK LINK'}
+                            </span>
+                        </td>
+                        <td style="color:#64748b; font-size:0.8rem;">${dateStr}</td>
+                    `;
+                    list.appendChild(tr);
+                });
+
+                document.getElementById('total-users').innerText = total;
+                document.getElementById('verified-users').innerText = verifiedCount;
+                document.getElementById('pending-users').innerText = pendingCount;
+
+            } catch (err) {
+                console.error(err);
+                list.innerHTML = '<tr><td colspan="5" style="color:red; text-align:center;">Gagal memuat data: ' + err.message + '</td></tr>';
+            }
+        }
+    </script>
+</body>
+
+</html>
