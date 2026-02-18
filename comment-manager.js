@@ -1,5 +1,5 @@
 import { db, auth } from "./firebase-config.js";
-import { collection, addDoc, query, where, orderBy, limit, getDocs, serverTimestamp, startAfter, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, addDoc, query, where, orderBy, limit, getDocs, serverTimestamp, startAfter, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 class CommentManager {
     constructor() {
@@ -113,35 +113,58 @@ class CommentManager {
                 loadMoreBtn.style.display = 'block';
             }
 
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                this._appendCommentElement(data);
-            });
 
+            snapshot.forEach(d => {
+                this._appendCommentElement(d);
+            });
         } catch (e) {
-            console.error("Error loading comments:", e);
-            if (isReset) listContainer.innerHTML = '<p style="color:red;">Gagal memuat komentar.</p>';
+            console.error("Load comments error", e);
+            listContainer.innerHTML = '<p>Gagal memuat komentar.</p>';
+        } finally {
+            this.isLoading = false;
         }
     }
 
-    _appendCommentElement(data) {
+    _appendCommentElement(docSnapshot) {
+        const data = docSnapshot.data();
         const container = document.getElementById('comment-list-ui');
         const div = document.createElement('div');
+        div.id = `comment-${docSnapshot.id}`;
         div.className = 'comment-card';
+        // Inline styles moved to CSS class 'comment-card' ideally, but keeping inline for now or relying on theme.css override
         div.style.padding = "15px";
         div.style.marginBottom = "10px";
         div.style.background = "var(--bg-card)";
         div.style.borderRadius = "8px";
         div.style.border = "1px solid var(--border)";
+        div.style.position = "relative"; // For positioning delete button
 
         const dateStr = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : 'Baru saja';
         const name = data.username || "Anonymous";
         const text = data.text || "";
 
+        // Check ownership
+        let deleteBtn = "";
+        const currentUser = auth.currentUser;
+        if (currentUser && data.uid === currentUser.uid) {
+            deleteBtn = `
+            <button onclick="commentManager.deleteComment('${docSnapshot.id}')" 
+                style="border:none; background:transparent; cursor:pointer; font-size:1.1rem; opacity:0.6; padding:0 5px;" 
+                title="Hapus Komentar">
+                🗑️
+            </button>`;
+        }
+
+        // Reply Button (Future Feature Placeholder)
+        // const replyBtn = `<button style="font-size:0.8rem; color:var(--primary); background:none; border:none; cursor:pointer; margin-top:5px;">Balas</button>`;
+
         div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                <span class="com-name" style="font-weight:bold; color:var(--primary);">${name}</span>
-                <span class="com-date" style="font-size:0.75rem; color:var(--text-muted);">${dateStr}</span>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                <div style="display:flex; flex-direction:column;">
+                     <span class="com-name" style="font-weight:bold; color:var(--primary);">${name}</span>
+                     <span class="com-date" style="font-size:0.75rem; color:var(--text-muted);">${dateStr}</span>
+                </div>
+                ${deleteBtn}
             </div>
             <div class="com-body" style="font-size:0.9rem; line-height:1.5; color:var(--text-main);">${text.replace(/\n/g, '<br>')}</div>
         `;
@@ -223,6 +246,26 @@ class CommentManager {
             }
         } finally {
             if (btn) btn.disabled = false;
+        }
+    }
+
+    async deleteComment(commentId) {
+        if (!confirm("Hapus komentar ini?")) return;
+
+        try {
+            await deleteDoc(doc(db, "comments", commentId));
+
+            // Remove from UI
+            const el = document.getElementById(`comment-${commentId}`);
+            if (el) el.remove();
+
+            // Optional: Show toast notif
+            if (window.showCustomNotif) window.showCustomNotif("Komentar dihapus.", 'success');
+            else alert("Komentar dihapus.");
+
+        } catch (e) {
+            console.error("Delete failed:", e);
+            alert("Gagal menghapus komentar. Pastikan ini komentar Anda.");
         }
     }
 }

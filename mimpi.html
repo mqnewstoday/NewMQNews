@@ -478,283 +478,274 @@
     <!-- Init Script -->
     <script src="theme-init.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script type="module">
-        import { auth } from './firebase-config.js';
-        import bookmarkManager from "./bookmark-manager.js";
-        import commentManager from "./comment-manager.js"; // Import Comment Manager
+    import { auth } from './firebase-config.js';
+    import bookmarkManager from "./bookmark-manager.js";
+    import commentManager from "./comment-manager.js"; // Import Comment Manager
 
-        // Listen for bookmarks-loaded
-        window.addEventListener('bookmarks-loaded', () => {
-            checkSavedStatus();
-        });
+    // Expose to window for onclick handlers
+    window.bookmarkManager = bookmarkManager;
+    window.commentManager = commentManager;
 
-        let currentData = null;
-        const player = document.getElementById('audio-player');
-        const btnPlay = document.getElementById('btn-play');
-        const iconPlay = document.getElementById('icon-play');
-        const iconPause = document.getElementById('icon-pause');
-        const statusText = document.getElementById('audio-status');
+    // Listen for bookmarks-loaded
+    window.addEventListener('bookmarks-loaded', () => {
+    checkSavedStatus();
+    });
 
-        // AMBIL PARAMETER URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const titleParam = urlParams.get('title');
+    let currentData = null;
+    const player = document.getElementById('audio-player');
+    const btnPlay = document.getElementById('btn-play');
+    const iconPlay = document.getElementById('icon-play');
+    const iconPause = document.getElementById('icon-pause');
+    const statusText = document.getElementById('audio-status');
 
-        // URL CSV DARI USER
-        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=703095600&single=true&output=csv";
+    // AMBIL PARAMETER URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const titleParam = urlParams.get('title');
 
-        // FUNGSI FETCH
-        function fetchDream() {
-            if (!titleParam) {
-                document.getElementById('d-title').innerText = "Judul Tidak Ditemukan";
-                return;
-            }
+    // URL CSV DARI USER
+    const CSV_URL =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=703095600&single=true&output=csv";
 
-            Papa.parse(CSV_URL, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function (results) {
-                    const data = results.data;
+    // FUNGSI FETCH
+    function fetchDream() {
+    if (!titleParam) {
+    document.getElementById('d-title').innerText = "Judul Tidak Ditemukan";
+    return;
+    }
 
-                    // FUNGSI HELPER UNTUK CARI DATA (CASE INSENSITIVE KEY)
-                    const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
+    Papa.parse(CSV_URL, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function (results) {
+    const data = results.data;
 
-                    // CARI ITEM YANG JUDULNYA COCOK
-                    const item = data.find(i => getK(i, 'judul').trim().toLowerCase() === titleParam.trim().toLowerCase());
+    // FUNGSI HELPER UNTUK CARI DATA (CASE INSENSITIVE KEY)
+    const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
 
-                    if (item) {
-                        renderData(item);
-                        // Panggil render rekomendasi setelah data utama dimuat
-                        // Kirim raw data (results.data) dan judul saat ini untuk di-exclude
-                        renderData(item);
-                        // Panggil render rekomendasi setelah data utama dimuat
-                        // Kirim raw data (results.data) dan judul saat ini untuk di-exclude
-                        renderRelatedDreams(data, item);
+    // CARI ITEM YANG JUDULNYA COCOK
+    const item = data.find(i => getK(i, 'judul').trim().toLowerCase() === titleParam.trim().toLowerCase());
 
-                        // INIT COMMENTS
-                        const currentTitle = getK(item, 'judul') || titleParam;
-                        if (currentTitle) {
-                            commentManager.init(currentTitle, 'comments-container');
-                        }
-                    } else {
-                        document.getElementById('d-title').innerText = "Mimpi Tidak Ditemukan";
-                        document.getElementById('d-text').innerText = "Maaf, data mimpi ini tidak ditemukan di database.";
-                        document.getElementById('related-list').innerHTML = ""; // Clear loader
-                    }
-                },
-                error: function (err) {
-                    console.error('Error fetching CSV:', err);
-                    document.getElementById('d-title').innerText = "Gagal Memuat Data";
-                }
-            });
+    if (item) {
+    renderData(item);
+    // Panggil render rekomendasi setelah data utama dimuat
+    // Kirim raw data (results.data) dan judul saat ini untuk di-exclude
+    renderData(item);
+    // Panggil render rekomendasi setelah data utama dimuat
+    // Kirim raw data (results.data) dan judul saat ini untuk di-exclude
+    renderRelatedDreams(data, item);
+
+    // INIT COMMENTS
+    const currentTitle = getK(item, 'judul') || titleParam;
+    if (currentTitle) {
+    commentManager.init(currentTitle, 'comments-container');
+    }
+    } else {
+    document.getElementById('d-title').innerText = "Mimpi Tidak Ditemukan";
+    document.getElementById('d-text').innerText = "Maaf, data mimpi ini tidak ditemukan di database.";
+    document.getElementById('related-list').innerHTML = ""; // Clear loader
+    }
+    },
+    error: function (err) {
+    console.error('Error fetching CSV:', err);
+    document.getElementById('d-title').innerText = "Gagal Memuat Data";
+    }
+    });
+    }
+
+    function renderData(item) {
+    const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
+
+    // MAPPING DATA
+    currentData = {
+    title: getK(item, 'judul') || titleParam,
+    image: getK(item, 'gambar') || getK(item, 'thumbnail') || "https://placehold.co/600x900?text=No+Image",
+    audio: getK(item, 'audio') || "",
+    // Narasi support HTML
+    narasi: getK(item, 'narasi') || "<p>Tidak ada narasi.</p>"
+    };
+
+    // RENDER KE ELEMENT HTML
+    document.getElementById('d-title').innerText = currentData.title;
+
+    // Set Gambar (handle error via onerror di HTML)
+    const imgEl = document.getElementById('d-img');
+    imgEl.src = currentData.image;
+
+    // Set Background Blur
+    document.querySelector('.dream-hero').style.setProperty('--bg-img', `url('${currentData.image}')`);
+
+    // Set Narasi
+    document.getElementById('d-text').innerHTML = currentData.narasi;
+
+    // Set Audio
+    if (currentData.audio && currentData.audio.length > 5) {
+    player.src = currentData.audio;
+    document.querySelector('.audio-block').style.display = 'flex';
+    } else {
+    // Sembunyikan player jika tidak ada audio, tapi tetap tampilkan tombol simpan?
+    // Lebih baik sembunyikan tombol play-nya saja, info dan save tetap ada.
+    btnPlay.style.display = 'none';
+    statusText.innerText = "Audio Tidak Tersedia";
+    }
+
+    checkSavedStatus();
+    }
+
+    // AUDIO CONTROLS
+    window.toggleAudio = function () {
+    if (!player.src) return;
+
+    if (player.paused) {
+    player.play();
+    iconPlay.style.display = 'none';
+    iconPause.style.display = 'block';
+    statusText.innerText = "Sedang Memutar...";
+    btnPlay.style.transform = "scale(1.1)";
+    } else {
+    player.pause();
+    iconPlay.style.display = 'block';
+    iconPause.style.display = 'none';
+    statusText.innerText = "Audio Jeda";
+    btnPlay.style.transform = "scale(1)";
+    }
+    }
+
+    player.onended = function () {
+    iconPlay.style.display = 'block';
+    iconPause.style.display = 'none';
+    statusText.innerText = "Selesai Diputar";
+    };
+
+    // SAVE LOGIC
+    function checkSavedStatus() {
+    if (!currentData) return;
+    const isSaved = bookmarkManager.isBookmarkedSync('mimpi', currentData.title);
+    updateSaveBtn(isSaved);
+    }
+
+    function updateSaveBtn(isSaved) {
+    const btn = document.getElementById('btn-save');
+    if (isSaved) {
+    btn.classList.add('saved');
+    btn.querySelector('span').innerText = "Tersimpan";
+    } else {
+    btn.classList.remove('saved');
+    btn.querySelector('span').innerText = "Simpan";
+    }
+    }
+
+    window.toggleSave = async function () {
+    if (!currentData) return;
+
+    // Construct Data Object
+    // We use title as ID effectively for dreams
+    const data = {
+    title: currentData.title,
+    image: currentData.image,
+    audio: currentData.audio,
+    narasi: currentData.narasi // Or summary
+    };
+
+    const result = await bookmarkManager.toggleBookmark('mimpi', data);
+
+    if (result === 'saved' || result === 'removed') {
+    checkSavedStatus();
+    }
+    }
+
+    // DOWNLOAD LOGIC
+    window.downloadAudio = function () {
+    if (!currentData || !currentData.audio || currentData.audio.length < 5) { showNotif("Tidak ada audio untuk
+        diunduh.", "error" ); return; } showNotif("Sedang mengunduh...", "success" ); const
+        link=document.createElement("a"); link.href=currentData.audio; // Gunakan judul sebagai nama file const
+        safeName=currentData.title.replace(/[^a-z0-9]/gi, '_' ).toLowerCase(); link.download=safeName + ".mp3" ;
+        link.target="_blank" ; document.body.appendChild(link); link.click(); document.body.removeChild(link); } //
+        NOTIF function showNotif(msg, type) { const box=document.getElementById('notifBox'); const
+        text=document.getElementById('notifText'); const icon=document.getElementById('notifIcon'); text.innerText=msg;
+        box.className="custom-notif active " + type; if (type==='success' ) { icon.innerHTML=`<svg
+        style="width:20px;height:20px;fill:#2e7d32" viewBox="0 0 24 24">
+        <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+        </svg>`;
+        } else {
+        icon.innerHTML = `<svg style="width:20px;height:20px;fill:#d32f2f" viewBox="0 0 24 24">
+            <path
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+        </svg>`;
         }
 
-        function renderData(item) {
-            const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
-
-            // MAPPING DATA
-            currentData = {
-                title: getK(item, 'judul') || titleParam,
-                image: getK(item, 'gambar') || getK(item, 'thumbnail') || "https://placehold.co/600x900?text=No+Image",
-                audio: getK(item, 'audio') || "",
-                // Narasi support HTML
-                narasi: getK(item, 'narasi') || "<p>Tidak ada narasi.</p>"
-            };
-
-            // RENDER KE ELEMENT HTML
-            document.getElementById('d-title').innerText = currentData.title;
-
-            // Set Gambar (handle error via onerror di HTML)
-            const imgEl = document.getElementById('d-img');
-            imgEl.src = currentData.image;
-
-            // Set Background Blur
-            document.querySelector('.dream-hero').style.setProperty('--bg-img', `url('${currentData.image}')`);
-
-            // Set Narasi
-            document.getElementById('d-text').innerHTML = currentData.narasi;
-
-            // Set Audio
-            if (currentData.audio && currentData.audio.length > 5) {
-                player.src = currentData.audio;
-                document.querySelector('.audio-block').style.display = 'flex';
-            } else {
-                // Sembunyikan player jika tidak ada audio, tapi tetap tampilkan tombol simpan?
-                // Lebih baik sembunyikan tombol play-nya saja, info dan save tetap ada.
-                btnPlay.style.display = 'none';
-                statusText.innerText = "Audio Tidak Tersedia";
-            }
-
-            checkSavedStatus();
-        }
-
-        // AUDIO CONTROLS
-        window.toggleAudio = function () {
-            if (!player.src) return;
-
-            if (player.paused) {
-                player.play();
-                iconPlay.style.display = 'none';
-                iconPause.style.display = 'block';
-                statusText.innerText = "Sedang Memutar...";
-                btnPlay.style.transform = "scale(1.1)";
-            } else {
-                player.pause();
-                iconPlay.style.display = 'block';
-                iconPause.style.display = 'none';
-                statusText.innerText = "Audio Jeda";
-                btnPlay.style.transform = "scale(1)";
-            }
-        }
-
-        player.onended = function () {
-            iconPlay.style.display = 'block';
-            iconPause.style.display = 'none';
-            statusText.innerText = "Selesai Diputar";
-        };
-
-        // SAVE LOGIC
-        function checkSavedStatus() {
-            if (!currentData) return;
-            const isSaved = bookmarkManager.isBookmarkedSync('mimpi', currentData.title);
-            updateSaveBtn(isSaved);
-        }
-
-        function updateSaveBtn(isSaved) {
-            const btn = document.getElementById('btn-save');
-            if (isSaved) {
-                btn.classList.add('saved');
-                btn.querySelector('span').innerText = "Tersimpan";
-            } else {
-                btn.classList.remove('saved');
-                btn.querySelector('span').innerText = "Simpan";
-            }
-        }
-
-        window.toggleSave = async function () {
-            if (!currentData) return;
-
-            // Construct Data Object
-            // We use title as ID effectively for dreams
-            const data = {
-                title: currentData.title,
-                image: currentData.image,
-                audio: currentData.audio,
-                narasi: currentData.narasi // Or summary
-            };
-
-            const result = await bookmarkManager.toggleBookmark('mimpi', data);
-
-            if (result === 'saved' || result === 'removed') {
-                checkSavedStatus();
-            }
-        }
-
-        // DOWNLOAD LOGIC
-        window.downloadAudio = function () {
-            if (!currentData || !currentData.audio || currentData.audio.length < 5) {
-                showNotif("Tidak ada audio untuk diunduh.", "error");
-                return;
-            }
-
-            showNotif("Sedang mengunduh...", "success");
-
-            const link = document.createElement("a");
-            link.href = currentData.audio;
-            // Gunakan judul sebagai nama file
-            const safeName = currentData.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-            link.download = safeName + ".mp3";
-            link.target = "_blank";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // NOTIF
-        function showNotif(msg, type) {
-            const box = document.getElementById('notifBox');
-            const text = document.getElementById('notifText');
-            const icon = document.getElementById('notifIcon');
-
-            text.innerText = msg;
-            box.className = "custom-notif active " + type;
-
-            if (type === 'success') {
-                icon.innerHTML = `<svg style="width:20px;height:20px;fill:#2e7d32" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
-            } else {
-                icon.innerHTML = `<svg style="width:20px;height:20px;fill:#d32f2f" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
-            }
-
-            setTimeout(() => {
-                box.classList.remove('active');
-                box.classList.remove('success');
-                box.classList.remove('error');
-            }, 3000);
+        setTimeout(() => {
+        box.classList.remove('active');
+        box.classList.remove('success');
+        box.classList.remove('error');
+        }, 3000);
         }
 
         // --- LOGIKA REKOMENDASI MIMPI ---
         function renderRelatedDreams(allData, currentItem) {
-            const container = document.getElementById('related-list');
-            if (!container) return;
-            container.innerHTML = "";
+        const container = document.getElementById('related-list');
+        if (!container) return;
+        container.innerHTML = "";
 
-            const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
-            const currentTitleRaw = getK(currentItem, 'judul');
+        const getK = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
+        const currentTitleRaw = getK(currentItem, 'judul');
 
-            // 1. Filter: Buang yang kosong dan buang yang sedang dibaca
-            let candidates = allData.filter(d => {
-                const t = getK(d, 'judul');
-                return t && t.length > 3 && t !== currentTitleRaw;
-            });
+        // 1. Filter: Buang yang kosong dan buang yang sedang dibaca
+        let candidates = allData.filter(d => {
+        const t = getK(d, 'judul');
+        return t && t.length > 3 && t !== currentTitleRaw;
+        });
 
-            // 2. Randomize (Shuffle)
-            candidates.sort(() => 0.5 - Math.random());
+        // 2. Randomize (Shuffle)
+        candidates.sort(() => 0.5 - Math.random());
 
-            // 3. Ambil Max 3
-            const selected = candidates.slice(0, 3);
+        // 3. Ambil Max 3
+        const selected = candidates.slice(0, 3);
 
-            if (selected.length === 0) {
-                container.innerHTML = "<div style='font-size:0.8rem; color:var(--text-muted);'>Tidak ada rekomendasi lainnya.</div>";
-                return;
-            }
+        if (selected.length === 0) {
+        container.innerHTML = "<div style='font-size:0.8rem; color:var(--text-muted);'>Tidak ada rekomendasi lainnya.
+        </div>";
+        return;
+        }
 
-            // 4. Render
-            selected.forEach(item => {
-                const judul = getK(item, 'judul');
-                const thumbnail = getK(item, 'gambar') || getK(item, 'thumbnail') || 'https://placehold.co/100x100?text=MQ';
-                // Jika ingin tampilkan tanggal atau kategori, ambil dari CSV jika ada.
-                // Asumsi CSV punya kolom 'tanggal' atau sejenisnya. Kalau tidak, pakai label statis.
-                const subInfo = "Mimpi Muhammad Qasim";
+        // 4. Render
+        selected.forEach(item => {
+        const judul = getK(item, 'judul');
+        const thumbnail = getK(item, 'gambar') || getK(item, 'thumbnail') || 'https://placehold.co/100x100?text=MQ';
+        // Jika ingin tampilkan tanggal atau kategori, ambil dari CSV jika ada.
+        // Asumsi CSV punya kolom 'tanggal' atau sejenisnya. Kalau tidak, pakai label statis.
+        const subInfo = "Mimpi Muhammad Qasim";
 
-                const el = document.createElement('a');
-                el.className = 'rel-card';
-                el.href = `mimpi.html?title=${encodeURIComponent(judul)}`;
-                el.innerHTML = `
-                    <div class="rel-img-wrap">
-                        <img src="${thumbnail}" class="rel-img" loading="lazy" alt="thumb">
-                    </div>
-                    <div class="rel-body">
-                        <div class="rel-title">${judul}</div>
-                        <div class="rel-sub">${subInfo}</div>
-                    </div>
-                `;
-                container.appendChild(el);
-            });
+        const el = document.createElement('a');
+        el.className = 'rel-card';
+        el.href = `mimpi.html?title=${encodeURIComponent(judul)}`;
+        el.innerHTML = `
+        <div class="rel-img-wrap">
+            <img src="${thumbnail}" class="rel-img" loading="lazy" alt="thumb">
+        </div>
+        <div class="rel-body">
+            <div class="rel-title">${judul}</div>
+            <div class="rel-sub">${subInfo}</div>
+        </div>
+        `;
+        container.appendChild(el);
+        });
         }
 
         // RUN
         fetchDream();
 
-    </script>
-    <script>
-        function goBack() {
-            if (window.history.length > 1 && document.referrer.toLowerCase().indexOf(window.location.hostname.toLowerCase()) !== -1) {
-                window.history.back();
-            } else {
-                window.location.href = 'index.html';
+        </script>
+        <script>
+            function goBack() {
+                if (window.history.length > 1 && document.referrer.toLowerCase().indexOf(window.location.hostname.toLowerCase()) !== -1) {
+                    window.history.back();
+                } else {
+                    window.location.href = 'index.html';
+                }
             }
-        }
-    </script>
+        </script>
 </body>
 
 </html>

@@ -338,8 +338,9 @@
         import bookmarkManager from "./bookmark-manager.js"; // Import Bookmark Manager
         import commentManager from "./comment-manager.js";   // Import Comment Manager
 
-        // Expose bookmarkManager
+        // Expose bookmarkManager and commentManager
         window.bookmarkManager = bookmarkManager;
+        window.commentManager = commentManager;
 
         // Listen for bookmarks-loaded to update UI
         window.addEventListener('bookmarks-loaded', () => {
