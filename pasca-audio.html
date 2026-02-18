@@ -338,24 +338,41 @@
         .action-buttons {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
+            /* Center buttons */
+            align-items: center;
+            gap: 8px;
+            /* Reduced gap */
+            width: 100%;
+            /* Force single line on mobile as requested */
+            flex-wrap: nowrap;
         }
 
         .btn-action {
+            flex: 1;
+            /* Distribute space evenly */
             display: flex;
+            flex-direction: column;
+            /* Stack icon and text */
             align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
+            justify-content: center;
+            gap: 4px;
+            font-size: 0.70rem;
+            /* Smaller text */
             font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 50px;
+            padding: 8px 4px;
+            /* Compact padding */
+            border-radius: 12px;
+            /* Soft square/rect look */
             border: 1px solid var(--border);
             cursor: pointer;
             background: transparent;
             color: var(--text-main);
             white-space: nowrap;
             transition: all 0.2s;
+            min-width: 0;
+            /* Allow shrinking */
+            height: 50px;
+            /* Fixed height for consistency */
         }
 
         .btn-action:active {
@@ -364,8 +381,10 @@
         }
 
         .btn-action svg {
-            width: 15px;
-            height: 15px;
+            width: 18px;
+            /* Slightly larger icon relative to text */
+            height: 18px;
+            margin-bottom: 2px;
         }
 
         /* CUSTOM NOTIF: TOP POSITION AS REQUESTED */
@@ -630,6 +649,30 @@
 
             // Update Save Button State immediately after loading track
             updateSaveButtonUI();
+
+            // MEDIA SESSION API (Lock Screen Metadata)
+            if ('mediaSession' in navigator) {
+                const artSrc = track.gambar || 'ALT_LogoMQN.png';
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: track.judul,
+                    artist: "MQ News Audio",
+                    album: "Mubasyirat",
+                    artwork: [
+                        { src: artSrc, sizes: '96x96', type: 'image/png' },
+                        { src: artSrc, sizes: '128x128', type: 'image/png' },
+                        { src: artSrc, sizes: '192x192', type: 'image/png' },
+                        { src: artSrc, sizes: '256x256', type: 'image/png' },
+                        { src: artSrc, sizes: '384x384', type: 'image/png' },
+                        { src: artSrc, sizes: '512x512', type: 'image/png' },
+                    ]
+                });
+
+                // Handlers
+                navigator.mediaSession.setActionHandler('play', togglePlay);
+                navigator.mediaSession.setActionHandler('pause', togglePlay);
+                navigator.mediaSession.setActionHandler('seekbackward', function () { seekRelative(-10); });
+                navigator.mediaSession.setActionHandler('seekforward', function () { seekRelative(10); });
+            }
         }
 
         // Expose functions to window because module scope is isolated
