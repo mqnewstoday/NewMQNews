@@ -220,6 +220,24 @@
         <div class="loading" id="loader">Sedang memvalidasi otoritas Admin...</div>
     </div>
 
+    <!-- CUSTOM DELETE MODAL -->
+    <div id="deleteModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <h3 class="modal-title">Hapus User</h3>
+            <p class="modal-desc" id="delete-msg">Apakah Anda yakin ingin menghapus user ini?</p>
+            <div class="modal-actions">
+                <button id="btnCancelDelete" class="modal-btn btn-cancel">Batal</button>
+                <button id="btnConfirmDelete" class="modal-btn btn-yes" style="background:#d32f2f;">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION BOX -->
+    <div id="notifBox" class="custom-notif">
+        <div id="notifIcon" class="notif-icon"></div>
+        <span id="notifText" class="notif-text">Pesan notifikasi...</span>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -322,20 +340,70 @@
         }
 
         // --- FUNGSI HAPUS USER ---
-        window.deleteUser = async function (uid, email) {
-            if (!confirm(`Yakin ingin menghapus data user ini?\nEmail: ${email}\n\nPERHATIAN: Ini hanya menghapus di Database, pastikan Anda sudah menghapus di Firebase Authentication Console jika perlu.`)) {
-                return;
-            }
+        // --- FUNGSI HAPUS USER (CUSTOM MODAL) ---
+        let targetDeleteUid = null;
+
+        window.deleteUser = function (uid, email) {
+            targetDeleteUid = uid;
+            const modal = document.getElementById('deleteModal');
+            const msg = document.getElementById('delete-msg');
+
+            // Set pesan detail
+            msg.innerHTML = `Yakin hapus data user <strong>${email}</strong>?<br><br>
+            <span style="font-size:0.85rem; color:#d32f2f;">PERHATIAN: Pastikan Anda sudah menghapus akun ini di Firebase Console Authentication agar bersih total.</span>`;
+
+            modal.classList.add('active');
+        };
+
+        // Event Listener Modal
+        document.getElementById('btnCancelDelete').onclick = () => {
+            document.getElementById('deleteModal').classList.remove('active');
+            targetDeleteUid = null;
+        };
+
+        document.getElementById('btnConfirmDelete').onclick = async () => {
+            const modal = document.getElementById('deleteModal');
+            if (!targetDeleteUid) return;
 
             try {
-                await deleteDoc(doc(db, "users", uid));
-                alert("Data user berhasil dihapus!");
-                loadUserList(); // Refresh tabel
+                // Hapus doc
+                await deleteDoc(doc(db, "users", targetDeleteUid));
+
+                modal.classList.remove('active');
+                showNotif("Data user berhasil dihapus!", "success");
+                loadUserList(); // Refresh
             } catch (err) {
                 console.error("Gagal hapus:", err);
-                alert("Gagal menghapus: " + err.message);
+                modal.classList.remove('active');
+                showNotif("Gagal menghapus: " + err.message, "error");
             }
         };
+
+        // --- FUNGSI NOTIFIKASI CUSTOM ---
+        function showNotif(message, type) {
+            const box = document.getElementById('notifBox');
+            const text = document.getElementById('notifText');
+            const icon = document.getElementById('notifIcon');
+
+            text.innerText = message;
+
+            // Reset
+            box.className = "custom-notif active"; // Reset class dasar
+
+            if (type === 'success') {
+                box.classList.add('success');
+                icon.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            } else {
+                box.classList.add('error');
+                icon.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+            }
+
+            setTimeout(() => {
+                box.classList.remove('active');
+                box.classList.remove('success');
+                box.classList.remove('error');
+            }, 3000);
+        }
     </script>
 </body>
 
