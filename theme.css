@@ -130,7 +130,7 @@ body.dark-mode .search-input {
 body.dark-mode input.form-input,
 body.dark-mode textarea.form-input,
 body.dark-mode .comment-input {
-    background-color: #1a1a1a !important;
+    background-color: #121212 !important;
     border: 1px solid #333 !important;
     color: #fff !important;
 }
