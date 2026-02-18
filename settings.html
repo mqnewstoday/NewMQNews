@@ -686,11 +686,26 @@
         // === 4. LOGIKA UTAMA (ACTIONS) ===
         window.appActions = {
 
-            // HAPUS CACHE
+            // HAPUS CACHE (TRUE HARD RELOAD)
             clearCache: () => {
-                ui.askConfirm("Hapus Cache?", "Data sementara akan dibersihkan.", () => {
-                    localStorage.removeItem('mq_guest_history');
-                    ui.showNotif("Cache Bersih!", "success");
+                ui.askConfirm("Segarkan Aplikasi?", "Ini akan memperbarui tampilan & menghapus data sementara.", () => {
+                    // 1. Hapus Data Lokal Non-Critical
+                    localStorage.removeItem('mq_guest_history'); // Riwayat baca tamu
+                    // JANGAN HAPUS 'theme' (Biar gak kaget flash putih)
+                    // JANGAN HAPUS 'fontSize' (Opsional, tapi biasanya user mau tetep fontnya)
+
+                    // 2. Beri Notif Dulu
+                    ui.showNotif("Memuat ulang sistem...", "success");
+
+                    // 3. Force Reload dari Server (Bypass Cache Browser)
+                    setTimeout(() => {
+                        // Trik Cache Busting: Tambah query string random
+                        // window.location.reload(true) kadang masih ngambil dari disk cache
+                        // Kita paksa fetch ulang index.html
+                        const currentUrl = window.location.href.split('?')[0];
+                        const separator = currentUrl.includes('?') ? '&' : '?';
+                        window.location.href = currentUrl + separator + 't=' + new Date().getTime();
+                    }, 1000);
                 });
             },
 
