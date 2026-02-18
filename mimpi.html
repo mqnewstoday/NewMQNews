@@ -372,6 +372,33 @@
         .custom-notif.error {
             border-left: 5px solid #d32f2f;
         }
+
+        /* IKLAN GEPENG STYLE */
+        .ad-box-slim {
+            width: calc(100% - 40px);
+            /* Adjust with padding */
+            max-width: 800px;
+            height: 50px;
+            background: #f4f4f4;
+            color: #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border: 1px dashed #ddd;
+            margin: 20px auto;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        @media (min-width: 768px) {
+            .ad-box-slim {
+                width: 100%;
+                /* On desktop, maybe max-width handles it */
+            }
+        }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5035531780463708"
         crossorigin="anonymous"></script>
@@ -439,6 +466,11 @@
             <!-- Item injected by JS -->
             <div style="font-size:0.8rem; color:var(--text-muted);">Memuat rekomendasi...</div>
         </div>
+    </div>
+
+    <!-- AD PLACEHOLDER SLIM (IKLAN) -->
+    <div class="ad-box-slim">
+        IKLAN
     </div>
 
     <!-- KOMENTAR SECTION (NEW) -->
