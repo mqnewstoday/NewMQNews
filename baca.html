@@ -502,7 +502,12 @@
 
                     if (data.count >= 3) {
                         // BLOCK JIKA SUDAH 3 KALI
-                        document.getElementById('limitModal').style.display = 'flex';
+                        const modal = document.getElementById('limitModal');
+                        if (modal) {
+                            modal.style.display = 'flex'; // Ensure visible container
+                            // Slight delay to allow display:flex to apply before adding active class for transition
+                            setTimeout(() => modal.classList.add('active'), 10);
+                        }
                         document.getElementById('article-view').style.display = 'none';
                     } else {
                         // ALLOW & INCREMENT
@@ -515,7 +520,6 @@
                             sessionStorage.setItem('last_read_url', window.location.href);
                         }
 
-                        renderArticle(item);
                         renderArticle(item);
                         renderRelatedNews(item); // Restore
                         updateProfileLink(null);
