@@ -131,43 +131,54 @@ class CommentManager {
         const div = document.createElement('div');
         div.id = `comment-${docSnapshot.id}`;
         div.className = 'comment-card';
-        // Inline styles moved to CSS class 'comment-card' ideally, but keeping inline for now or relying on theme.css override
         div.style.padding = "15px";
         div.style.marginBottom = "10px";
         div.style.background = "var(--bg-card)";
         div.style.borderRadius = "8px";
         div.style.border = "1px solid var(--border)";
-        div.style.position = "relative"; // For positioning delete button
+        div.style.position = "relative";
 
         const dateStr = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : 'Baru saja';
         const name = data.username || "Anonymous";
         const text = data.text || "";
+        const photo = data.userPhoto || ""; // New photo field from database
 
-        // Check ownership
+        // Logic for Avatar / No Image
+        let avatarHTML = "";
+        if (photo) {
+            avatarHTML = `<img src="${photo}" style="width:100%; height:100%; object-fit:cover;">`;
+        } else {
+            // Fallback for guests or members without photo
+            avatarHTML = `<div style="font-size:0.55rem; color:var(--text-muted); font-weight:bold; text-align:center; line-height:1.1; display:flex; align-items:center; justify-content:center;">NO<br>IMAGE</div>`;
+        }
+
+        // Check ownership for delete button
         let deleteBtn = "";
         const currentUser = auth.currentUser;
         if (currentUser && data.uid === currentUser.uid) {
             deleteBtn = `
             <button onclick="window.commentManager.deleteComment('${docSnapshot.id}')" 
-                style="border:none; background:transparent; cursor:pointer; font-size:1.2rem; padding:5px; color:#d32f2f; transition:transform 0.2s;" 
-                onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"
+                style="border:none; background:transparent; cursor:pointer; font-size:1rem; padding:5px; color:#d32f2f; transition:transform 0.2s;" 
                 title="Hapus Komentar">
                 🗑️
             </button>`;
         }
 
-        // Reply Button (Future Feature Placeholder)
-        // const replyBtn = `<button style="font-size:0.8rem; color:var(--primary); background:none; border:none; cursor:pointer; margin-top:5px;">Balas</button>`;
-
         div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                <div style="display:flex; flex-direction:column;">
-                     <span class="com-name" style="font-weight:bold; color:var(--primary);">${name}</span>
-                     <span class="com-date" style="font-size:0.75rem; color:var(--text-muted);">${dateStr}</span>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <!-- AVATAR BOX -->
+                    <div class="com-avatar" style="width:36px; height:36px; border-radius:50%; background:var(--input-bg); border:1px solid var(--border); overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
+                        ${avatarHTML}
+                    </div>
+                    <div style="display:flex; flex-direction:column;">
+                         <span class="com-name" style="font-weight:bold; color:var(--primary); font-size:0.9rem;">${name}</span>
+                         <span class="com-date" style="font-size:0.7rem; color:var(--text-muted);">${dateStr}</span>
+                    </div>
                 </div>
                 ${deleteBtn}
             </div>
-            <div class="com-body" style="font-size:0.9rem; line-height:1.5; color:var(--text-main);">${text.replace(/\n/g, '<br>')}</div>
+            <div class="com-body" style="font-size:0.9rem; line-height:1.5; color:var(--text-main); padding-left:46px;">${text.replace(/\n/g, '<br>')}</div>
         `;
         container.appendChild(div);
     }
@@ -270,6 +281,7 @@ class CommentManager {
                 text: text,
                 username: username,
                 uid: uid,
+                userPhoto: currentUser ? (currentUser.photoURL || "") : "", // Save photo URL if available
                 timestamp: serverTimestamp()
             });
 
