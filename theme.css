@@ -65,6 +65,13 @@ body.dark-mode .comment-card {
     box-shadow: none !important;
 }
 
+/* FIX SIDEBAR BOTTOM CONTRAST */
+body.dark-mode .auth-bottom-wrapper {
+    background: transparent !important;
+    border-color: #333 !important;
+    color: #eee !important;
+}
+
 /* 3. FIX KOMENTAR (YANG TADI GAK KEBACA) - NEW FIX! */
 body.dark-mode .com-body,
 body.dark-mode .comment-text,
