@@ -749,11 +749,7 @@
         </div>
 
 
-    </div>
-
-    <!-- CONTAINER UTAMA -->
-    <div class="main-container">
-        <!-- ... Content ... -->
+        <!-- CONTAINER DAFTAR MIMPI (Moved Inside for Alignment) -->
         <div id="pramimpi-list" class="pramimpi-grid">
             <!-- Render via JS -->
             <div class="status-msg" style="display:none">Memuat data mimpi...</div>
@@ -761,7 +757,10 @@
 
         <!-- Pagination -->
         <div id="pagination-controls" class="pagination-wrapper"></div>
+
     </div>
+
+    <!-- CONTAINER UTAMA REMOVED (Merged content above) -->
 
     <!-- FOOTER -->
     <footer>
@@ -938,7 +937,7 @@
 
         // Global variables for pagination
         let currentPramimpiPage = 1;      // Halaman aktif sekarang
-        const PRAMIMPI_BATCH_SIZE = 10;   // Jumlah mimpi per halaman (10 items)
+        const PRAMIMPI_BATCH_SIZE = 12;   // Jumlah mimpi per halaman (12 items)
         let filteredData = [];            // Data yang SUDAH difilter
 
         function renderDreams(data) {
