@@ -178,67 +178,124 @@ class CommentManager {
         const text = input ? input.value.trim() : "";
 
         if (!text || text.length < 3) {
-            alert("Komentar terlalu pendek (min 3 karakter).");
+            // Using global notif if available, else alert
+            if (window.showCustomNotif) window.showCustomNotif("Komentar terlalu pendek (min 3 karakter).", 'error');
+            else alert("Komentar terlalu pendek (min 3 karakter).");
             return;
         }
 
-        if (status) {
-            status.innerText = "Mengirim...";
-            status.style.color = "var(--text-muted)";
-        }
-
-        // Disable button
         const btn = document.getElementById('btn-post-comment');
         if (btn) btn.disabled = true;
 
-        let username = "Anonymous";
-        let uid = "guest";
-
-        // Check Auth and Fetch Correct Name
-        if (auth.currentUser) {
-            uid = auth.currentUser.uid;
-
-            // 1. Try Auth Display Name
-            if (auth.currentUser.displayName) {
-                username = auth.currentUser.displayName;
-            } else {
-                // 2. Fetch from Firestore Profile
-                try {
-                    const userRef = doc(db, "users", uid);
-                    const userSnap = await getDoc(userRef);
-                    if (userSnap.exists()) {
-                        const userData = userSnap.data();
-                        username = userData.nama || userData.name || "Member MQ News";
-                    } else {
-                        username = "Member MQ News";
-                    }
-                } catch (e) {
-                    username = "Member MQ News";
-                }
-            }
+        if (status) {
+            status.innerText = "Memeriksa...";
+            status.style.color = "var(--text-muted)";
         }
 
         try {
+            const currentUser = auth.currentUser;
+            let uid = "guest";
+            let username = "Anonymous";
+
+            // --- 1. DETERMINE USER IDENTITY ---
+            if (currentUser) {
+                uid = currentUser.uid;
+                if (currentUser.displayName) {
+                    username = currentUser.displayName;
+                } else {
+                    // Try fetch profile
+                    try {
+                        const userSnap = await getDoc(doc(db, "users", uid));
+                        if (userSnap.exists()) {
+                            const d = userSnap.data();
+                            username = d.nama || d.name || "Member MQ News";
+                        } else username = "Member MQ News";
+                    } catch (e) { username = "Member MQ News"; }
+                }
+            } else {
+                // GUEST HANDLING
+                // We use a simple local storage marker or a fingerprint for guests if needed
+                // For now, let's treat "guest" as a shared UID for the query, but that would group ALL guests.
+                // BETTER APPROACH FOR GUESTS: Check LocalStorage for *this* article.
+                const guestStorageKey = `mq_comment_${this.currentTargetId}`;
+                const guestCommentCount = parseInt(localStorage.getItem(guestStorageKey) || '0');
+
+                if (guestCommentCount >= 1) {
+                    // Trigger Login Popup for Guest Limit
+                    // If page has showLoginPopup function (from bookmark-manager usually), use it.
+                    // Or create a simple alert/confirm to redirect.
+                    if (window.bookmarkManager && window.bookmarkManager._showLoginPopup) {
+                        window.bookmarkManager._showLoginPopup(); // Re-use existing popup
+                        if (window.showCustomNotif) window.showCustomNotif("Batas komentar tamu habis. Silahkan login.", 'error');
+                    } else if (window.showLoginPopup) { // Fallback if exposed differently
+                        window.showLoginPopup();
+                    } else {
+                        if (confirm("Batas 1 komentar untuk tamu. Login untuk komentar lagi?")) {
+                            window.location.href = "login.html";
+                        }
+                    }
+
+                    if (status) status.innerText = "";
+                    if (btn) btn.disabled = false;
+                    return;
+                }
+            }
+
+            // --- 2. CHECK COMMENT LIMIT FOR LOGGED IN USER ---
+            if (currentUser) {
+                // Query Firestore to count comments by this UID on this TargetID
+                // Note: Firestore count aggregation is cheaper/better, but simple getDocs limit is fine for small numbers.
+                const qLimit = query(
+                    collection(db, "comments"),
+                    where("targetId", "==", this.currentTargetId),
+                    where("uid", "==", uid)
+                );
+
+                const snapLimit = await getDocs(qLimit);
+                if (!snapLimit.empty && snapLimit.size >= 2) {
+                    if (window.showCustomNotif) window.showCustomNotif("Batas 2 komentar per artikel untuk akun ini.", 'error');
+                    else alert("Batas 2 komentar per artikel tercapai.");
+
+                    if (status) status.innerText = "";
+                    if (btn) btn.disabled = false;
+                    return;
+                }
+            }
+
+            // --- 3. POST COMMENT ---
+            if (status) status.innerText = "Mengirim...";
+
             await addDoc(collection(db, "comments"), {
                 targetId: this.currentTargetId,
                 text: text,
                 username: username,
                 uid: uid,
-                timestamp: serverTimestamp() // Firestore Server Time
+                timestamp: serverTimestamp()
             });
+
+            // --- 4. SUCCESS HANDLING & LIMIT UPDATE ---
+            if (!currentUser) {
+                // If guest, increment local storage count
+                const guestStorageKey = `mq_comment_${this.currentTargetId}`;
+                localStorage.setItem(guestStorageKey, '1'); // Mark as commented
+            }
 
             if (input) input.value = "";
             if (status) {
                 status.innerText = "Komentar terkirim!";
                 status.style.color = "green";
             }
+            if (window.showCustomNotif) window.showCustomNotif("Komentar berhasil dikirim!", 'success');
 
-            // Reload list from scratch to show new comment at top
+            // Convert local storage guest comments to real check? No, local storage is enough for guest restriction.
+
+            // Reload list
             await this.loadComments(true);
 
             setTimeout(() => {
                 if (status) status.innerText = "";
             }, 3000);
+
         } catch (e) {
             console.error("Post error:", e);
             if (status) {
