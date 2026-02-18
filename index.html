@@ -719,13 +719,13 @@
                             const thumb = getVal(item, 'gambar') || getVal(item, 'image') || getVal(item, 'thumbnail') || "https://placehold.co/400x600?text=News";
                             const date = getVal(item, 'tanggal') || "";
 
-                            // Gunakan Style Card MUBASYIRAT (dream-card) tapi konten berita
-                            // Kita re-use class .dream-card
+                            // Gunakan Style Card MUBASYIRAT (dream-card) tapi Rasio Kotak (1:1)
+                            // Hapus Tanggal sesuai request
                             html += `
                                 <a href="baca.html?title=${encodeURIComponent(title)}" class="dream-card">
-                                    <div class="dream-thumb">
-                                        <div class="dream-date-badge">${date}</div>
-                                        <img src="${thumb}" alt="thumb" loading="lazy" onerror="this.src='https://placehold.co/400x600?text=Err'">
+                                    <div class="dream-thumb" style="aspect-ratio: 1 / 1;">
+                                        <!-- Date Removed -->
+                                        <img src="${thumb}" alt="thumb" loading="lazy" style="object-fit: cover;" onerror="this.src='https://placehold.co/400x400?text=Err'">
                                     </div>
                                     <div class="dream-info">
                                         <h4 class="dream-title">${title}</h4>
