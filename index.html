@@ -644,6 +644,101 @@
                 });
             </script>
 
+            <!-- BERITA RANDOM SECTION -->
+            <div class="random-section">
+                <div class="section-label">
+                    <span>BERITA RANDOM</span>
+                    <div class="section-line"></div>
+                </div>
+                <!-- Reuse dream-scroll-container style for horizontal scroll -->
+                <div class="dream-scroll-container" id="random-news-scroll">
+                    <div class="loader" style="width:100%; text-align:center; padding:20px;">Memuat Berita Random...
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // LOGIC BERITA RANDOM (Update tiap jam 8 Malam)
+                document.addEventListener("DOMContentLoaded", () => {
+                    // Tunggu variabel global allNews tersedia (dari script utama)
+                    // Kita akan check setiap 500ms apakah allNews sudah ready
+                    const checkNewsInterval = setInterval(() => {
+                        if (window.allDataNews && window.allDataNews.length > 0) {
+                            clearInterval(checkNewsInterval);
+                            initRandomNews(window.allDataNews);
+                        } else if (typeof allNews !== 'undefined' && allNews.length > 0) {
+                            clearInterval(checkNewsInterval);
+                            initRandomNews(allNews);
+                        }
+                    }, 500);
+
+                    function initRandomNews(newsData) {
+                        const container = document.getElementById('random-news-scroll');
+                        if (!container) return;
+
+                        // 1. Generate Seed based on 8 PM Logic
+                        // Jika sekarang < jam 20:00, maka seed = kemarin. Jika >= 20:00, seed = hari ini.
+                        const now = new Date();
+                        const cutoff = new Date();
+                        cutoff.setHours(20, 0, 0, 0);
+
+                        let seedDate = new Date();
+                        if (now < cutoff) {
+                            seedDate.setDate(seedDate.getDate() - 1); // Pakai seed kemarin
+                        }
+                        // Seed string: "YYYY-MM-DD"
+                        const seed = seedDate.getFullYear() + "-" + (seedDate.getMonth() + 1) + "-" + seedDate.getDate();
+
+                        // 2. Shuffle dengan Seed
+                        // Clone array biar gak ngerusak urutan asli
+                        let shuffled = [...newsData];
+
+                        // Simple Seeded Random (SFC32 or Mulberry32 is overkill, use simple LCG)
+                        let seedVal = 0;
+                        for (let i = 0; i < seed.length; i++) seedVal += seed.charCodeAt(i);
+
+                        const random = () => {
+                            const x = Math.sin(seedVal++) * 10000;
+                            return x - Math.floor(x);
+                        }
+
+                        // Fisher-Yates Shuffle with seeded random
+                        for (let i = shuffled.length - 1; i > 0; i--) {
+                            const j = Math.floor(random() * (i + 1));
+                            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                        }
+
+                        // 3. Ambil 6 Berita
+                        const selected = shuffled.slice(0, 6);
+
+                        // 4. Render Horizontal Scroll
+                        let html = "";
+                        selected.forEach(item => {
+                            const getVal = (obj, k) => obj[Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase())] || "";
+                            const title = getVal(item, 'judul') || getVal(item, 'title') || "Tanpa Judul";
+                            const thumb = getVal(item, 'gambar') || getVal(item, 'image') || getVal(item, 'thumbnail') || "https://placehold.co/400x600?text=News";
+                            const date = getVal(item, 'tanggal') || "";
+
+                            // Gunakan Style Card MUBASYIRAT (dream-card) tapi konten berita
+                            // Kita re-use class .dream-card
+                            html += `
+                                <a href="baca.html?title=${encodeURIComponent(title)}" class="dream-card">
+                                    <div class="dream-thumb">
+                                        <div class="dream-date-badge">${date}</div>
+                                        <img src="${thumb}" alt="thumb" loading="lazy" onerror="this.src='https://placehold.co/400x600?text=Err'">
+                                    </div>
+                                    <div class="dream-info">
+                                        <h4 class="dream-title">${title}</h4>
+                                    </div>
+                                </a>
+                             `;
+                        });
+
+                        container.innerHTML = html;
+                    }
+                });
+            </script>
+
             <!-- FAQ SECTION (RELOCATED INSIDE MAIN) -->
             <section class="faq-section" style="margin-top: 10px;">
                 <h2
