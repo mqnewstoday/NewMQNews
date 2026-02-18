@@ -1405,15 +1405,13 @@
 
         // Listener: Re-render news when bookmarks are loaded (to update save icons)
         window.addEventListener('bookmarks-loaded', () => {
-            // Re-render current page if data exists
-            if (typeof resetRender === 'function') {
-                // We don't want to reset page 1, just re-render current
-                // But resetRender does reset to page 1.
-                // Let's call renderPage(currentPage) instead if available
-                if (typeof renderPage === 'function' && typeof currentPage !== 'undefined') {
+            // Re-render current page if data exists and news has been loaded
+            if (typeof renderPage === 'function' && typeof currentPage !== 'undefined') {
+                // PENTING: Gunakan variabel global yang benar
+                if (window.activeData && window.activeData.length > 0) {
                     renderPage(currentPage);
+                    if (typeof renderEditorPicks === 'function') renderEditorPicks();
                 }
-                if (typeof renderEditorPicks === 'function') renderEditorPicks();
             }
         });
 
@@ -1473,22 +1471,19 @@
         // --- KONFIGURASI ---
         const sheetID = "1FDzhBlVOFlnlQgphN2gsGJUdDeFWonpoJcadY8JqUcM";
 
-        // Variabel Global
+        // Variabel Global (Gunakan var agar nempel ke window)
         var allNews = [];         // Semua berita mentah dari CSV
-        let activeData = [];      // Berita yang sedang aktif (bisa hasil search/filter)
-        let currentPage = 1;      // Halaman aktif sekarang
+        var activeData = [];      // Berita yang sedang aktif (bisa hasil search/filter)
+        var currentPage = 1;      // Halaman aktif sekarang
         const BATCH_SIZE = 6;     // Jumlah berita per halaman (6 berita)
 
         // --- 1. INIT: AMBIL DATA ---
-        // --- 1. INIT: AMBIL DATA ---
         async function init() {
-            // Updated to use the specific published CSV link provided by the user
-            const rawUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
-            const url = rawUrl + "&t=" + Date.now(); // Cache Buster
+            // Hapus cache: no-store biar LOADING CEPET lagi kayak dulu
+            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv";
 
             try {
-                // Fetch with explicit cache control
-                const response = await fetch(url, { cache: "no-store" });
+                const response = await fetch(url);
                 if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
                 const text = await response.text();
 
@@ -1505,9 +1500,6 @@
                             if (!allNews || allNews.length === 0) {
                                 throw new Error("Data CSV Kosong / Format Salah");
                             }
-
-                            // Debug Check
-                            // console.log("Data loaded:", allNews.length);
 
                             activeData = allNews.slice().reverse();
 
