@@ -209,19 +209,23 @@ class CommentManager {
             let username = "Anonymous";
 
             // --- 1. DETERMINE USER IDENTITY ---
+            let userPhotoUrl = "";
             if (currentUser) {
                 uid = currentUser.uid;
-                if (currentUser.displayName) {
-                    username = currentUser.displayName;
-                } else {
-                    // Try fetch profile
-                    try {
-                        const userSnap = await getDoc(doc(db, "users", uid));
-                        if (userSnap.exists()) {
-                            const d = userSnap.data();
-                            username = d.nama || d.name || "Member MQ News";
-                        } else username = "Member MQ News";
-                    } catch (e) { username = "Member MQ News"; }
+                // Fetch latest data from Firestore Database
+                try {
+                    const userSnap = await getDoc(doc(db, "users", uid));
+                    if (userSnap.exists()) {
+                        const d = userSnap.data();
+                        username = d.nama || d.name || currentUser.displayName || "Member MQ News";
+                        userPhotoUrl = d.fotoURL || currentUser.photoURL || "";
+                    } else {
+                        username = currentUser.displayName || "Member MQ News";
+                        userPhotoUrl = currentUser.photoURL || "";
+                    }
+                } catch (e) {
+                    username = currentUser.displayName || "Member MQ News";
+                    userPhotoUrl = currentUser.photoURL || "";
                 }
             } else {
                 // GUEST HANDLING
@@ -281,7 +285,7 @@ class CommentManager {
                 text: text,
                 username: username,
                 uid: uid,
-                userPhoto: currentUser ? (currentUser.photoURL || "") : "", // Save photo URL if available
+                userPhoto: userPhotoUrl,
                 timestamp: serverTimestamp()
             });
 
