@@ -272,13 +272,41 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            background: #fff;
+            background: #000;
             transition: transform 0.3s ease, opacity 0.3s ease;
             cursor: grab;
-            display: flex;
             /* Center if image fails */
             align-items: center;
             justify-content: center;
+        }
+
+        /* BLURRED BACKGROUND EFFECT */
+        .tinder-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            /* Use parent's bg image */
+            background-size: cover;
+            background-position: center;
+            filter: blur(20px) brightness(0.7);
+            /* The Blur Magic */
+            z-index: 1;
+        }
+
+        .card-inner-img {
+            position: relative;
+            z-index: 2;
+            /* Sit on top of blur */
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* Show full image */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            /* Pop out effect */
         }
 
         .tinder-card img {
@@ -518,13 +546,16 @@
             images.forEach((url, i) => {
                 const card = document.createElement('div');
                 card.classList.add('tinder-card');
-                card.style.zIndex = images.length - 1 - i; // Highest z-index for the first image (index 0)
-                card.style.backgroundImage = `url('${url}')`; // Use BG for easier cover
-                card.style.backgroundSize = 'cover';
-                card.style.backgroundPosition = 'center';
+                card.style.zIndex = images.length - 1 - i;
+                card.style.backgroundImage = `url('${url}')`; // For the blur effect
 
-                // Add Image tag for accessibility/SEO, but hidden visually or used as backup
-                // Actually BG is cleaner for sizing.
+                // Inner Image for Sharp View
+                const img = document.createElement('img');
+                img.src = url;
+                img.classList.add('card-inner-img');
+                img.draggable = false; // Prevent drag
+
+                card.appendChild(img);
 
                 // TOUCH EVENTS
                 initCardEvents(card);
@@ -625,9 +656,18 @@
                 const newCard = document.createElement('div');
                 newCard.classList.add('tinder-card');
                 newCard.style.zIndex = 0; // Put at bottom
-                newCard.style.backgroundImage = bg;
-                newCard.style.backgroundSize = 'cover';
-                newCard.style.backgroundPosition = 'center';
+                newCard.style.backgroundImage = bg; // Reuse BG URL
+
+                // Create Inner Image again
+                // Extract URL from bg string: url("...")
+                const urlMatch = bg.match(/url\(['"]?(.*?)['"]?\)/);
+                if (urlMatch && urlMatch[1]) {
+                    const img = document.createElement('img');
+                    img.src = urlMatch[1];
+                    img.classList.add('card-inner-img');
+                    img.draggable = false;
+                    newCard.appendChild(img);
+                }
 
                 // Re-init events
                 initCardEvents(newCard);
