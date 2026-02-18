@@ -39,6 +39,12 @@
     audioScript.src = "audio-manager.js";
     document.body.appendChild(audioScript);
 
+    // --- GOOGLE ANALYTICS (GA4) ---
+    const gaScript = document.createElement('script');
+    gaScript.src = "analytics.js";
+    gaScript.defer = true;
+    document.body.appendChild(gaScript);
+
     // --- ONESIGNAL INIT (Notification) ---
     // Load Script
     const osScript = document.createElement('script');
