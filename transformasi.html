@@ -275,7 +275,8 @@
             background: #000;
             transition: transform 0.3s ease, opacity 0.3s ease;
             cursor: grab;
-            /* Center if image fails */
+            display: flex;
+            /* REQUIRED FOR CENTER IMAGE */
             align-items: center;
             justify-content: center;
         }
@@ -309,12 +310,12 @@
             /* Pop out effect */
         }
 
+        /* GENERAL IMG RESET inside card */
         .tinder-card img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            /* object-fit: cover REMOVED to allow specific classes to handle it */
             pointer-events: none;
-            /* Prevent drag image browser default */
             user-select: none;
         }
 
@@ -329,6 +330,55 @@
             font-size: 0.8rem;
             color: var(--text-muted);
             font-style: italic;
+        }
+
+        /* --- DESKTOP BALANCE LAYOUT --- */
+        @media (min-width: 1024px) {
+            .content-wrapper {
+                max-width: 1200px;
+                /* Wider canvas */
+                padding: 40px;
+            }
+
+            .card-body {
+                display: grid;
+                grid-template-columns: 1.6fr 1fr;
+                /* Text wider than gallery */
+                gap: 50px;
+                align-items: start;
+            }
+
+            .card-title {
+                grid-column: 1 / -1;
+                /* Full width title */
+                font-size: 2.5rem;
+                margin-bottom: 40px;
+                text-align: center;
+                /* Center big title */
+                border-left: none;
+                /* Remove side border for centered look */
+                border-bottom: 4px solid var(--gold);
+                /* Use bottom border instead */
+                padding-bottom: 15px;
+                padding-left: 0;
+            }
+
+            .card-text {
+                font-size: 1.1rem;
+                /* Better readability */
+                line-height: 1.8;
+            }
+
+            .tinder-wrapper {
+                margin: 0;
+                width: 100%;
+                max-width: 400px;
+                position: sticky;
+                /* Sticky gallery while reading */
+                top: 100px;
+                justify-self: center;
+                /* Center in its column */
+            }
         }
     </style>
 </head>
