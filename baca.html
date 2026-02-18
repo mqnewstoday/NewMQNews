@@ -723,13 +723,29 @@
         };
 
         // Custom Notif dari Theme
+        let notifTimer = null;
         function showCustomNotif(msg, type) {
             const box = document.getElementById('notifBox');
             const text = document.getElementById('notifText');
 
+            if (!box || !text) return; // Guard clause
+
+            // Clear previous timer if exists
+            if (notifTimer) {
+                clearTimeout(notifTimer);
+                notifTimer = null;
+            }
+
             text.innerText = msg;
+            // Reset class first to re-trigger animation if needed (optional)
+            box.className = `custom-notif ${type}`;
+
+            // Force reflow
+            void box.offsetWidth;
+
             box.className = `custom-notif active ${type}`;
-            setTimeout(() => {
+
+            notifTimer = setTimeout(() => {
                 box.className = 'custom-notif';
             }, 3000);
         }
