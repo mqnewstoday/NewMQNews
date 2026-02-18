@@ -38,4 +38,24 @@
     const audioScript = document.createElement('script');
     audioScript.src = "audio-manager.js";
     document.body.appendChild(audioScript);
+
+    // --- ONESIGNAL INIT (Notification) ---
+    // Load Script
+    const osScript = document.createElement('script');
+    osScript.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+    osScript.defer = true;
+    document.head.appendChild(osScript);
+
+    // Init Config
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function (OneSignal) {
+        await OneSignal.init({
+            appId: "542c9bb4-d7e3-4938-b453-cf7ad6bef22c",
+            allowLocalhostAsSecureOrigin: true, // Biar bisa tes di localhost
+            autoRegister: false, // PENTING: Jangan paksa subscribe di awal!
+            notifyButton: {
+                enable: false, // Kita pake tombol custom di settings
+            },
+        });
+    });
 })();

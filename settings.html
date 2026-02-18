@@ -506,6 +506,17 @@
 
         <div class="menu-item">
             <div class="menu-text">
+                <h4>Notifikasi Berita</h4>
+                <p>Terima update jika ada artikel baru</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="notifToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-text">
                 <h4>Ukuran Teks</h4>
                 <p>Sesuaikan besar huruf aplikasi</p>
             </div>
@@ -847,6 +858,58 @@
         // CEK LOGIN
         onAuthStateChanged(auth, (user) => {
             if (!user) window.location.href = 'login.html';
+        });
+
+        // === 7. LOGIKA NOTIFIKASI TOGGLE (ONESIGNAL) ===
+        const notifToggle = document.getElementById('notifToggle');
+
+        // Pastikan OneSignal sudah ada (dari theme-init.js)
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+
+        OneSignalDeferred.push(async function (OneSignal) {
+            // Cek status saat ini
+            try {
+                // Versi v16: OneSignal.User.PushSubscription.optedIn
+                if (OneSignal.User && OneSignal.User.PushSubscription) {
+                    const isOptedIn = OneSignal.User.PushSubscription.optedIn;
+                    // Set Toggle Awal
+                    if (isOptedIn) {
+                        if (notifToggle) notifToggle.checked = true;
+                    } else {
+                        if (notifToggle) notifToggle.checked = false;
+                    }
+
+                    // Listener Perubahan Status dari Luar (Misal user ubah setelan browser)
+                    OneSignal.User.PushSubscription.addEventListener("change", (event) => {
+                        if (notifToggle) notifToggle.checked = event.current.optedIn;
+                    });
+                }
+            } catch (e) {
+                console.log("OneSignal Init Status Error:", e);
+            }
+
+            // Listener Perubahan Toggle UI
+            if (notifToggle) {
+                notifToggle.addEventListener('change', async () => {
+                    if (notifToggle.checked) {
+                        // USER MAU NYALAIN NOTIF
+                        // Panggil Prompt Bawaan Browser
+                        try {
+                            console.log("Requesting permission...");
+                            await OneSignal.Notifications.requestPermission();
+                            // Opt-In user
+                            OneSignal.User.PushSubscription.optIn();
+                        } catch (e) {
+                            console.error("Notif Error:", e);
+                            notifToggle.checked = false; // Balikin kalo gagal
+                            alert("Gagal mengaktifkan notifikasi. Pastikan browser Anda mengizinkan notifikasi untuk situs ini.");
+                        }
+                    } else {
+                        // USER MAU MATIIN NOTIF
+                        OneSignal.User.PushSubscription.optOut();
+                    }
+                });
+            }
         });
 
 
