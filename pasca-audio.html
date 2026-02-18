@@ -522,7 +522,15 @@
     <audio id="main-audio" preload="auto"></audio>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script>
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import bookmarkManager from './bookmark-manager.js';
+
+        // Listen for bookmarks-loaded
+        window.addEventListener('bookmarks-loaded', () => {
+            updateSaveButtonUI();
+        });
+
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1549454662&single=true&output=csv";
 
         // CORRECT KEY MATCHING SIMPAN.HTML
@@ -623,6 +631,13 @@
             updateSaveButtonUI();
         }
 
+        // Expose functions to window because module scope is isolated
+        window.togglePlay = togglePlay;
+        window.seekRelative = seekRelative;
+        window.downloadCurrent = downloadCurrent;
+        window.copyLink = copyLink;
+        window.toggleSave = toggleSave;
+
         function togglePlay() {
             if (audio.paused) {
                 audio.play();
@@ -688,44 +703,29 @@
             });
         }
 
-        function toggleSave() {
+        async function toggleSave() {
             if (!currentTrack) return;
 
-            // KEY MUST MATCH SIMPAN.HTML 'bookmarks_audio'
-            let saved = JSON.parse(localStorage.getItem(STORAGE_SAVE_KEY) || '[]');
+            // Construct Data Object
+            const data = {
+                title: currentTrack.judul,
+                desc: currentTrack.deskripsi,
+                thumb: currentTrack.gambar,
+                audio: currentTrack.link_audio
+            };
 
-            // DATA STRUCTURE MUST MATCH SIMPAN.HTML: title, desc, thumb
-            // Check existence by title
-            const index = saved.findIndex(s => s.title === currentTrack.judul);
+            const result = await bookmarkManager.toggleBookmark('audio', data);
 
-            if (index !== -1) {
-                // DELETE
-                saved.splice(index, 1);
-                localStorage.setItem(STORAGE_SAVE_KEY, JSON.stringify(saved));
-                showCustomNotif("Audio dihapus dari simpanan.", 'error');
-            } else {
-                // SAVE
-                // Important: simpan.html expects 'title', 'desc', 'thumb'
-                saved.push({
-                    title: currentTrack.judul,
-                    desc: currentTrack.deskripsi,
-                    thumb: currentTrack.gambar,
-                    audio: currentTrack.link_audio, // saving extra data just in case
-                    dateAdded: new Date().toISOString()
-                });
-                localStorage.setItem(STORAGE_SAVE_KEY, JSON.stringify(saved));
-                showCustomNotif("Audio berhasil disimpan!", 'success');
+            if (result === 'saved' || result === 'removed') {
+                updateSaveButtonUI();
             }
-            updateSaveButtonUI();
         }
 
         function updateSaveButtonUI() {
             if (!currentTrack) return;
 
-            const saved = JSON.parse(localStorage.getItem(STORAGE_SAVE_KEY) || '[]');
-
-            // Check by title (because we saved it as 'title', but currentTrack has 'judul')
-            const isSaved = saved.some(s => s.title === currentTrack.judul);
+            // Use Bookmark Manager Sync Check
+            const isSaved = bookmarkManager.isBookmarkedSync('audio', currentTrack.judul);
 
             const btn = document.getElementById('btn-save');
             const icon = document.getElementById('icon-save');
