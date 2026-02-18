@@ -388,17 +388,20 @@
             font-weight: 700;
             letter-spacing: 2px;
             border: 1px dashed #ddd;
-            margin: 20px auto;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
+            margin: 5px auto;
 
-        @media (min-width: 768px) {
-            .ad-box-slim {
-                width: 100%;
-                /* On desktop, maybe max-width handles it */
+            /* SANGAT RAPAT (Very Tight) */
+            @media (min-width: 768px) {
+                .ad-box-slim {
+                    width: 100%;
+                    /* On desktop, maybe max-width handles it */
+                }
             }
-        }
+
+            /* Force tight grouping */
+            .related-section {
+                margin-bottom: 5px !important;
+            }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5035531780463708"
         crossorigin="anonymous"></script>
