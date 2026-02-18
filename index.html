@@ -722,12 +722,12 @@
                             // Gunakan Style Card MUBASYIRAT (dream-card) tapi Rasio KESELURUHAN KOTAK (1:1)
                             // Override style via inline
                             html += `
-                                <a href="baca.html?title=${encodeURIComponent(title)}" class="dream-card" style="width:180px; min-width:180px; height:180px; aspect-ratio:1/1; display:flex; flex-direction:column; padding:0; overflow:hidden;">
+                                <a href="baca.html?title=${encodeURIComponent(title)}" class="dream-card" style="width:180px; min-width:180px; height:180px; aspect-ratio:1/1; display:flex; flex-direction:column; padding:0; overflow:hidden; text-decoration:none;">
                                     <div class="dream-thumb" style="width:100%; height:65%; border-radius:0;">
                                         <img src="${thumb}" alt="thumb" loading="lazy" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://placehold.co/400x400?text=Err'">
                                     </div>
-                                    <div class="dream-info" style="width:100%; height:35%; display:flex; align-items:center; justify-content:center; padding:5px 10px; background:var(--bg-card);">
-                                        <h4 class="dream-title" style="font-size:0.8rem; line-height:1.2; margin:0; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">${title}</h4>
+                                    <div class="dream-info" style="width:100%; height:35%; display:flex; align-items:center; justify-content:center; padding:5px 10px; background:var(--bg-card); border-top:1px solid var(--border);">
+                                        <h4 class="dream-title" style="font-size:0.75rem; line-height:1.3; margin:0; text-align:center; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; color:var(--text-main) !important; font-weight:700; font-family:'Lato', sans-serif; text-shadow:none;">${title}</h4>
                                     </div>
                                 </a>
                              `;
