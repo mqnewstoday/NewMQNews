@@ -292,7 +292,8 @@
             justify-content: center;
             gap: 40px;
             /* More breathing room for buttons */
-            margin-bottom: 25px;
+            margin-bottom: 0;
+            /* REMOVED margin-bottom since buttons are gone */
         }
 
         .btn-ctrl svg {
@@ -473,6 +474,37 @@
                 <h2 id="full-title" class="large-title skeleton-loading skeleton-text"></h2>
                 <p id="full-desc" class="large-desc skeleton-loading skeleton-text"></p>
             </div>
+
+            <!-- MOVED ACTION BUTTONS HERE -->
+            <div class="action-buttons" style="max-width: 320px;">
+                <!-- UNDUH -->
+                <button class="btn-action" onclick="downloadCurrent()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    UNDUH
+                </button>
+
+                <!-- SIMPAN -->
+                <button id="btn-save" class="btn-action" onclick="toggleSave()">
+                    <svg id="icon-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span id="text-save">SIMPAN</span>
+                </button>
+
+                <!-- SALIN LINK -->
+                <button class="btn-action" onclick="copyLink()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    SALIN LINK
+                </button>
+            </div>
         </div>
 
         <div class="controls-area">
@@ -510,36 +542,9 @@
                 </button>
             </div>
 
-            <div class="action-buttons">
-                <!-- UNDUH -->
-                <button class="btn-action" onclick="downloadCurrent()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    UNDUH
-                </button>
-
-                <!-- SIMPAN -->
-                <button id="btn-save" class="btn-action" onclick="toggleSave()">
-                    <svg id="icon-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    <span id="text-save">SIMPAN</span>
-                </button>
-
-                <!-- SALIN LINK -->
-                <button class="btn-action" onclick="copyLink()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                    </svg>
-                    SALIN LINK
-                </button>
-            </div>
+            <!-- ACTION BUTTONS MOVED UP -->
         </div>
+    </div>
     </div>
 
     <!-- MAIN AUDIO ELEMENT -->
