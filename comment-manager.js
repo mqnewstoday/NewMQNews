@@ -149,7 +149,8 @@ class CommentManager {
         if (currentUser && data.uid === currentUser.uid) {
             deleteBtn = `
             <button onclick="commentManager.deleteComment('${docSnapshot.id}')" 
-                style="border:none; background:transparent; cursor:pointer; font-size:1.1rem; opacity:0.6; padding:0 5px;" 
+                style="border:none; background:transparent; cursor:pointer; font-size:1.2rem; padding:5px; color:#d32f2f; transition:transform 0.2s;" 
+                onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"
                 title="Hapus Komentar">
                 🗑️
             </button>`;
