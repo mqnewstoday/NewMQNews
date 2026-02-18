@@ -255,14 +255,46 @@
             </div>
         </div>
 
-        <!-- BACA JUGA SECTION (NEW) -->
+        <!-- COMMENT SECTION (Swapped Order) -->
+        <div id="comments-container" style="max-width:800px; margin:0 auto; padding:0 20px 20px;"></div>
+
+        <!-- AD PLACEHOLDER SLIM (IKLAN) -->
+        <style>
+            .ad-box-slim {
+                width: 100%;
+                height: 50px;
+                /* Lebih gepeng dari banner */
+                background: #f4f4f4;
+                color: #aaa;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.75rem;
+                font-weight: 700;
+                letter-spacing: 2px;
+                border: 1px dashed #ddd;
+                margin: 30px auto;
+                border-radius: 4px;
+                text-transform: uppercase;
+                max-width: 800px;
+                /* Match content width */
+            }
+
+            body.dark-mode .ad-box-slim {
+                background: rgba(255, 255, 255, 0.03);
+                border-color: rgba(255, 255, 255, 0.1);
+                color: #555;
+            }
+        </style>
+        <div class="ad-box-slim">
+            IKLAN
+        </div>
+
+        <!-- BACA JUGA SECTION (Swapped Order) -->
         <div class="related-section" style="max-width:800px; margin:0 auto; padding:0 20px 20px;">
             <h4 class="share-title" style="margin-bottom:15px;">BACA JUGA</h4>
             <div id="related-news-container"></div>
         </div>
-
-        <!-- COMMENT SECTION (Moved Here as Requested) -->
-        <div id="comments-container" style="max-width:800px; margin:0 auto; padding:0 20px 20px;"></div>
 
         <div class="social-share-area">
             <div class="social-label">Ikuti Kami</div>
