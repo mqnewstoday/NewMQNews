@@ -244,6 +244,28 @@
                 opacity: 0.6;
             }
         }
+
+        /* Save Button Style Helper */
+        .btn-save-mini {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.2s;
+            margin-left: 10px;
+        }
+
+        .btn-save-mini.saved {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
     </style>
 </head>
 
@@ -285,7 +307,13 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script>
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import bookmarkManager from './bookmark-manager.js';
+
+        // Expose to window for inline onclicks
+        window.bookmarkManager = bookmarkManager;
+
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1549454662&single=true&output=csv";
         const container = document.getElementById('audio-list');
 
@@ -300,6 +328,26 @@
             }
         }
 
+        // Listen for bookmarks update to refresh UI
+        window.addEventListener('bookmarks-loaded', () => {
+            // Re-render might be too heavy? We can just update buttons.
+            // But for now, let's just re-render to be safe and simple if data is small.
+            // Or better, update specific buttons?
+            // Let's re-run init logic if data is already there? No, we need data.
+            // Let's just rely on button state logic update if we can.
+            // Actually, simplest is to re-render if we have the data cached.
+            // But we don't cache CSV data globally here.
+            // Let's just leave it, toggleBookmark updates its own button state if we implement it right.
+            // OR: We can iterate buttons and update them.
+            document.querySelectorAll('.btn-save-mini').forEach(btn => {
+                const title = btn.getAttribute('data-title');
+                if (title) {
+                    const isSaved = bookmarkManager.isBookmarkedSync('audio', title);
+                    updateButtonState(btn, isSaved);
+                }
+            });
+        });
+
         function renderList(data) {
             console.log("Audio Data Loaded:", data); // DEBUG
             container.innerHTML = "";
@@ -311,41 +359,47 @@
 
             let count = 0;
             data.forEach(item => {
-                // FUZZY MATCHING STRATEGY ("Sapu Jagat")
+                // FUZZY MAPPING
                 let title = "", thumbUrl = "", desc = "";
-
                 Object.keys(item).forEach(key => {
                     const k = key.toLowerCase();
                     const v = item[key];
                     if (!v) return;
-
                     if ((k.includes('judul') || k.includes('title')) && !title) title = v;
                     else if ((k.includes('thumb') || k.includes('gambar') || k.includes('img'))) thumbUrl = v;
                     else if ((k.includes('deskripsi') || k.includes('desc')) && !desc) desc = v;
                 });
 
                 if (!title) return;
-
                 count++;
 
-                const card = document.createElement('div');
-                card.className = 'audio-card';
-                card.onclick = () => {
-                    window.location.href = `pasca-audio.html?bg=${encodeURIComponent(title)}`;
-                };
-
-                // Fix Google Drive Links if detected
+                // Build Clean Data for Saving
+                // Drive Link Fix
                 if (thumbUrl && thumbUrl.includes('drive.google.com') && thumbUrl.includes('/file/d/')) {
                     const matches = thumbUrl.match(/\/d\/(.+?)\//);
-                    if (matches && matches[1]) {
-                        thumbUrl = `https://drive.google.com/uc?export=view&id=${matches[1]}`;
-                    }
+                    if (matches && matches[1]) thumbUrl = `https://drive.google.com/uc?export=view&id=${matches[1]}`;
                 }
-
                 const finalThumb = (thumbUrl && thumbUrl.trim() !== "") ? thumbUrl : 'ALT_LogoMQN.png';
                 if (!desc) desc = 'Audio Muhammad Qasim';
 
-                console.log(`[Card] Title: ${title} | Thumb: ${finalThumb}`);
+                const card = document.createElement('div');
+                card.className = 'audio-card';
+
+                // Click handler for navigation
+                card.onclick = (e) => {
+                    // Prevent navigation if clicking save button
+                    if (e.target.closest('.btn-save-mini')) return;
+                    window.location.href = `pasca-audio.html?bg=${encodeURIComponent(title)}`;
+                };
+
+                // Check Saved Status
+                const isSaved = bookmarkManager.isBookmarkedSync('audio', title);
+                const savedClass = isSaved ? 'saved' : '';
+
+                // Escape for onclick
+                const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeDesc = desc.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeThumb = finalThumb.replace(/'/g, "\\'");
 
                 card.innerHTML = `
                     <div class="card-thumb">
@@ -358,12 +412,52 @@
                         <div class="card-title">${title}</div>
                         <div class="card-desc">${desc}</div>
                     </div>
+                    <button class="btn-save-mini ${savedClass}" data-title="${safeTitle}" onclick="toggleAudioSave('${safeTitle}', '${safeDesc}', '${safeThumb}', this)">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </button>
                 `;
                 container.appendChild(card);
             });
 
             if (count === 0) {
                 container.innerHTML = `<div style="text-align:center;">Format CSV tidak sesuai (Kolom 'Judul' tidak ditemukan).</div>`;
+            }
+        }
+
+        window.toggleAudioSave = async function (title, desc, thumb, btn) {
+            // Construct data
+            const data = {
+                title: title,
+                desc: desc,
+                thumb: thumb
+            };
+
+            const result = await bookmarkManager.toggleBookmark('audio', data);
+
+            if (result === 'saved') {
+                updateButtonState(btn, true);
+            } else if (result === 'removed') {
+                updateButtonState(btn, false);
+            }
+        };
+
+        function updateButtonState(btn, isSaved) {
+            if (isSaved) {
+                btn.classList.add('saved');
+                btn.style.background = "var(--primary)";
+                btn.style.borderColor = "var(--primary)";
+                btn.style.color = "white";
+                btn.querySelector('svg').setAttribute('fill', 'white');
+                btn.querySelector('svg').setAttribute('stroke', 'white');
+            } else {
+                btn.classList.remove('saved');
+                btn.style.background = "transparent";
+                btn.style.borderColor = "var(--border)";
+                btn.style.color = "var(--text-muted)";
+                btn.querySelector('svg').setAttribute('fill', 'none');
+                btn.querySelector('svg').setAttribute('stroke', 'currentColor');
             }
         }
 

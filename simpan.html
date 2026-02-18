@@ -481,66 +481,141 @@
         <span id="notifText">Pesan notifikasi</span>
     </div>
 
-    <script>
+    <script type="module">
+        import { auth, db } from "./firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { collection, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
         const viewMenu = document.getElementById('view-menu');
         const viewList = document.getElementById('view-list');
         const titleEl = document.getElementById('pageTitle');
-
+        let currentUser = null;
         let currentView = 'menu';
 
-        // --- 1. AMBIL DATA DARI LOCALSTORAGE ---
-        function getSavedData(key) {
-            return JSON.parse(localStorage.getItem(key)) || [];
+        // Data Cache
+        const bookmarksData = {
+            news: [],
+            audio: [],
+            mimpi: []
+        };
+
+        // --- 1. AUTH CHECK ---
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                // Load counts
+                updateCounts();
+                // If hash is present, load that category
+                checkHash();
+            } else {
+                // Show Guest State
+                renderGuestState();
+            }
+        });
+
+        function renderGuestState() {
+            viewMenu.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:60px;height:60px;margin-bottom:20px;">
+                        <circle cx="12" cy="7" r="4"></circle>
+                        <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path>
+                    </svg>
+                    <h3>Anda Belum Login</h3>
+                    <p style="margin-bottom:20px;">Silakan login untuk melihat dan mengelola simpanan Anda.</p>
+                    <button onclick="window.location.href='login.html'" class="btn-confirm btn-yes" style="width:auto; padding:10px 40px;">Login / Daftar</button>
+                </div>
+             `;
+            // Disable counts
+            document.querySelectorAll('.cat-count').forEach(el => el.style.display = 'none');
         }
 
-        function updateCounts() {
-            document.getElementById('count-berita').innerText = getSavedData('mq_saved_news').length;
-            document.getElementById('count-audio').innerText = getSavedData('bookmarks_audio').length;
-            document.getElementById('count-mimpi').innerText = getSavedData('mq_saved_mimpi').length;
+        async function updateCounts() {
+            if (!currentUser) return;
+            try {
+                // Fetch counts (by fetching size not all data if possible, but Firestore counts are expensive or need aggregation. 
+                // We'll just fetch all for now as user data won't be huge)
+                const cats = ['news', 'audio', 'mimpi'];
+
+                for (const cat of cats) {
+                    const snap = await getDocs(collection(db, "users", currentUser.uid, "bookmarks_" + cat));
+                    const count = snap.size;
+
+                    // Update UI Count
+                    const el = document.getElementById(`count-${cat === 'news' ? 'berita' : cat}`);
+                    if (el) el.innerText = count;
+
+                    // Update Cache (optional but good for syncing)
+                    // We won't cache full data here to save bandwidth, just count.
+                }
+            } catch (e) {
+                console.error("Error fetching counts:", e);
+            }
+        }
+
+        function checkHash() {
+            if (window.location.hash === '#berita') openCategory('berita');
+            if (window.location.hash === '#audio') openCategory('audio');
+            if (window.location.hash === '#mimpi') openCategory('mimpi');
         }
 
         // --- 2. LOGIKA NAVIGASI ---
-        function openCategory(type) {
+        window.openCategory = async function (type) {
+            if (!currentUser) return;
+
             currentView = type;
             viewMenu.style.display = 'none';
             viewList.style.display = 'block';
-
             titleEl.innerText = type === 'berita' ? "BERITA TERSIMPAN" : (type === 'mimpi' ? "MIMPI TERSIMPAN" : "AUDIO TERSIMPAN");
 
-            renderList(type);
-            history.pushState({ view: type }, null, `#${type}`);
-        }
+            // Show Loading
+            viewList.innerHTML = '<div style="text-align:center; padding:40px;">Checking Cloud...</div>';
 
-        function handleBack() {
+            await renderList(type);
+            history.pushState({ view: type }, null, `#${type}`);
+        };
+
+        window.handleBack = function () {
             if (currentView !== 'menu') {
-                // Balik ke Menu Utama
                 currentView = 'menu';
                 titleEl.innerText = "BOOKMARK";
                 viewMenu.style.display = 'flex';
                 viewList.style.display = 'none';
-                updateCounts();
+                updateCounts(); // Refresh counts
                 history.replaceState(null, null, 'simpan.html');
             } else {
-                // Balik ke Index
                 window.location.href = 'index.html';
             }
-        }
+        };
 
-        // Handle Tombol Back HP
         window.onpopstate = function (event) {
             if (!event.state || !event.state.view) {
                 if (currentView !== 'menu') handleBack();
             }
         };
 
-        // --- 3. RENDER DATA ---
-        function renderList(type) {
-            let key;
-            if (type === 'berita') key = 'mq_saved_news';
-            else if (type === 'mimpi') key = 'mq_saved_mimpi';
-            else key = 'bookmarks_audio';
+        // --- 3. FETCH & RENDER DATA ---
+        async function fetchBookmarks(type) {
+            // Map UI type to Firestore collection suffix
+            // berita -> news
+            // audio -> audio
+            // mimpi -> mimpi
+            const cat = type === 'berita' ? 'news' : type;
 
-            const data = getSavedData(key);
+            try {
+                const snap = await getDocs(collection(db, "users", currentUser.uid, "bookmarks_" + cat));
+                const data = [];
+                snap.forEach(doc => {
+                    data.push({ id: doc.id, ...doc.data() });
+                });
+                return data;
+            } catch (e) {
+                console.log(e);
+                return [];
+            }
+        }
+
+        async function renderList(type) {
+            const data = await fetchBookmarks(type);
 
             viewList.innerHTML = "";
 
@@ -556,30 +631,33 @@
             data.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'item-card';
-                if (type === 'mimpi') card.classList.add('mimpi-mode'); // Add class for portrait styling
+                if (type === 'mimpi') card.classList.add('mimpi-mode');
 
-                // MAPPING DATA
                 let title, desc, thumb, targetUrl;
 
                 if (type === 'berita') {
-                    title = item.judul || item.title || "No Title";
-                    desc = item.isi || item.desc || "";
-                    thumb = item.gambar || item.thumb || "https://placehold.co/100?text=IMG";
+                    title = item.title || item.judul || "No Title";
+                    // Fallbacks for legacy/mixed data structure
+                    desc = item.desc || item.isi || "";
+                    thumb = item.image || item.gambar || "https://placehold.co/100?text=IMG";
                     targetUrl = item.url || "#";
-                    desc = desc.replace(/<[^>]*>?/gm, ''); // Clean HTML
+                    // Ensure local link logic if url is full path
+                    // If stored URL is full absolute, let it be.
                 } else if (type === 'mimpi') {
                     title = item.title || "Mimpi";
-                    desc = item.narasi || "Narasi mimpi...";
+                    desc = item.desc || item.narasi || "Narasi mimpi...";
                     thumb = item.image || "https://placehold.co/100?text=IMG";
                     targetUrl = `mimpi.html?title=${encodeURIComponent(title)}`;
-                    desc = desc.replace(/<[^>]*>?/gm, '');
                 } else {
                     // Audio
                     title = item.title;
-                    desc = item.desc;
-                    thumb = item.thumb;
-                    targetUrl = `audio.html#track=${encodeURIComponent(item.title)}`;
+                    desc = item.desc || "Audio MQ News";
+                    thumb = item.image || item.thumb || "https://placehold.co/100?text=AUDIO";
+                    targetUrl = `audio.html?track=${encodeURIComponent(item.title)}`;
                 }
+
+                // Clean HTML tags from desc
+                desc = desc ? desc.replace(/<[^>]*>?/gm, '') : "";
 
                 card.innerHTML = `
                     <div class="item-thumb">
@@ -589,47 +667,52 @@
                         <div class="item-title">${title}</div>
                         <div class="item-desc">${desc}</div>
                     </div>
-                    <div class="btn-delete" onclick="deleteItem('${key}', ${index}, '${type}')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <div class="btn-delete" onclick="window.confirmDelete('${type}', '${item.id}')">
+                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                     </div>
                 `;
                 viewList.appendChild(card);
             });
         }
 
-        // --- 4. HAPUS DATA ---
-        // --- 4. HAPUS DATA ---
-        // --- 4. HAPUS DATA ---
-        let pendingDelete = null; // Simpan data item yg mau dihapus sementara
+        // --- 4. DELETE LOGIC ---
+        let pendingDelete = null;
 
-        window.deleteItem = function (key, index, type) {
-            // Simpan info item ke variabel global
-            pendingDelete = { key, index, type };
-            // Tampilkan Modal
+        window.confirmDelete = function (type, docId) {
+            pendingDelete = { type, docId };
             document.getElementById('confirmModal').style.display = 'flex';
-        }
+        };
 
-        // Fungsi Eksekusi Hapus (Dipanggil tombol YA)
-        window.executeDelete = function () {
-            if (!pendingDelete) return;
+        window.executeDelete = async function () {
+            if (!pendingDelete || !currentUser) return;
 
-            const { key, index, type } = pendingDelete;
-            const data = getSavedData(key);
+            const btn = document.querySelector('.btn-confirm.btn-yes');
+            const originalText = btn.innerText;
+            btn.innerText = "Menghapus...";
 
-            data.splice(index, 1);
-            localStorage.setItem(key, JSON.stringify(data));
+            const { type, docId } = pendingDelete;
+            const cat = type === 'berita' ? 'news' : type;
 
-            showNotif("Item telah dihapus.", "error");
-            renderList(type);
-            updateCounts();
+            try {
+                await deleteDoc(doc(db, "users", currentUser.uid, "bookmarks_" + cat, docId));
 
-            closeConfirm();
-        }
+                showNotif("Item telah dihapus.", "error");
+                await renderList(type); // Refresh list
+                updateCounts(); // Refresh counts
+
+            } catch (e) {
+                console.error(e);
+                showNotif("Gagal menghapus.", "error");
+            } finally {
+                closeConfirm();
+                btn.innerText = originalText;
+            }
+        };
 
         window.closeConfirm = function () {
             document.getElementById('confirmModal').style.display = 'none';
             pendingDelete = null;
-        }
+        };
 
         function showNotif(message, type) {
             const box = document.getElementById('notifBox');
@@ -653,14 +736,6 @@
                 box.classList.remove('error');
             }, 3000);
         }
-
-        // Init
-        updateCounts();
-        // Cek hash url (kalo user refresh pas di detail)
-        if (window.location.hash === '#berita') openCategory('berita');
-        if (window.location.hash === '#audio') openCategory('audio');
-        if (window.location.hash === '#mimpi') openCategory('mimpi');
-
     </script>
     <!-- MODAL KONFIRMASI -->
     <div id="confirmModal" class="confirm-modal-overlay">

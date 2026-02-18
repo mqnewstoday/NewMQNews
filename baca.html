@@ -328,6 +328,15 @@
         // IMPORT VIA CONFIG
         import { auth } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import bookmarkManager from "./bookmark-manager.js"; // Import Bookmark Manager
+
+        // Expose bookmarkManager
+        window.bookmarkManager = bookmarkManager;
+
+        // Listen for bookmarks-loaded to update UI
+        window.addEventListener('bookmarks-loaded', () => {
+            if (typeof updateSaveButtonUI === 'function') updateSaveButtonUI();
+        });
 
         let currentArticle = null; // Store for saving
 
@@ -338,68 +347,24 @@
             return (t || "").replace(/["']/g, "").replace(/\n/g, " ").trim();
         };
 
-        window.saveCurrentArticle = function () {
+        window.saveCurrentArticle = async function () {
             if (!currentArticle) return;
 
-            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
+            // Construct Data Object
+            const data = {
+                title: getVal(currentArticle, 'judul') || getVal(currentArticle, 'title'),
+                isi: getVal(currentArticle, 'isi') || getVal(currentArticle, 'content'),
+                image: getVal(currentArticle, 'gambar') || getVal(currentArticle, 'image'),
+                url: window.location.href,
+                date: getVal(currentArticle, 'tanggal') || getVal(currentArticle, 'date')
+            };
 
-            // FIX: Gunakan getVal & Normalisasi
-            const rawTitle = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
-            const targetTitle = normalizeTitle(rawTitle);
+            const result = await bookmarkManager.toggleBookmark('news', data);
 
-            // Cek index berdasarkan judul NORMALISASI
-            const index = saved.findIndex(x => normalizeTitle(x.judul) === targetTitle);
-
-            if (index !== -1) {
-                // HAPUS (Toggle Off) -> Tapi user minta notifikasi "Sudah tersimpan" kalau coba simpan lagi?
-                // Tunggu, user bilang: "maka munculkan notif kalo berita ini pernah disimpan bukannya malah berhasil disimpan lagi"
-                // Ini berarti user TIDAK MAU TOGGLE DELETE, TAPI MAU PREVENT DUPLICATE.
-                // Logika saveCurrentArticle saat ini adalah TOGGLE (Simpan/Hapus).
-                // Kalau di index.html, dia PREVENT DUPLICATE ("Berita sudah tersimpan!").
-                // User mau konsistensi. Jika di index.html prevent, di sini harusnya juga?
-                // Tapi tombol "Simpan" biasanya berubah jadi "Disimpan" (Merah). 
-                // Kalau diklik saat merah, biasanya artinya "Unsave".
-                // User bilang: "malah double simpan... bukannya notif pernah disimpan".
-                // Jadi masalahnya adalah Double Simpan.
-                // Kalau logic sekarang (findIndex ketemu), dia menghapus. Itu normal toggle behavior.
-                // Masalah user adalah dia GAK ketemu, jadi dia SIMPAN LAGI (Double).
-                // Dengan fix normalisasi ini, dia BAKAL KETEMU.
-                // Kalau ketemu, dia akan MENGHAPUS (Unsave). Ini behavior yang benar untuk tombol toggle.
-
-                // Namun, user bilang: "...munculkan notif kalo berita ini pernah disimpan".
-                // Apakah user mau tombolnya jadi "Static" (Gak bisa unsave)?
-                // "bikin supaya kalo misal udah pernah simpan... maka munculkan notif kalo berita ini pernah disimpan"
-                // Ini terdengar seperti logic index.html.
-                // Tapi di baca.html, tombolnya berubah warna jadi "Disimpan".
-                // Kalau user klik tombol merah "Disimpan", ekspektasinya apa? Unsave kan?
-                // Masalah user adalah saat dia buka dari index (sudah simpan), di baca.html tombolnya MASIH PUTIH ("Simpan"). 
-                // Lalu dia klik -> Kesimpen lagi (Double).
-                // Solusi saya (Normalisasi) akan membuat tombol jadi MERAH ("Disimpan") saat load.
-                // Jadi user gak akan klik "Simpan" lagi (kecuali mau unsave).
-
-                // Jadi logic Toggle ini tetap saya pertahankan, yang penting DETEKSINYA BENAR.
-
-                saved.splice(index, 1);
-                localStorage.setItem('mq_saved_news', JSON.stringify(saved));
-                showCustomNotif('Berita dihapus dari simpanan!', 'error');
-            } else {
-                // SIMPAN
-                const isi = getVal(currentArticle, 'isi') || getVal(currentArticle, 'content') || "";
-                const gambar = getVal(currentArticle, 'gambar') || getVal(currentArticle, 'image') || "";
-                const tanggal = getVal(currentArticle, 'tanggal') || getVal(currentArticle, 'date') || "";
-
-                saved.push({
-                    judul: targetTitle, // Simpan versi normalisasi biar konsisten
-                    isi: isi,
-                    gambar: gambar,
-                    url: window.location.href, // Absolute URL is safer
-                    tanggal: tanggal,
-                    dateAdded: new Date().toISOString()
-                });
-                localStorage.setItem('mq_saved_news', JSON.stringify(saved));
-                showCustomNotif('Berita berhasil disimpan!', 'success');
+            // UI Update is handled by toggleBookmark notifications, but we update button state explicitly
+            if (result === 'saved' || result === 'removed') {
+                updateSaveButtonUI();
             }
-            updateSaveButtonUI();
         };
 
         function updateSaveButtonUI() {
@@ -408,14 +373,10 @@
             const icon = document.getElementById('icon-save-main');
             const txt = document.getElementById('text-save-main');
 
-            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
+            const title = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
 
-            // FIX: Gunakan getVal & Normalisasi
-            const rawTitle = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
-            const targetTitle = normalizeTitle(rawTitle);
-
-            // Cek apakah ada yang judulnya (setelah dinormalisasi) sama
-            const isSaved = saved.some(x => normalizeTitle(x.judul) === targetTitle);
+            // Check via Bookmark Manager
+            const isSaved = bookmarkManager.isBookmarkedSync('news', title);
 
             if (isSaved) {
                 // SAVED STATE

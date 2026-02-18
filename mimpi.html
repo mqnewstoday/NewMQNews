@@ -477,6 +477,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script type="module">
         import { auth } from './firebase-config.js';
+        import bookmarkManager from "./bookmark-manager.js";
+
+        // Listen for bookmarks-loaded
+        window.addEventListener('bookmarks-loaded', () => {
+            checkSavedStatus();
+        });
 
         let currentData = null;
         const player = document.getElementById('audio-player');
@@ -595,12 +601,9 @@
         };
 
         // SAVE LOGIC
-        const SAVE_KEY = 'mq_saved_mimpi';
-
         function checkSavedStatus() {
             if (!currentData) return;
-            const saved = JSON.parse(localStorage.getItem(SAVE_KEY)) || [];
-            const isSaved = saved.some(item => item.title === currentData.title);
+            const isSaved = bookmarkManager.isBookmarkedSync('mimpi', currentData.title);
             updateSaveBtn(isSaved);
         }
 
@@ -615,24 +618,23 @@
             }
         }
 
-        window.toggleSave = function () {
+        window.toggleSave = async function () {
             if (!currentData) return;
 
-            let saved = JSON.parse(localStorage.getItem(SAVE_KEY)) || [];
-            const index = saved.findIndex(item => item.title === currentData.title);
+            // Construct Data Object
+            // We use title as ID effectively for dreams
+            const data = {
+                title: currentData.title,
+                image: currentData.image,
+                audio: currentData.audio,
+                narasi: currentData.narasi // Or summary
+            };
 
-            if (index === -1) {
-                // ADD
-                saved.push(currentData);
-                showNotif("Mimpi berhasil disimpan!", "success");
-                updateSaveBtn(true);
-            } else {
-                // REMOVE
-                saved.splice(index, 1);
-                showNotif("Dihapus dari simpanan.", "error");
-                updateSaveBtn(false);
+            const result = await bookmarkManager.toggleBookmark('mimpi', data);
+
+            if (result === 'saved' || result === 'removed') {
+                checkSavedStatus();
             }
-            localStorage.setItem(SAVE_KEY, JSON.stringify(saved));
         }
 
         // DOWNLOAD LOGIC

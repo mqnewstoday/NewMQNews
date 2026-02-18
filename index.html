@@ -1386,9 +1386,25 @@
     <script type="module">
         import { auth } from "./firebase-config.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import bookmarkManager from "./bookmark-manager.js"; // Import Bookmark Manager
 
         // Expose auth to global window so non-module scripts can use it
         window.auth = auth;
+        window.bookmarkManager = bookmarkManager;
+
+        // Listener: Re-render news when bookmarks are loaded (to update save icons)
+        window.addEventListener('bookmarks-loaded', () => {
+            // Re-render current page if data exists
+            if (typeof resetRender === 'function') {
+                // We don't want to reset page 1, just re-render current
+                // But resetRender does reset to page 1.
+                // Let's call renderPage(currentPage) instead if available
+                if (typeof renderPage === 'function' && typeof currentPage !== 'undefined') {
+                    renderPage(currentPage);
+                }
+                if (typeof renderEditorPicks === 'function') renderEditorPicks();
+            }
+        });
 
         // AUTH LISTENER: Update Sidebar UI
         onAuthStateChanged(auth, (user) => {
@@ -1523,10 +1539,6 @@
                 return;
             }
 
-            // Load Saved Data for checking
-            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
-            const isSaved = (t) => saved.some(x => x.judul === t);
-
             // Ambil 3 Berita Terbaru (Filter yang judulnya ada)
             let source = allNews.slice().reverse().filter(item => {
                 const j = getVal(item, 'judul') || getVal(item, 'title');
@@ -1543,10 +1555,17 @@
                 if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/150x100?text=MQ";
 
                 const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
-                const savedClass = isSaved(judul) ? 'saved' : '';
+
+                // Check Bookmark Status (Sync)
+                // Use global bookmarkManager if available
+                const isSaved = window.bookmarkManager ? window.bookmarkManager.isBookmarkedSync('news', judul) : false;
+
+                // Optional: visual indicator for saved items in editor picks
+                const savedBadge = isSaved ? `<div style="position:absolute; top:5px; right:5px; background:white; border-radius:50%; padding:2px;"><svg width="12" height="12" fill="#d32f2f" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></div>` : '';
 
                 const html = `
-                <a href="${targetUrl}" class="editor-card">
+                <a href="${targetUrl}" class="editor-card" style="position:relative;">
+                    ${savedBadge}
                     <div class="editor-thumb">
                         <img src="${gambar}" loading="lazy" alt="thumb" onerror="this.src='https://via.placeholder.com/150x100?text=Err'">
                     </div>
@@ -1767,10 +1786,8 @@
             let isi = getVal(item, 'isi') || getVal(item, 'content') || "Tidak ada detail.";
 
             // --- FIX: REMOVE TITLE FROM CONTENT IF REPEATED ---
-            // Banyak kasus di mana data sheet 'isi' dimulai dengan 'judul'. Kita hapus biar gak double.
             if (judul && isi.toLowerCase().trim().startsWith(judul.toLowerCase().trim())) {
                 isi = isi.substring(judul.length).trim();
-                // Bersihkan karakter sisa di awal (misal: " - " atau ": ")
                 isi = isi.replace(/^[:\-\s]+/, '');
             }
             const tanggal = getVal(item, 'tanggal') || getVal(item, 'date');
@@ -1779,12 +1796,17 @@
 
             if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/600x400?text=MQ+News";
 
-            // Escape string biar aman pas dikirim ke fungsi
-            const safeJudul = (judul || "").replace(/["']/g, "").replace(/\n/g, " ");
-            const safeIsi = (isi || "").replace(/["']/g, "").replace(/\n/g, " ").substring(0, 150);
+            // Escape string biar aman
+            const safeJudul = (judul || "").replace(/["']/g, "&quot;").replace(/\n/g, " ");
+            const safeIsi = (isi || "").replace(/["']/g, "&quot;").replace(/\n/g, " ").substring(0, 150);
 
             // Encode Judul
             const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+
+            // Check Saved Status
+            const isSaved = window.bookmarkManager ? window.bookmarkManager.isBookmarkedSync('news', judul) : false;
+            const fill = isSaved ? "#d32f2f" : "none";
+            const stroke = isSaved ? "#d32f2f" : "currentColor";
 
             return `
             <article class="news-card">
@@ -1800,9 +1822,10 @@
                             <span class="card-date">${tanggal}</span>
                             
                             <button onclick="saveNews('${safeJudul}', '${safeIsi}', '${gambar}', '${targetUrl}', '${tanggal}', event)" 
-                                    style="background:none; border:none; cursor:pointer; padding:4px; color:var(--text); transition:0.2s;"
-                                    title="Simpan Berita">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                    style="background:none; border:none; cursor:pointer; padding:4px; color:var(--text); transition:transform 0.2s;"
+                                    title="${isSaved ? 'Hapus Simpanan' : 'Simpan Berita'}"
+                                    id="btn-save-${judul.replace(/[^a-zA-Z0-9]/g, '_')}">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="${fill}" stroke="${stroke}" stroke-width="2" style="transition:0.3s">
                                     <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
                                 </svg>
                             </button>
@@ -1929,19 +1952,39 @@
             }
         };
 
-        window.saveNews = function (judul, isi, gambar, url, tanggal, e) {
+        window.saveNews = async function (judul, isi, gambar, url, tanggal, e) {
             if (e) { e.stopPropagation(); e.preventDefault(); }
-            let saved = JSON.parse(localStorage.getItem('mq_saved_news')) || [];
 
-            // Cek duplikasi
-            if (saved.some(x => x.judul === judul)) {
-                showSavedNotification("Berita sudah tersimpan!", "error");
-                return;
+            // Use Bookmark Manager
+            if (window.bookmarkManager) {
+                // Construct data object
+                const data = {
+                    title: judul,
+                    isi: isi,
+                    image: gambar,
+                    url: url,
+                    date: tanggal
+                };
+
+                const result = await window.bookmarkManager.toggleBookmark('news', data);
+
+                if (result === 'saved' || result === 'removed') {
+                    // Update UI immediately for this specific button if found (Optional optimization)
+                    // But re-render is triggered by listener usually. 
+                    // Since we want immediate feedback, let's toggle the specific button SVG
+                    const btn = e.currentTarget;
+                    const svg = btn.querySelector('svg');
+                    if (result === 'saved') {
+                        svg.setAttribute('fill', '#d32f2f');
+                        svg.setAttribute('stroke', '#d32f2f');
+                    } else {
+                        svg.setAttribute('fill', 'none');
+                        svg.setAttribute('stroke', 'currentColor');
+                    }
+                }
+            } else {
+                alert("Sistem sedang memuat.. coba sesaat lagi.");
             }
-
-            saved.push({ judul, isi, gambar, url, tanggal, dateAdded: new Date().toISOString() });
-            localStorage.setItem('mq_saved_news', JSON.stringify(saved));
-            showSavedNotification("Berita berhasil disimpan!", "success");
         };
 
         function showSavedNotification(msg, type) {
