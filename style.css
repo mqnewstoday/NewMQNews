@@ -1339,6 +1339,9 @@ footer {
 /* =========================================
    9. NOTIFIKASI CUSTOM
    ========================================= */
+/* =========================================
+   9. NOTIFIKASI CUSTOM (POP UP MELAYANG)
+   ========================================= */
 .custom-notif {
     position: fixed;
     top: -100px;
@@ -1354,6 +1357,7 @@ footer {
     z-index: 9999;
     transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     min-width: 300px;
+    border-bottom: 4px solid transparent;
 }
 
 .custom-notif.active {
@@ -1361,11 +1365,11 @@ footer {
 }
 
 .custom-notif.success {
-    border-bottom: 4px solid #2e7d32;
+    border-bottom-color: #2e7d32;
 }
 
 .custom-notif.error {
-    border-bottom: 4px solid #d32f2f;
+    border-bottom-color: #d32f2f;
 }
 
 .notif-icon {
@@ -1379,6 +1383,7 @@ footer {
     color: #333;
     font-size: 0.95rem;
 }
+
 
 /* =========================================
    NEW SECTION: MUBASYIRAT (Horizontal Scroll)
