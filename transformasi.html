@@ -295,42 +295,6 @@
             /* No transition while dragging */
         }
 
-        /* Nav Buttons for Desktop */
-        .tinder-nav {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
-        }
-
-        .t-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            background: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-        }
-
-        .t-btn:active {
-            transform: scale(0.9);
-        }
-
-        .t-btn.nope {
-            color: #ec5e6f;
-            border: 2px solid #ec5e6f;
-        }
-
-        .t-btn.like {
-            color: #4CAF50;
-            border: 2px solid #4CAF50;
-        }
-
         .tinder-info {
             text-align: center;
             margin-top: 10px;
@@ -515,14 +479,6 @@
                             <!-- Cards Injected Here -->
                         </div>
                         <div class="tinder-info">Geser gambar untuk melihat lainnya &larr; &rarr;</div>
-                        <div class="tinder-nav">
-                            <button class="t-btn nope" onclick="userSwipe('left')">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                            </button>
-                            <button class="t-btn like" onclick="userSwipe('right')">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                            </button>
-                        </div>
                     </div>
                     `;
 
@@ -562,7 +518,7 @@
             images.forEach((url, i) => {
                 const card = document.createElement('div');
                 card.classList.add('tinder-card');
-                card.style.zIndex = images.length - i; // 0 is highest index -> highest z-index
+                card.style.zIndex = images.length - 1 - i; // Highest z-index for the first image (index 0)
                 card.style.backgroundImage = `url('${url}')`; // Use BG for easier cover
                 card.style.backgroundSize = 'cover';
                 card.style.backgroundPosition = 'center';
@@ -653,44 +609,42 @@
             card.style.transform = `translateX(${dir * window.innerWidth * 1.5}px) rotate(${dir * 30}deg)`;
             card.style.opacity = 0;
 
-            // Remove after animation
+            // Remove after animation & RECYCLE (Looping)
             setTimeout(() => {
                 card.remove();
-                // Maybe put it back to bottom if we want infinite loop? 
-                // For now "Discard" style is standard tinder.
-                // If user wants to see again, they reload or we add undo button.
 
-                // Check if empty
-                if (document.querySelectorAll('.tinder-card').length === 0) {
-                    document.getElementById('stack-container').innerHTML =
-                        '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#888;">Habis! Klik Navigasi lagi.</div>';
-                }
+                // INFINITE LOOP LOGIC:
+                // Create a clone or re-use the same card logic?
+                // Better to create a pristine new card from the same image source at the back.
+                // But since we want to loop the existing stack, we can just append a new card with same bg.
+
+                // Get the bg url
+                const bg = card.style.backgroundImage;
+
+                const container = document.getElementById('stack-container');
+                const newCard = document.createElement('div');
+                newCard.classList.add('tinder-card');
+                newCard.style.zIndex = 0; // Put at bottom
+                newCard.style.backgroundImage = bg;
+                newCard.style.backgroundSize = 'cover';
+                newCard.style.backgroundPosition = 'center';
+
+                // Re-init events
+                initCardEvents(newCard);
+
+                // Insert at beginning (bottom of stack visually in absolute layout??)
+                // In absolute layout, last child is top. First child is bottom.
+                // WE WANT IT AT THE BOTTOM. So prepend?
+                container.insertBefore(newCard, container.firstChild);
+
+                // Re-adjust Z-Indexes for all cards to keep order correct
+                // Top card (last child) should have highest Z.
+                const allCards = container.querySelectorAll('.tinder-card');
+                allCards.forEach((c, i) => {
+                    c.style.zIndex = i; // 0 is bottom, length-1 is top
+                });
+
             }, 300);
-        }
-
-        function userSwipe(dirStr) {
-            // Programmatic swipe for buttons
-            const cards = document.querySelectorAll('.tinder-card');
-            if (cards.length === 0) return;
-
-            // Top card is last one? No we used z-index.
-            // But querySelectorAll returns in DOM order. 
-            // Our JS appended them in order of array 0..N.
-            // But we set z-index: Length - i. So 0 is top.
-
-            // Let's find the card with highest z-index that is not swiped out?
-            // Actually, we can just pick the first one in the container if we append properly.
-
-            // Wait, card.remove() removes it from DOM. So valid cards are always present.
-            // Which one is on top visually?
-            // currentStack[0] IS WRONG if we remove from DOM. 
-
-            // Simple logic: Select the first valid card in DOM.
-            const card = cards[0];
-            if (!card) return;
-
-            const dir = dirStr === 'right' ? 1 : -1;
-            finishSwipe(card, dir);
         }
 
         function formatText(text) {
