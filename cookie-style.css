@@ -1,0 +1,94 @@
+/* =========================================
+   COOKIE CONSENT TOAST (STICKY BOTTOM)
+   ========================================= */
+.cookie-toast {
+    position: fixed;
+    bottom: 20px;
+    /* Jarak dari bawah */
+    left: 20px;
+    right: 20px;
+    background: #ffffff;
+    /* Default Putih */
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    /* Paling Atas */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    transform: translateY(150%);
+    /* Hidden awalnya */
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    border-left: 5px solid var(--primary);
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: 'Lato', sans-serif;
+}
+
+.cookie-toast.show {
+    transform: translateY(0);
+}
+
+.cookie-text {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    line-height: 1.4;
+    flex: 1;
+}
+
+.cookie-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 700;
+    border-bottom: 1px dotted var(--primary);
+}
+
+.cookie-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.2s;
+}
+
+.cookie-btn:active {
+    transform: scale(0.95);
+}
+
+/* DARK MODE SUPPORT */
+body.dark-mode .cookie-toast {
+    background: #1e1e1e !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid #333;
+    border-left: 5px solid var(--primary);
+}
+
+body.dark-mode .cookie-text {
+    color: #e2e8f0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+    .cookie-toast {
+        flex-direction: column;
+        align-items: flex-start;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 15px 15px 0 0;
+        padding: 20px;
+    }
+
+    .cookie-btn {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+    }
+}

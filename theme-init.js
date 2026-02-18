@@ -64,4 +64,41 @@
             },
         });
     });
+    // --- COOKIE CONSENT BANNER (STICKY BOTTOM TOAST) ---
+    function initCookieBanner() {
+        const consent = localStorage.getItem('cookieConsent');
+        if (consent === 'true') return; // User udah setuju, diem aja
+
+        // 1. Load CSS
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'cookie-style.css';
+        document.head.appendChild(link);
+
+        // 2. Buat HTML Banner
+        const banner = document.createElement('div');
+        banner.className = 'cookie-toast';
+        banner.innerHTML = `
+            <div class="cookie-text">
+                Kami menggunakan cookie untuk memastikan Anda mendapatkan pengalaman terbaik. 
+                <a href="privacy-policy.html" class="cookie-link">Pelajari Selengkapnya</a>
+            </div>
+            <button class="cookie-btn" id="acceptCookie">Oke, Mengerti</button>
+        `;
+        document.body.appendChild(banner);
+
+        // 3. Animasi Muncul (Delay dikit biar smooth)
+        setTimeout(() => banner.classList.add('show'), 1500);
+
+        // 4. Logika Tombol
+        document.getElementById('acceptCookie').addEventListener('click', () => {
+            banner.classList.remove('show');
+            localStorage.setItem('cookieConsent', 'true');
+            // Hapus elemen setelah animasi selesai
+            setTimeout(() => banner.remove(), 500);
+        });
+    }
+    // Jalanin fungsi banner
+    window.addEventListener('load', initCookieBanner);
+
 })();
