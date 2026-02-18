@@ -284,6 +284,10 @@
         </div>
     </div>
 
+    <!-- COMMENT SECTION (NEW) -->
+    <div id="comments-container" style="max-width:800px; margin:0 auto; padding:0 20px;"></div>
+    </div>
+
 
     <footer>
         <div class="footer-content">
@@ -328,7 +332,10 @@
         // IMPORT VIA CONFIG
         import { auth } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { auth } from "./firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import bookmarkManager from "./bookmark-manager.js"; // Import Bookmark Manager
+        import commentManager from "./comment-manager.js";   // Import Comment Manager
 
         // Expose bookmarkManager
         window.bookmarkManager = bookmarkManager;
@@ -527,7 +534,13 @@
             updateSaveButtonUI();  // Update initial UI state
             document.title = (getVal(item, 'judul') || "Berita") + " - MQ News Today";
 
-            document.getElementById('art-title').innerText = getVal(item, 'judul') || getVal(item, 'title');
+            // INIT COMMENTS
+            const articleTitle = getVal(item, 'judul') || getVal(item, 'title');
+            if (articleTitle) {
+                commentManager.init(articleTitle, 'comments-container');
+            }
+
+            document.getElementById('art-title').innerText = articleTitle;
 
             // --- IN-ARTICLE AD INJECTION LOGIC (New) ---
             const rawContent = (getVal(item, 'isi') || getVal(item, 'content'));
