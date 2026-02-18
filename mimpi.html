@@ -764,39 +764,45 @@
         // RUN
         fetchDream();
 
-
-        // --- CUSTOM DELETE CONFIRMATION LOGIC ---
-        let pendingDeleteId = null;
-
-        window.showConfirmDelete = function (commentId) {
-            pendingDeleteId = commentId;
-            const modal = document.getElementById('deleteConfirmModal');
-            modal.classList.add('active');
-        }
-
-        window.closeDeleteConfirm = function () {
-            pendingDeleteId = null;
-            const modal = document.getElementById('deleteConfirmModal');
-            modal.classList.remove('active');
-        }
-
-        // Bind confirm button
-        document.getElementById('btn-conf-del').addEventListener('click', async () => {
-            if (pendingDeleteId && window.commentManager) {
-                const tempId = pendingDeleteId;
-                closeDeleteConfirm(); // Close first
-                await window.commentManager.performDelete(tempId);
-            }
-        });
-
     </script>
     <script>
         function goBack() {
-            if (window.history.length > 1 && document.referrer.toLowerCase().indexOf(window.location.hostname.toLowerCase()) !== -1) {
+            if (document.referrer && document.referrer.includes(window.location.hostname)) {
                 window.history.back();
             } else {
+                // Fallback ke index jika buka langsung direct link link eksternal
                 window.location.href = 'index.html';
             }
+        }
+    </script>
+    <script>
+        // --- CUSTOM DELETE CONFIRMATION LOGIC ---
+        let pendingDeleteId = null;
+
+        function showConfirmDelete(commentId) {
+            pendingDeleteId = commentId;
+            const modal = document.getElementById('deleteConfirmModal');
+            if (modal) modal.classList.add('active');
+        }
+        window.showConfirmDelete = showConfirmDelete;
+
+        function closeDeleteConfirm() {
+            pendingDeleteId = null;
+            const modal = document.getElementById('deleteConfirmModal');
+            if (modal) modal.classList.remove('active');
+        }
+        window.closeDeleteConfirm = closeDeleteConfirm;
+
+        // Bind confirm button
+        const confBtn = document.getElementById('btn-conf-del');
+        if (confBtn) {
+            confBtn.addEventListener('click', async () => {
+                const tempId = pendingDeleteId;
+                if (tempId && window.commentManager) {
+                    closeDeleteConfirm();
+                    await window.commentManager.performDelete(tempId);
+                }
+            });
         }
     </script>
 </body>
