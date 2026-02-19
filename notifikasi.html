@@ -239,11 +239,20 @@
     <script>
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1630354903&single=true&output=csv";
 
-        // Smart Back Function
+        // Smart Back Function (Anti-Loop)
         function goBack() {
-            if (document.referrer && document.referrer.includes(window.location.hostname)) {
+            // Kalau user datang dari Artikel (baca.html) hasil redirect smart back, 
+            // kita JANGAN history.back() karena bakal balik ke artikel lagi (loop).
+            // Kita paksa pulang ke INDEX.
+            if (document.referrer && document.referrer.includes('baca.html')) {
+                window.location.href = 'index.html';
+            }
+            // Kalau referrer ada & internal (bukan dari Google/WA), boleh back normal
+            else if (document.referrer && document.referrer.includes(window.location.hostname)) {
                 window.history.back();
-            } else {
+            }
+            // Fallback
+            else {
                 window.location.href = 'index.html';
             }
         }
