@@ -517,6 +517,17 @@
             }
         });
 
+        // LISTENER UPDATE DATA (CRITICAL)
+        window.addEventListener('bookmarks-loaded', () => {
+            // Update Counts
+            updateCounts();
+
+            // If viewing a list, refresh it
+            if (currentView !== 'menu') {
+                renderList(currentView);
+            }
+        });
+
         function renderGuestState() {
             viewMenu.innerHTML = `
                 <div class="empty-state">
