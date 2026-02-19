@@ -219,37 +219,7 @@
     </div>
     <script src="theme-init.js?v=2"></script>
 
-    <!-- NUCLEAR CACHE KILLER (EMERGENCY FIX) -->
-    <script>
-        (function () {
-            // 1. Unregister Service Workers (Penyebab Utama Cache Bandel)
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function (registrations) {
-                    for (let registration of registrations) {
-                        registration.unregister();
-                    }
-                });
-            }
 
-            // 2. Paksa Reload Sekali jika versi baru belum terdeteksi
-            // Kita pakai sessionStorage biar gak reload terus-terusan (loop).
-            if (!sessionStorage.getItem('CACHE_BUSTED_V2')) {
-                // Hapus Cache Storage API juga kalau ada
-                if ('caches' in window) {
-                    caches.keys().then(function (names) {
-                        for (let name of names) caches.delete(name);
-                    });
-                }
-
-                // Tandai sudah dibersihkan
-                sessionStorage.setItem('CACHE_BUSTED_V2', 'true');
-
-                // Reload Keras dari Server
-                console.log("FORCE RELOAD FOR UPDATE...");
-                window.location.reload(true);
-            }
-        })();
-    </script>
     <header>
 
         <div class="brand">
@@ -259,21 +229,9 @@
                 <span>Truth & Clarity</span>
             </div>
         </div>
-        <div class="nav-right-actions"
-            style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 15px; z-index: 100;">
-            <!-- BELL NOTIFICATION ICON -->
-            <a href="notifikasi.html" class="nav-icon-btn"
-                style="display: flex; align-items: center; justify-content: center; color: inherit; text-decoration: none;">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                </svg>
-            </a>
-
-            <!-- HAMBURGER ORIGINAL (FORCED STATIC) -->
-            <div class="menu-toggle" onclick="toggleSidebar()"
-                style="position: static !important; margin: 0 !important;">
+        <div class="nav-right-actions" style="display: flex; align-items: center; gap: 15px;">
+            <!-- HAMBURGER ORIGINAL -->
+            <div class="menu-toggle" onclick="toggleSidebar()">
                 <span></span>
                 <span></span>
                 <span></span>
