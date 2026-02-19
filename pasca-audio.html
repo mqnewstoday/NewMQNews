@@ -208,6 +208,8 @@
             /* Truncate if too long (2 lines) */
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
+            /* Standard */
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -567,226 +569,34 @@
         import bookmarkManager from './bookmark-manager.js';
 
         // Listen for bookmarks-loaded
-        window.addEventListener('bookmarks-loaded', () => {
-            updateSaveButtonUI();
-        });
+        // Listen for bookmarks-loaded & auth-ready
+        window.addEventListener('bookmarks-loaded', () => updateSaveButtonUI());
+        window.addEventListener('auth-ready', () => updateSaveButtonUI());
 
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1549454662&single=true&output=csv";
 
-        // CORRECT KEY MATCHING SIMPAN.HTML
-        const STORAGE_SAVE_KEY = 'bookmarks_audio';
-
-        let allTracks = [];
-        let currentTrack = null;
-        const audio = document.getElementById('main-audio');
-
-        // INIT
-        window.addEventListener('DOMContentLoaded', async () => {
-            await loadData();
-
-            // Get ID from URL
-            const params = new URLSearchParams(window.location.search);
-            const titleParam = params.get('bg');
-
-            if (titleParam) {
-                const found = allTracks.find(t => t.judul === decodeURIComponent(titleParam));
-                if (found) {
-                    loadTrack(found);
-                    togglePlay();
-                }
-            } else {
-                if (allTracks.length > 0) {
-                    loadTrack(allTracks[0]);
-                }
-            }
-        });
-
-        async function loadData() {
-            try {
-                const res = await fetch(SHEET_CSV_URL);
-                const text = await res.text();
-                const result = Papa.parse(text, { header: true, skipEmptyLines: true });
-
-                // NORMALIZE DATA
-                allTracks = result.data.map(item => {
-                    let title = "", audioUrl = "", thumb = "", desc = "";
-
-                    Object.keys(item).forEach(key => {
-                        const k = key.toLowerCase();
-                        const v = item[key];
-                        if (!v) return;
-
-                        if ((k.includes('judul') || k.includes('title')) && !title) title = v;
-                        else if ((k.includes('embed') || k.includes('audio') || k.includes('link')) && !audioUrl) audioUrl = v;
-                        else if ((k.includes('thumb') || k.includes('gambar') || k.includes('img') || k.includes('foto')) && !thumb) thumb = v;
-                        else if ((k.includes('deskripsi') || k.includes('desc') || k.includes('ket')) && !desc) desc = v;
-                    });
-
-                    if (thumb && thumb.includes('drive.google.com') && thumb.includes('/file/d/')) {
-                        const matches = thumb.match(/\/d\/(.+?)\//);
-                        if (matches && matches[1]) {
-                            thumb = `https://drive.google.com/uc?export=view&id=${matches[1]}`;
-                        }
-                    }
-
-                    return {
-                        judul: title,
-                        link_audio: audioUrl,
-                        gambar: thumb,
-                        deskripsi: desc
-                    };
-                }).filter(t => t.judul && t.link_audio);
-
-            } catch (e) {
-                console.error("Failed to load CSV", e);
-            }
-        }
-
-        function loadTrack(track) {
-            currentTrack = track;
-
-            const titleEl = document.getElementById('full-title');
-            const descEl = document.getElementById('full-desc');
-
-            titleEl.classList.remove('skeleton-loading', 'skeleton-text');
-            descEl.classList.remove('skeleton-loading', 'skeleton-text');
-
-            titleEl.innerText = track.judul;
-            descEl.innerText = track.deskripsi || "Audio MQ News";
-
-            const img = document.getElementById('full-img');
-            img.classList.remove('loaded');
-
-            // Set source first
-            img.src = track.gambar || 'ALT_LogoMQN.png';
-
-            // Re-apply skeleton until load
-            img.parentElement.classList.add('skeleton-loading');
-
-            if (audio.src !== track.link_audio) {
-                audio.src = track.link_audio;
-            }
-
-            // Update Save Button State immediately after loading track
-            updateSaveButtonUI();
-
-            // MEDIA SESSION API (Lock Screen Metadata)
-            if ('mediaSession' in navigator) {
-                const artSrc = track.gambar || 'ALT_LogoMQN.png';
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: track.judul,
-                    artist: "MQ News Audio",
-                    album: "Mubasyirat",
-                    artwork: [
-                        { src: artSrc, sizes: '96x96', type: 'image/png' },
-                        { src: artSrc, sizes: '128x128', type: 'image/png' },
-                        { src: artSrc, sizes: '192x192', type: 'image/png' },
-                        { src: artSrc, sizes: '256x256', type: 'image/png' },
-                        { src: artSrc, sizes: '384x384', type: 'image/png' },
-                        { src: artSrc, sizes: '512x512', type: 'image/png' },
-                    ]
-                });
-
-                // Handlers
-                navigator.mediaSession.setActionHandler('play', togglePlay);
-                navigator.mediaSession.setActionHandler('pause', togglePlay);
-                navigator.mediaSession.setActionHandler('seekbackward', function () { seekRelative(-10); });
-                navigator.mediaSession.setActionHandler('seekforward', function () { seekRelative(10); });
-            }
-        }
-
-        // Expose functions to window because module scope is isolated
-        window.togglePlay = togglePlay;
-        window.seekRelative = seekRelative;
-        window.downloadCurrent = downloadCurrent;
-        window.copyLink = copyLink;
-        window.toggleSave = toggleSave;
-
-        function togglePlay() {
-            if (audio.paused) {
-                audio.play();
-                document.getElementById('play-icon').style.display = 'none';
-                document.getElementById('pause-icon').style.display = 'block';
-            } else {
-                audio.pause();
-                document.getElementById('play-icon').style.display = 'block';
-                document.getElementById('pause-icon').style.display = 'none';
-            }
-        }
-
-        function seekRelative(sec) {
-            audio.currentTime += sec;
-        }
-
-        const seekSlider = document.getElementById('seek-slider');
-        seekSlider.addEventListener('input', () => {
-            const time = (seekSlider.value / 100) * audio.duration;
-            audio.currentTime = time;
-        });
-
-        audio.addEventListener('timeupdate', () => {
-            if (!audio.duration) return;
-            const percent = (audio.currentTime / audio.duration) * 100;
-            seekSlider.value = percent;
-            document.getElementById('curr-time').innerText = formatTime(audio.currentTime);
-            document.getElementById('total-time').innerText = formatTime(audio.duration);
-        });
-
-        audio.addEventListener('play', () => {
-            document.getElementById('play-icon').style.display = 'none';
-            document.getElementById('pause-icon').style.display = 'block';
-        });
-
-        audio.addEventListener('pause', () => {
-            document.getElementById('play-icon').style.display = 'block';
-            document.getElementById('pause-icon').style.display = 'none';
-        });
-
-        function formatTime(s) {
-            if (isNaN(s)) return "0:00";
-            const min = Math.floor(s / 60);
-            const sec = Math.floor(s % 60);
-            return min + ":" + (sec < 10 ? "0" + sec : sec);
-        }
-
-        function downloadCurrent() {
-            if (!currentTrack) return;
-            const link = document.createElement('a');
-            link.href = currentTrack.link_audio;
-            link.download = currentTrack.judul + ".mp3";
-            link.target = "_blank";
-            link.click();
-        }
-
-        function copyLink() {
-            const link = window.location.href;
-            navigator.clipboard.writeText(link).then(() => {
-                showCustomNotif("Link berhasil disalin!", 'success');
-            }).catch(() => {
-                showCustomNotif("Gagal menyalin link.", 'error');
-            });
-        }
+        // ... (existing code)
 
         async function toggleSave() {
             if (!currentTrack) return;
 
-            // Construct Data Object
+            // Construct Data Object (Corrected for Manager V2)
             const data = {
                 title: currentTrack.judul,
                 desc: currentTrack.deskripsi,
-                thumb: currentTrack.gambar,
-                audio: currentTrack.link_audio
+                image: currentTrack.gambar, // Use 'image' key
+                url: window.location.href   // Save current player URL
             };
 
-            const result = await bookmarkManager.toggleBookmark('audio', data);
+            // Call Manager
+            await bookmarkManager.toggleBookmark('audio', data);
 
-            if (result === 'saved' || result === 'removed') {
-                updateSaveButtonUI();
-            }
+            // UI Update handled by local function, explicitly calling it ensures fast response
+            updateSaveButtonUI();
         }
 
         function updateSaveButtonUI() {
-            if (!currentTrack) return;
+            if (!currentTrack || !bookmarkManager) return;
 
             // Use Bookmark Manager Sync Check
             const isSaved = bookmarkManager.isBookmarkedSync('audio', currentTrack.judul);
