@@ -568,14 +568,133 @@
         import { auth } from './firebase-config.js';
         import bookmarkManager from './bookmark-manager.js';
 
-        // Listen for bookmarks-loaded
-        // Listen for bookmarks-loaded & auth-ready
+        // LISTENERS
         window.addEventListener('bookmarks-loaded', () => updateSaveButtonUI());
         window.addEventListener('auth-ready', () => updateSaveButtonUI());
 
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1549454662&single=true&output=csv";
 
-        // ... (existing code)
+        let allTracks = [];
+        let currentTrack = null;
+        const audio = document.getElementById('main-audio');
+
+        // INIT
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
+
+            // Get ID from URL
+            const params = new URLSearchParams(window.location.search);
+            const titleParam = params.get('bg');
+
+            if (titleParam) {
+                const found = allTracks.find(t => t.judul === decodeURIComponent(titleParam));
+                if (found) {
+                    loadTrack(found);
+                    setTimeout(() => togglePlay(), 500); // Auto play with slight delay
+                }
+            } else {
+                if (allTracks.length > 0) {
+                    loadTrack(allTracks[0]);
+                }
+            }
+        });
+
+        async function loadData() {
+            try {
+                const res = await fetch(SHEET_CSV_URL);
+                const text = await res.text();
+                const result = Papa.parse(text, { header: true, skipEmptyLines: true });
+
+                // NORMALIZE DATA
+                allTracks = result.data.map(item => {
+                    let title = "", audioUrl = "", thumb = "", desc = "";
+
+                    Object.keys(item).forEach(key => {
+                        const k = key.toLowerCase();
+                        const v = item[key];
+                        if (!v) return;
+
+                        if ((k.includes('judul') || k.includes('title')) && !title) title = v;
+                        else if ((k.includes('embed') || k.includes('audio') || k.includes('link')) && !audioUrl) audioUrl = v;
+                        else if ((k.includes('thumb') || k.includes('gambar') || k.includes('img') || k.includes('foto')) && !thumb) thumb = v;
+                        else if ((k.includes('deskripsi') || k.includes('desc') || k.includes('ket')) && !desc) desc = v;
+                    });
+
+                    if (thumb && thumb.includes('drive.google.com') && thumb.includes('/file/d/')) {
+                        const matches = thumb.match(/\/d\/(.+?)\//);
+                        if (matches && matches[1]) {
+                            thumb = `https://drive.google.com/uc?export=view&id=${matches[1]}`;
+                        }
+                    }
+
+                    return {
+                        judul: title,
+                        link_audio: audioUrl,
+                        gambar: thumb,
+                        deskripsi: desc
+                    };
+                }).filter(t => t.judul && t.link_audio);
+
+            } catch (e) {
+                console.error("Failed to load CSV", e);
+            }
+        }
+
+        function loadTrack(track) {
+            currentTrack = track;
+
+            const titleEl = document.getElementById('full-title');
+            const descEl = document.getElementById('full-desc');
+
+            titleEl.classList.remove('skeleton-loading', 'skeleton-text');
+            descEl.classList.remove('skeleton-loading', 'skeleton-text');
+
+            titleEl.innerText = track.judul;
+            descEl.innerText = track.deskripsi || "Audio MQ News";
+
+            const img = document.getElementById('full-img');
+            img.classList.remove('loaded');
+
+            // Set source first
+            img.src = track.gambar || 'ALT_LogoMQN.png';
+
+            // Re-apply skeleton until load
+            img.parentElement.classList.add('skeleton-loading');
+
+            if (audio.src !== track.link_audio) {
+                audio.src = track.link_audio;
+                audio.load(); // Force load
+            }
+
+            // Update Save Button State immediately after loading track
+            updateSaveButtonUI();
+
+            // MEDIA SESSION STUFF
+            if ('mediaSession' in navigator) {
+                // ... (Metadata setup)
+                const artSrc = track.gambar || 'ALT_LogoMQN.png';
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: track.judul,
+                    artist: "MQ News Audio",
+                    album: "Mubasyirat",
+                    artwork: [
+                        { src: artSrc, sizes: '512x512', type: 'image/png' },
+                    ]
+                });
+                // Handlers
+                navigator.mediaSession.setActionHandler('play', togglePlay);
+                navigator.mediaSession.setActionHandler('pause', togglePlay);
+                navigator.mediaSession.setActionHandler('seekbackward', function () { seekRelative(-10); });
+                navigator.mediaSession.setActionHandler('seekforward', function () { seekRelative(10); });
+            }
+        }
+
+        // EXPOSE TO WINDOW (CRITICAL FOR ONCLICK)
+        window.togglePlay = togglePlay;
+        window.seekRelative = seekRelative;
+        window.downloadCurrent = downloadCurrent;
+        window.copyLink = copyLink;
+        window.toggleSave = toggleSave;
 
         async function toggleSave() {
             if (!currentTrack) return;

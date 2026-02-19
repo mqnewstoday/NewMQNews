@@ -63,6 +63,8 @@ class BookmarkManager {
                     const data = snap.data();
                     const list = data.list || []; // Array of objects
 
+                    console.log(`[BookmarkManager] Fetched ${cat}: ${list.length} items`);
+
                     this.dataCache[cat] = list; // Store full objects
                     this.cache[cat].clear();
 
@@ -70,6 +72,7 @@ class BookmarkManager {
                         this.cache[cat].add(item.id);
                     });
                 } else {
+                    console.log(`[BookmarkManager] Fetched ${cat}: Document not found (0 items)`);
                     this.dataCache[cat] = [];
                     this.cache[cat].clear();
                 }
@@ -119,36 +122,47 @@ class BookmarkManager {
 
             if (exists) {
                 // DELETE: FIND ITEM TO REMOVE
-                // ArrayRemove needs EXACT object match, which is hard.
-                // Better strategy: Read -> Filter -> Write (1 Read + 1 Write)
-                // OR: Store plain IDs in one array and data in another? No, complex.
-                // BEST FOR ARRAY: We filter the local cache and re-upload the array (Write Cost).
+                // Fix Delete Logic: Filter current cache, write back
+                const currentList = this.dataCache[category] || [];
 
-                const currentList = this.dataCache[category];
+                // Log what we are deleting
+                console.log(`[BookmarkManager] Deleting ${docId} from ${category}. List size before: ${currentList.length}`);
+
                 const newList = currentList.filter(item => item.id !== docId);
 
-                await setDoc(docRef, { list: newList }); // Overwrite array with new list
+                if (currentList.length === newList.length) {
+                    console.warn(`[BookmarkManager] Item ${docId} not found in cache during delete, but ID exists in Set.`);
+                    // Force sync?
+                }
+
+                // Write back entire list (overwrite strategy for array removal)
+                await setDoc(docRef, { list: newList });
 
                 // Update Local State
                 this.dataCache[category] = newList;
                 this.cache[category].delete(docId);
 
                 this._showNotif(`Dihapus dari simpanan ${category}.`, 'error');
+                console.log(`[BookmarkManager] Deleted successfully. New list size: ${newList.length}`);
                 return 'removed';
 
             } else {
-                // SAVE: ADD TO ARRAY (arrayUnion is clean)
+                // SAVE: ADD TO ARRAY
+                // Sanitize STRICTLY to avoid undefined values rejected by Firestore
                 const safeData = {
-                    id: docId, // Critical for ID matching
-                    title: title,
-                    url: data.url || window.location.href,
-                    image: data.image || data.gambar || data.thumbnail || '',
-                    date: data.date || data.tanggal || new Date().toISOString(),
-                    desc: data.desc || data.narasi || data.isi || data.description || '',
+                    id: docId,
+                    title: String(title || "No Title").substring(0, 150),
+                    url: String(data.url || window.location.href),
+                    image: String(data.image || data.gambar || data.thumbnail || data.thumb || ''),
+                    date: String(data.date || data.tanggal || new Date().toISOString()),
+                    desc: String(data.desc || data.narasi || data.isi || data.description || ''),
                     savedAt: new Date().toISOString()
                 };
 
+                // Truncate desc
                 if (safeData.desc.length > 200) safeData.desc = safeData.desc.substring(0, 200) + "...";
+
+                console.log(`[BookmarkManager] Saving to ${category}:`, safeData);
 
                 // Create doc if not exists, merge: true
                 await setDoc(docRef, {
@@ -156,14 +170,16 @@ class BookmarkManager {
                 }, { merge: true });
 
                 // Update Local State
+                // Push to local array immediately for UI responsiveness
                 this.dataCache[category].push(safeData);
                 this.cache[category].add(docId);
 
                 this._showNotif(`Berhasil disimpan di ${category}!`, 'success');
+                console.log(`[BookmarkManager] Saved successfully.`);
                 return 'saved';
             }
         } catch (e) {
-            console.error("Bookmark V2 Error:", e);
+            console.error("[BookmarkManager] Transaction Error:", e);
             this._showNotif("Gagal menyimpan. Periksa koneksi.", 'error');
             return 'error';
         }
