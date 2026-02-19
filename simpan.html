@@ -196,6 +196,8 @@
             color: var(--text);
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
+            /* Standard */
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-bottom: 5px;
@@ -206,6 +208,8 @@
             color: #64748b;
             display: -webkit-box;
             -webkit-line-clamp: 1;
+            line-clamp: 1;
+            /* Standard */
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -530,25 +534,27 @@
         }
 
         async function updateCounts() {
-            if (!currentUser) return;
+            if (!currentUser || !window.bookmarkManager) return;
+
             try {
-                // Fetch counts (by fetching size not all data if possible, but Firestore counts are expensive or need aggregation. 
-                // We'll just fetch all for now as user data won't be huge)
+                // Gunakan Data Cache Manager (Sync)
+                // Manager punya: this.dataCache.news (Array)
+                // Kita akses via getter atau direct property kalau exposed.
+                // Manager kita expose getBookmarkList(cat).
+
                 const cats = ['news', 'audio', 'mimpi'];
+                cats.forEach(cat => {
+                    const list = window.bookmarkManager.getBookmarkList(cat);
+                    const count = list.length;
 
-                for (const cat of cats) {
-                    const snap = await getDocs(collection(db, "users", currentUser.uid, "bookmarks_" + cat));
-                    const count = snap.size;
-
-                    // Update UI Count
-                    const el = document.getElementById(`count-${cat === 'news' ? 'berita' : cat}`);
+                    // UI ID: count-berita, count-audio, count-mimpi
+                    const uiId = cat === 'news' ? 'count-berita' : 'count-' + cat;
+                    const el = document.getElementById(uiId);
                     if (el) el.innerText = count;
+                });
 
-                    // Update Cache (optional but good for syncing)
-                    // We won't cache full data here to save bandwidth, just count.
-                }
             } catch (e) {
-                console.error("Error fetching counts:", e);
+                console.error("Error updating counts:", e);
             }
         }
 
@@ -595,23 +601,11 @@
 
         // --- 3. FETCH & RENDER DATA ---
         async function fetchBookmarks(type) {
-            // Map UI type to Firestore collection suffix
-            // berita -> news
-            // audio -> audio
-            // mimpi -> mimpi
-            const cat = type === 'berita' ? 'news' : type;
-
-            try {
-                const snap = await getDocs(collection(db, "users", currentUser.uid, "bookmarks_" + cat));
-                const data = [];
-                snap.forEach(doc => {
-                    data.push({ id: doc.id, ...doc.data() });
-                });
-                return data;
-            } catch (e) {
-                console.log(e);
-                return [];
+            // Use Manager Cache directly (Already loaded)
+            if (window.bookmarkManager) {
+                return window.bookmarkManager.getBookmarkList(type);
             }
+            return [];
         }
 
         async function renderList(type) {
@@ -694,11 +688,41 @@
             const cat = type === 'berita' ? 'news' : type;
 
             try {
-                await deleteDoc(doc(db, "users", currentUser.uid, "bookmarks_" + cat, docId));
+                // Gunakan Manager V2
+                const result = await window.bookmarkManager.toggleBookmark(type, { title: docId }); // Trick: ID disimpan sbg Title karena sanitize sama
+                // TAPI TUNGGU: toggleBookmark butuh DATA ASLI buat ngecek ID di sanitize
+                // Di V2, kita butuh ID yang PERSIS.
+                // Masalah: toggleBookmark nge-sanitize title lagi.
+                // SOLUSI: Kita panggil toggleBookmark dengan ID sebagai title, karena sanitize("ID") = "id".
+                // ATAU: Kita bikin fungsi `removeById` di Manager. TAPI biar cepet, kita pake logic toggleBookmark yg ada.
+                // TAPI: docId dari list adalah hasil sanitize, jadi aman.
 
-                showNotif("Item telah dihapus.", "error");
-                await renderList(type); // Refresh list
-                updateCounts(); // Refresh counts
+                // KOREKSI: toggleBookmark logic kita tadi: 
+                // const docId = this._sanitizeId(title);
+                // Kita harus kirim fake object dng Title yg kalau di sanitize hasilnya sama dengan ID.
+                // UNTUK SEKARANG: Di V2 Manager saya belum handle remove by specific ID direct.
+                // TAPI: ID kita generate dari Title. Selama ID di list = Title sanitized, kita bisa kirim ID sebagai Title.
+
+                // REVISI MANAGER DULU? Gak usah, kita assume ID = Sanitized Title.
+                // Cuma masalahnya ID "judul_berita" aslinya "Judul Berita". 
+                // Kalau kita kirim "judul_berita" -> sanitize -> "judul_berita". MATCH!
+
+                if (window.bookmarkManager) {
+                    // Kita perlu tahu ini kategori apa di mata manager (berita -> news)
+                    // TYPE di simpan.html = 'berita', 'audio', 'mimpi'
+                    // DI MANAGER: toggleBookmark param category: 'news', 'audio', 'mimpi'
+                    const managerCat = type === 'berita' ? 'news' : type;
+
+                    // Kita manipulasi cache manager secara manual ATAU panggil toggle.
+                    // Panggil toggle paling aman (handle DB + Cache).
+                    // Kita kirim { title: docId } -> Sanitize(docId) -> docId.
+                    await window.bookmarkManager.toggleBookmark(managerCat, { title: docId });
+
+                    showNotif("Item telah dihapus.", "error");
+                    // Refresh UI
+                    await renderList(type);
+                    updateCounts();
+                }
 
             } catch (e) {
                 console.error(e);

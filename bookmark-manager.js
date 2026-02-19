@@ -1,23 +1,29 @@
 
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, setDoc, deleteDoc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /**
- * Universal Bookmark Manager
- * Handles saving/removing bookmarks to Firestore.
+ * Universal Bookmark Manager (V2 - SINGLE DOC ARRAY)
+ * Optimized for COST EFFICIENCY (1 Read per Category Load)
  */
 
 class BookmarkManager {
     constructor() {
         this.user = null;
         this.isAuthReady = false;
-        // Cache to store set of bookmarked IDs for fast UI lookup
-        // Structure: { 'news': Set(), 'audio': Set(), 'mimpi': Set() }
+        // Cache for fast UI lookup: { 'news': Set(ids), 'audio': Set(ids), 'mimpi': Set(ids) }
         this.cache = {
             news: new Set(),
             audio: new Set(),
             mimpi: new Set()
+        };
+
+        // Full Data Cache (To avoid re-fetch on simple UI toggles if possible)
+        this.dataCache = {
+            news: [],
+            audio: [],
+            mimpi: []
         };
 
         // Listen to Auth State
@@ -26,13 +32,11 @@ class BookmarkManager {
             this.isAuthReady = true;
 
             if (user) {
-                // Fetch all bookmarks to populate cache
                 this._fetchAllBookmarks();
             } else {
                 this._clearCache();
             }
 
-            // Dispatch event for UI updates
             window.dispatchEvent(new CustomEvent('auth-ready', { detail: user }));
         });
     }
@@ -41,6 +45,7 @@ class BookmarkManager {
         this.cache.news.clear();
         this.cache.audio.clear();
         this.cache.mimpi.clear();
+        this.dataCache = { news: [], audio: [], mimpi: [] };
     }
 
     async _fetchAllBookmarks() {
@@ -50,17 +55,30 @@ class BookmarkManager {
             const categories = ['news', 'audio', 'mimpi'];
 
             for (const cat of categories) {
-                const snapshot = await getDocs(collection(db, "users", this.user.uid, "bookmarks_" + cat));
-                snapshot.forEach(doc => {
-                    this.cache[cat].add(doc.id);
-                });
+                // READ SINGLE DOC (1 Read Cost)
+                const docRef = doc(db, "users", this.user.uid, "bookmarks", cat);
+                const snap = await getDoc(docRef);
+
+                if (snap.exists()) {
+                    const data = snap.data();
+                    const list = data.list || []; // Array of objects
+
+                    this.dataCache[cat] = list; // Store full objects
+                    this.cache[cat].clear();
+
+                    list.forEach(item => {
+                        this.cache[cat].add(item.id);
+                    });
+                } else {
+                    this.dataCache[cat] = [];
+                    this.cache[cat].clear();
+                }
             }
 
-            // Dispatch event that bookmarks are loaded
             window.dispatchEvent(new CustomEvent('bookmarks-loaded'));
-            console.log("Bookmarks cache loaded:", this.cache);
+            console.log("Bookmarks V2 loaded:", this.cache);
         } catch (e) {
-            console.error("Error loading bookmarks:", e);
+            console.error("Error loading bookmarks V2:", e);
         }
     }
 
@@ -69,30 +87,20 @@ class BookmarkManager {
         return title.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 100);
     }
 
-    /**
-     * Check if an item is bookmarked (Synchronous - uses Cache)
-     * Suitable for lists/grids rendering
-     */
+    // Synchronous Check
     isBookmarkedSync(category, title) {
         if (!this.user) return false;
         const docId = this._sanitizeId(title);
         return this.cache[category].has(docId);
     }
 
-    /**
-     * Check if an item is bookmarked (Async - direct DB)
-     */
     async isBookmarked(category, title) {
         if (!this.user) return false;
-        // ... (Fallthrough to sync check if cache loaded, otherwise DB)
         return this.isBookmarkedSync(category, title);
     }
 
     /**
-     * Toggle Bookmark (Save/Unsave)
-     * @param {string} category - 'news', 'audio', 'mimpi'
-     * @param {object} data - { title, url, image, date, desc }
-     * @returns {Promise<string>} - 'saved', 'removed', or 'unauth'
+     * Toggle Bookmark (Save/Unsave) -> Updates Array in Single Doc
      */
     async toggleBookmark(category, data) {
         if (!this.user) {
@@ -104,122 +112,100 @@ class BookmarkManager {
         if (!title) return 'error';
 
         const docId = this._sanitizeId(title);
-        const ref = doc(db, "users", this.user.uid, "bookmarks_" + category, docId);
+        const docRef = doc(db, "users", this.user.uid, "bookmarks", category);
 
         try {
-            // Check cache first
             const exists = this.cache[category].has(docId);
 
             if (exists) {
-                // DELETE
-                await deleteDoc(ref);
-                this.cache[category].delete(docId); // Update Cache
+                // DELETE: FIND ITEM TO REMOVE
+                // ArrayRemove needs EXACT object match, which is hard.
+                // Better strategy: Read -> Filter -> Write (1 Read + 1 Write)
+                // OR: Store plain IDs in one array and data in another? No, complex.
+                // BEST FOR ARRAY: We filter the local cache and re-upload the array (Write Cost).
+
+                const currentList = this.dataCache[category];
+                const newList = currentList.filter(item => item.id !== docId);
+
+                await setDoc(docRef, { list: newList }); // Overwrite array with new list
+
+                // Update Local State
+                this.dataCache[category] = newList;
+                this.cache[category].delete(docId);
+
                 this._showNotif(`Dihapus dari simpanan ${category}.`, 'error');
                 return 'removed';
+
             } else {
-                // SAVE
-                // Clean data before saving
+                // SAVE: ADD TO ARRAY (arrayUnion is clean)
                 const safeData = {
+                    id: docId, // Critical for ID matching
                     title: title,
                     url: data.url || window.location.href,
                     image: data.image || data.gambar || data.thumbnail || '',
                     date: data.date || data.tanggal || new Date().toISOString(),
-                    desc: data.desc || data.narasi || data.isi || data.description || '', // Fallback description
+                    desc: data.desc || data.narasi || data.isi || data.description || '',
                     savedAt: new Date().toISOString()
                 };
 
-                // Truncate desc if too long (save storage)
                 if (safeData.desc.length > 200) safeData.desc = safeData.desc.substring(0, 200) + "...";
 
-                await setDoc(ref, safeData);
-                this.cache[category].add(docId); // Update Cache
+                // Create doc if not exists, merge: true
+                await setDoc(docRef, {
+                    list: arrayUnion(safeData)
+                }, { merge: true });
+
+                // Update Local State
+                this.dataCache[category].push(safeData);
+                this.cache[category].add(docId);
+
                 this._showNotif(`Berhasil disimpan di ${category}!`, 'success');
                 return 'saved';
             }
         } catch (e) {
-            console.error("Bookmark Error:", e);
+            console.error("Bookmark V2 Error:", e);
             this._showNotif("Gagal menyimpan. Periksa koneksi.", 'error');
             return 'error';
         }
     }
 
+    // --- UTILS (Popup & Notif same as before) ---
     _showLoginPopup() {
-        // Create popup if not exists
         let popup = document.getElementById('auth-popup-overlay');
-
         if (!popup) {
             const html = `
             <div id="auth-popup-overlay" class="custom-modal-overlay">
                 <div class="custom-modal-box">
-                    <div style="margin-bottom:15px; color:var(--primary);">
-                         <!-- Lock Icon (Non-animate) -->
-                         <svg viewBox="0 0 24 24" width="50" height="50" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                         </svg>
-                    </div>
                     <h3 class="modal-title">Fitur Login</h3>
-                    <p class="modal-desc">Login untuk menyimpan artikel dan mengaksesnya di semua perangkat Anda.</p>
+                    <p class="modal-desc">Login untuk menyimpan artikel.</p>
                     <div class="modal-actions">
                         <button id="btn-cancel-auth" class="modal-btn btn-cancel">Nanti</button>
-                        <button onclick="window.location.href='login.html'" class="modal-btn btn-yes">Login / Daftar</button>
+                        <button onclick="window.location.href='login.html'" class="modal-btn btn-yes">Login</button>
                     </div>
                 </div>
             </div>`;
             document.body.insertAdjacentHTML('beforeend', html);
             popup = document.getElementById('auth-popup-overlay');
-
-            // Add event listener for cancel button
-            document.getElementById('btn-cancel-auth').addEventListener('click', () => {
-                popup.classList.remove('active');
-                // Optional: remove element after animation if you prefer, but hiding is fine
-            });
+            document.getElementById('btn-cancel-auth').onclick = () => popup.classList.remove('active');
         }
-
-        // Use timeout to allow DOM insertion if just created
-        setTimeout(() => {
-            popup.classList.add('active');
-        }, 10);
+        setTimeout(() => popup.classList.add('active'), 10);
     }
 
     _showNotif(msg, type) {
-        // Delegate to global unified notification system if available
         if (window.showCustomNotif) {
             window.showCustomNotif(msg, type);
             return;
         }
+        console.log(`[${type}] ${msg}`);
+        // Fallback alert removed mostly
+    }
 
-        // Fallback implementation (with naive timer cleanup)
-        const box = document.getElementById('notifBox');
-        if (box) {
-            const text = document.getElementById('notifText');
-            const icon = document.getElementById('notifIcon');
-
-            text.innerText = msg;
-
-            // Icon Logic (Inline SVG to minimize dependencies)
-            if (type === 'success') {
-                if (icon) icon.innerHTML = `<svg style="width:20px;height:20px;fill:#2e7d32" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
-            } else {
-                if (icon) icon.innerHTML = `<svg style="width:20px;height:20px;fill:#d32f2f" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
-            }
-
-            box.className = `custom-notif active ${type}`;
-
-            // Self-contained simple timer (better to rely on window.showCustomNotif)
-            setTimeout(() => {
-                box.classList.remove('active');
-                box.classList.remove('success');
-                box.classList.remove('error');
-            }, 3000);
-        } else {
-            console.log(`[${type}] ${msg}`);
-            // alert(msg); // Avoid alert which blocks execution
-        }
+    // EXPOSE DATA FOR SIMPAN.HTML
+    getBookmarkList(category) {
+        return this.dataCache[category] || [];
     }
 }
 
-// Export Singleton
 const bookmarkManager = new BookmarkManager();
-window.bookmarkManager = bookmarkManager; // Expose globally
+window.bookmarkManager = bookmarkManager;
 export default bookmarkManager;
