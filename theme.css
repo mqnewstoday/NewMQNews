@@ -15,6 +15,22 @@
     --base-size: 16px;
 }
 
+/* --- NAV ICON BTN (NOTIFICATION BELL) --- */
+.nav-icon-btn {
+    color: var(--primary) !important;
+    /* WAJIB MERAH */
+    transition: transform 0.2s;
+}
+
+.nav-icon-btn:hover {
+    transform: scale(1.1);
+}
+
+.nav-icon-btn svg {
+    stroke: var(--primary) !important;
+    /* Pastikan garisnya merah */
+}
+
 /* =========================================
    DARK MODE SETTINGS
    ========================================= */

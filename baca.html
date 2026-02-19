@@ -179,8 +179,8 @@
 
     <div id="article-view" style="display: block; min-height: 80vh;">
         <div class="article-header">
-            <!-- Tombol Back ke Index -->
-            <div class="back-icon-btn" onclick="goBack()" title="Kembali">
+            <!-- Tombol Back ke Index (Smart Back) -->
+            <div class="back-icon-btn" onclick="goSmartBack()" title="Kembali">
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -829,12 +829,15 @@
     </script>
     <!-- Script goBack Updated for Smart Back -->
     <script>
-        function goBack() {
-            // Cek apakah ada history sebelumnya di domain yang sama (Smart Back)
-            if (document.referrer && document.referrer.includes(window.location.hostname)) {
+        function goSmartBack() {
+            // KHUSUS DARI NOTIFIKASI
+            if (document.referrer && document.referrer.includes('notifikasi.html')) {
+                window.location.href = 'notifikasi.html';
+            }
+            // Smart Back Umum
+            else if (document.referrer && document.referrer.includes(window.location.hostname)) {
                 window.history.back();
             } else {
-                // Fallback ke index jika buka langsung direct link link eksternal
                 window.location.href = 'index.html';
             }
         }
