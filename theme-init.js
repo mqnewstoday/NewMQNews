@@ -78,6 +78,10 @@
         // 2. Buat HTML Banner (Updated with Close X Button)
         const banner = document.createElement('div');
         banner.className = 'cookie-toast';
+        // FOUC FIX: Sembunyikan dulu pakai inline style sebelum CSS loaded
+        banner.style.opacity = '0';
+        banner.style.pointerEvents = 'none';
+
         banner.innerHTML = `
             <button class="cookie-close-btn" id="closeCookie">&times;</button>
             <div class="cookie-text">
@@ -88,8 +92,13 @@
         `;
         document.body.appendChild(banner);
 
-        // 3. Animasi Muncul (Delay dikit biar smooth)
-        setTimeout(() => banner.classList.add('show'), 1500);
+        // 3. Animasi Muncul (Tunggu CSS load + Delay)
+        // Kita balikin opacity via CSS class .show nanti
+        setTimeout(() => {
+            banner.style.opacity = ''; // Hapus inline style biar CSS ambil alih
+            banner.style.pointerEvents = '';
+            banner.classList.add('show');
+        }, 1500);
 
         // 4. Logika Tombol (Accept & Close sama-sama setuju/tutup)
         const closeAction = () => {
