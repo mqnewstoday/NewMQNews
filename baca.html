@@ -829,9 +829,10 @@
     </script>
     <!-- Script goBack Updated for Smart Back -->
     <script>
-        function goSmartBack() {
-            // 1. Cek Parameter URL 'source=notif' (Paling Kuat)
+        // UNIFIED BACK BUTTON LOGIC
+        function goBack() {
             const urlParams = new URLSearchParams(window.location.search);
+            // 1. Cek Parameter URL 'source=notif' (Paling Kuat)
             if (urlParams.get('source') === 'notif') {
                 window.location.href = 'notifikasi.html';
                 return;
@@ -848,6 +849,8 @@
                 window.location.href = 'index.html';
             }
         }
+        // Map goSmartBack to goBack for safety (if newer HTML calls it)
+        window.goSmartBack = goBack;
     </script>
 </body>
 

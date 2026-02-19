@@ -345,8 +345,8 @@
                         localStorage.setItem('mq_read_notifs', JSON.stringify(readHistory));
                     }
 
-                    // 2. Open Link with Source Param
-                    if (link && link.startsWith('http')) {
+                    // 2. Open Link with Source Param (Fixed Logic)
+                    if (link && link.trim() !== '') {
                         let separator = link.includes('?') ? '&' : '?';
                         window.location.href = link + separator + 'source=notif';
                     } else {
