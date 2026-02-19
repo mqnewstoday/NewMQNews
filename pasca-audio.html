@@ -527,8 +527,9 @@
                 <span id="total-time" class="time-label">0:00</span>
             </div>
 
+            <!-- MAIN CONTROLS: REMOVE ONCLICK, USE ID -->
             <div class="main-controls">
-                <button class="btn-ctrl" onclick="seekRelative(-10)">
+                <button class="btn-ctrl" id="btn-rewind">
                     <svg viewBox="0 0 24 24">
                         <path
                             d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z" />
@@ -536,7 +537,8 @@
                             fill="currentColor">10</text>
                     </svg>
                 </button>
-                <button class="btn-play-pause" onclick="togglePlay()">
+
+                <button class="btn-play-pause" id="btn-toggle-play">
                     <svg id="play-icon" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z" />
                     </svg>
@@ -544,23 +546,22 @@
                         <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                     </svg>
                 </button>
-                <button class="btn-ctrl" onclick="seekRelative(10)">
+
+                <button class="btn-ctrl" id="btn-forward">
                     <svg viewBox="0 0 24 24">
                         <path d="M10 18l8.5-6L10 6v12zM19 6v12h2V6h-2z" style="display:none" />
                         <path
                             d="M11.5 8C16.15 8 20.08 11.03 21.13 15.3l-2.37.78C17.7 12.81 14.69 10.5 11.15 10.5c-1.96 0-3.73.72-5.12 1.88L2.41 16H11v-9l-3.6 3.6 1.41-1.41L11.5 8z"
-                            transform="scale(-1, 1) translate(-24, 0)" /><text x="12" y="16" font-family="Arial"
-                            font-size="7" text-anchor="middle" fill="currentColor">10</text>
+                            transform="scale(-1, 1) translate(-24, 0)" />
+                        <text x="12" y="16" font-family="Arial" font-size="7" text-anchor="middle"
+                            fill="currentColor">10</text>
                     </svg>
                 </button>
             </div>
-
-            <!-- ACTION BUTTONS MOVED UP -->
         </div>
     </div>
-    </div>
 
-    <!-- MAIN AUDIO ELEMENT -->
+    <!-- AUDIO ELEMENT -->
     <audio id="main-audio" preload="auto"></audio>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -568,9 +569,8 @@
         import { auth } from './firebase-config.js';
         import bookmarkManager from './bookmark-manager.js';
 
-        // LISTENERS
-        window.addEventListener('bookmarks-loaded', () => updateSaveButtonUI());
-        window.addEventListener('auth-ready', () => updateSaveButtonUI());
+        // --- BINDING ELEMENTS (NO MORE ONCLICK) ---
+        // We bind after DOM Content Loaded inside the module
 
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1549454662&single=true&output=csv";
 
@@ -580,6 +580,34 @@
 
         // INIT
         window.addEventListener('DOMContentLoaded', async () => {
+            // Listeners for UI Updates
+            window.addEventListener('bookmarks-loaded', () => updateSaveButtonUI());
+            window.addEventListener('auth-ready', () => updateSaveButtonUI());
+
+            // Bind Buttons Safely
+            document.getElementById('btn-toggle-play').addEventListener('click', togglePlay);
+            document.getElementById('btn-rewind').addEventListener('click', () => seekRelative(-10));
+            document.getElementById('btn-forward').addEventListener('click', () => seekRelative(10));
+
+            // Bind Actions (Check IDs if they exist)
+            const btnUnduh = document.querySelector('.btn-action[onclick*="download"]');
+            if (btnUnduh) {
+                btnUnduh.removeAttribute('onclick');
+                btnUnduh.addEventListener('click', downloadCurrent);
+            }
+
+            const btnSalin = document.querySelector('.btn-action[onclick*="copy"]');
+            if (btnSalin) {
+                btnSalin.removeAttribute('onclick');
+                btnSalin.addEventListener('click', copyLink);
+            }
+
+            // Save is already ID-based: btn-save
+            document.getElementById('btn-save').addEventListener('click', toggleSave);
+            // Remove old onclick attribute if present to avoid conflicts
+            document.getElementById('btn-save').removeAttribute('onclick');
+
+            // Load Data
             await loadData();
 
             // Get ID from URL
