@@ -1,5 +1,5 @@
 import { db, auth } from "./firebase-config.js";
-import { collection, addDoc, query, where, orderBy, limit, getDocs, serverTimestamp, startAfter, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, addDoc, query, where, orderBy, limit, getDocs, serverTimestamp, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 class CommentManager {
     constructor() {
@@ -7,34 +7,22 @@ class CommentManager {
         this.lastVisible = null;
         this.currentTargetId = null;
         this.containerId = null;
-        this.limit = 6;
+        this.limit = 5; // STRICT LIMIT 5
         this.isLoading = false;
     }
 
     init(targetId, containerId) {
         if (!targetId || !containerId) return;
-        this.currentTargetId = this._sanitizeId(targetId);
+        this.currentTargetId = targetId; // No sanitize needed if trusted
         this.containerId = containerId;
-
-        // Wait for DOM
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this._start());
-        } else {
-            this._start();
-        }
+        this._start();
     }
 
     _start() {
         this.renderUI();
-        // Allow time for auth to resolve before loading (optional but nice for username)
-        // Check auth status
         setTimeout(() => {
             this.loadComments(true);
         }, 500);
-    }
-
-    _sanitizeId(str) {
-        return str.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 100);
     }
 
     renderUI() {
@@ -43,7 +31,7 @@ class CommentManager {
 
         container.innerHTML = `
             <div class="comments-wrapper" style="margin-top:30px; border-top:1px solid var(--border); padding-top:20px;">
-                <h3 style="font-family:'Cinzel', serif; color:var(--primary); margin-bottom:15px;">KOMENTAR</h3>
+                <h3 style="font-family:'Cinzel', serif; color:var(--primary); margin-bottom:15px;">KOMENTAR TERBARU</h3>
                 
                 <div class="comment-form" style="margin-bottom:25px;">
                     <textarea id="comment-input" class="form-input" placeholder="Tulis komentar Anda..." rows="3" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border); font-family:inherit; resize:vertical; background:var(--input-bg); color:var(--text-main);"></textarea>
@@ -54,102 +42,82 @@ class CommentManager {
                 <div id="comment-list-ui">
                     <!-- Comments injected here -->
                     <div class="skeleton-text" style="height:60px; margin-bottom:10px;"></div>
-                    <div class="skeleton-text" style="height:60px; margin-bottom:10px;"></div>
                 </div>
-
-                <button id="btn-load-more-comments" style="display:none; width:100%; background:transparent; border:1px solid var(--border); color:var(--text-muted); padding:10px; border-radius:8px; margin-top:15px; cursor:pointer;">
-                    Baca komentar lainnya...
-                </button>
+                
+                <!-- NO LOAD MORE BUTTON (AUTO ROTATE STRATEGY) -->
+                <div style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-top:15px; font-style:italic;">
+                    Menampilkan 5 komentar terbaru.
+                </div>
             </div>
         `;
 
         document.getElementById('btn-post-comment').onclick = () => this.postComment();
-        document.getElementById('btn-load-more-comments').onclick = () => this.loadComments(false);
     }
 
-    async loadComments(isReset = false) {
-        if (isReset) {
-            this.commentsList = [];
-            this.lastVisible = null;
-            document.getElementById('comment-list-ui').innerHTML = ''; // Clear skeleton
-        }
-
+    async loadComments(isReset = true) {
+        // ALWAYS RESET: Strategy is just show top 5
+        this.commentsList = [];
         const listContainer = document.getElementById('comment-list-ui');
-        const loadMoreBtn = document.getElementById('btn-load-more-comments');
-        const statusEl = document.getElementById('comment-status');
+        listContainer.innerHTML = '';
 
         try {
-            let q = query(
+            // Simple Query: Top 5 Descending
+            const q = query(
                 collection(db, "comments"),
                 where("targetId", "==", this.currentTargetId),
                 orderBy("timestamp", "desc"),
                 limit(this.limit)
             );
 
-            if (this.lastVisible && !isReset) {
-                q = query(
-                    collection(db, "comments"),
-                    where("targetId", "==", this.currentTargetId),
-                    orderBy("timestamp", "desc"),
-                    startAfter(this.lastVisible),
-                    limit(this.limit)
-                );
-            }
-
             const snapshot = await getDocs(q);
 
             if (snapshot.empty) {
-                if (isReset) listContainer.innerHTML = '<p style="color:var(--text-muted); font-style:italic;">Belum ada komentar. Jadilah yang pertama!</p>';
-                loadMoreBtn.style.display = 'none';
+                listContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted);">Belum ada komentar. Jadilah yang pertama!</div>';
                 return;
             }
 
-            this.lastVisible = snapshot.docs[snapshot.docs.length - 1];
-
-            // Check if we likely have more (if we got exactly LIMIT, maybe there's more)
-            if (snapshot.docs.length < this.limit) {
-                loadMoreBtn.style.display = 'none';
-            } else {
-                loadMoreBtn.style.display = 'block';
-            }
-
-
-            snapshot.forEach(d => {
-                this._appendCommentElement(d);
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                data.id = doc.id;
+                this.commentsList.push(data);
+                this._appendCommentElement(doc);
             });
-        } catch (e) {
-            console.error("Load comments error", e);
-            listContainer.innerHTML = '<p>Gagal memuat komentar.</p>';
-        } finally {
-            this.isLoading = false;
+
+        } catch (error) {
+            console.error("Error loading comments:", error);
+            listContainer.innerHTML = '<div style="color:red; text-align:center;">Gagal memuat komentar.</div>';
         }
     }
+
+
 
     _appendCommentElement(docSnapshot) {
         const data = docSnapshot.data();
         const container = document.getElementById('comment-list-ui');
+
+        // Create element
         const div = document.createElement('div');
         div.id = `comment-${docSnapshot.id}`;
         div.className = 'comment-card';
         div.style.padding = "15px";
         div.style.marginBottom = "10px";
-        div.style.background = "var(--bg-card)";
+        div.style.background = "var(--input-bg)"; // Slightly darker than card
         div.style.borderRadius = "8px";
         div.style.border = "1px solid var(--border)";
         div.style.position = "relative";
 
         const dateStr = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : 'Baru saja';
-        const name = data.username || "Anonymous";
+        const name = data.displayName || data.username || "Anonymous"; // Use displayName consistent with auth
         const text = data.text || "";
-        const photo = data.userPhoto || ""; // New photo field from database
+        const photo = data.photoURL || data.userPhoto || ""; // Use photoURL consistent with auth
 
         // Logic for Avatar / No Image
         let avatarHTML = "";
         if (photo) {
-            avatarHTML = `<img src="${photo}" style="width:100%; height:100%; object-fit:cover;">`;
+            avatarHTML = `<img src="${photo}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
         } else {
-            // Fallback for guests or members without photo
-            avatarHTML = `<div style="font-size:0.55rem; color:var(--text-muted); font-weight:bold; text-align:center; line-height:1.1; display:flex; align-items:center; justify-content:center;">NO<br>IMAGE</div>`;
+            // Fallback
+            avatarHTML = `<div style="font-size:0.6rem; color:var(--text-muted);">NO IMG</div>`;
         }
 
         // Check ownership for delete button
@@ -332,6 +300,7 @@ class CommentManager {
 
         // Fallback to standard confirm
         if (!confirm("Hapus komentar ini?")) return;
+
         await this.performDelete(commentId);
     }
 
@@ -355,4 +324,5 @@ class CommentManager {
 }
 
 const commentManager = new CommentManager();
+window.commentManager = commentManager; // Expose globally
 export default commentManager;
