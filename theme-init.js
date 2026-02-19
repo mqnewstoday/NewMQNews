@@ -75,10 +75,11 @@
         link.href = 'cookie-style.css';
         document.head.appendChild(link);
 
-        // 2. Buat HTML Banner
+        // 2. Buat HTML Banner (Updated with Close X Button)
         const banner = document.createElement('div');
         banner.className = 'cookie-toast';
         banner.innerHTML = `
+            <button class="cookie-close-btn" id="closeCookie">&times;</button>
             <div class="cookie-text">
                 Kami menggunakan cookie untuk memastikan Anda mendapatkan pengalaman terbaik. 
                 <a href="privacy-policy.html" class="cookie-link">Pelajari Selengkapnya</a>
@@ -90,15 +91,17 @@
         // 3. Animasi Muncul (Delay dikit biar smooth)
         setTimeout(() => banner.classList.add('show'), 1500);
 
-        // 4. Logika Tombol
-        document.getElementById('acceptCookie').addEventListener('click', () => {
+        // 4. Logika Tombol (Accept & Close sama-sama setuju/tutup)
+        const closeAction = () => {
             banner.classList.remove('show');
             localStorage.setItem('cookieConsent', 'true');
-            // Hapus elemen setelah animasi selesai
             setTimeout(() => banner.remove(), 500);
-        });
+        };
+
+        document.getElementById('acceptCookie').addEventListener('click', closeAction);
+        document.getElementById('closeCookie').addEventListener('click', closeAction);
     }
+
     // Jalanin fungsi banner
     window.addEventListener('load', initCookieBanner);
-
 })();
