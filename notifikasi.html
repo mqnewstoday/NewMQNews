@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifikasi - MQ News Today</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="ALT_LogoMQN.png" type="image/png">
+
+    <style>
+        /* INBOX STYLING */
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding-bottom: 60px;
+            /* Space for toast/bottom elements */
+        }
+
+        /* Nav Header same as Transformasi.html */
+        .profile-header-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--primary);
+            /* Sesuai Request Garis Merah */
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .header-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            border-radius: 50%;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .header-icon-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .header-icon-btn svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* NOTIF LIST */
+        .notif-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .notif-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .notif-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* UNREAD STATUS */
+        .notif-item.unread {
+            background: var(--bg-card);
+            /* Bisa dibedakan dikit backgroundnya kalau mau */
+            border-left: 4px solid var(--primary);
+        }
+
+        .notif-item.unread .notif-title {
+            font-weight: 800;
+            /* Lebih tebal */
+        }
+
+        .red-dot {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: none;
+        }
+
+        .notif-item.unread .red-dot {
+            display: block;
+        }
+
+        .notif-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .notif-title {
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.3;
+            flex: 1;
+            padding-right: 15px;
+            /* Space for dot */
+        }
+
+        .notif-body {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .notif-date {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 5px;
+            text-align: right;
+            font-style: italic;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            stroke: var(--border);
+        }
+
+        /* DARK MODE OVERRIDES */
+        body.dark-mode .header-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <script src="theme-init.js"></script>
+
+    <!-- HEADER NAVIGATION -->
+    <header class="profile-header-nav">
+        <!-- Smart Back Button -->
+        <a href="#" onclick="goBack()" class="header-icon-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+        </a>
+
+        <h1 class="header-title">NOTIFIKASI</h1>
+
+        <a href="settings.html" class="header-icon-btn">
+            <svg viewBox="0 0 24 24"> <!-- Gear Icon -->
+                <circle cx="12" cy="12" r="3"></circle>
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.09 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+            </svg>
+        </a>
+    </header>
+
+    <div class="container">
+        <div id="notif-container" class="notif-list">
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <p>Memuat notifikasi...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1630354903&single=true&output=csv";
+
+        // Smart Back Function
+        function goBack() {
+            if (document.referrer && document.referrer.includes(window.location.hostname)) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Fetch & Render
+        async function loadNotifications() {
+            try {
+                const response = await fetch(CSV_URL);
+                const data = await response.text();
+                const rows = parseCSV(data);
+
+                // Skip Header (Row 0) and Reverse (Newest First)
+                const notifs = rows.slice(1).reverse();
+
+                renderList(notifs);
+
+            } catch (error) {
+                console.error("Error loading notifications:", error);
+                document.getElementById('notif-container').innerHTML = `
+                    <div class="empty-state">
+                        <p>Gagal memuat notifikasi. Periksa koneksi internet Anda.</p>
+                    </div>`;
+            }
+        }
+
+        // CSV Parser (Handle quotes responsibly)
+        function parseCSV(str) {
+            const arr = [];
+            let quote = false;
+            let col = 0, row = 0;
+
+            for (let c = 0; c < str.length; c++) {
+                let cc = str[c], nc = str[c + 1];
+                arr[row] = arr[row] || [];
+                arr[row][col] = arr[row][col] || '';
+
+                if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; continue; }
+                if (cc == '"') { quote = !quote; continue; }
+                if (cc == ',' && !quote) { ++col; continue; }
+                if (cc == '\r' && !quote && nc == '\n') { ++row; col = 0; ++c; continue; }
+                if (cc == '\n' && !quote) { ++row; col = 0; continue; }
+                if (cc == '\r' && !quote) { ++row; col = 0; continue; }
+                arr[row][col] += cc;
+            }
+            return arr;
+        }
+
+        function renderList(items) {
+            const container = document.getElementById('notif-container');
+            container.innerHTML = '';
+
+            // Get Read History from LocalStorage
+            let readHistory = JSON.parse(localStorage.getItem('mq_read_notifs') || '[]');
+
+            let validCount = 0;
+
+            items.forEach(item => {
+                // Mapping (Sesuaikan urutan kolom Sheet: A=Timestamp, B=Judul, C=Pesan, D=Img, E=Link, F=Status)
+                // Index: 0=Time, 1=Title, 2=Msg, 3=Img, 4=Link
+                const timestamp = item[0] ? item[0].trim() : '';
+                const title = item[1];
+                const msg = item[2];
+                const link = item[4];
+
+                if (!title || !msg) return; // Skip empty rows
+
+                validCount++;
+
+                // Check Unread
+                // Kita pakai Timestamp sebagai ID unik
+                const isRead = readHistory.includes(timestamp);
+                const unreadClass = isRead ? '' : 'unread';
+
+                // Format Date (Simple)
+                let dateDisplay = timestamp;
+                try {
+                    if (timestamp.includes('T')) {
+                        const d = new Date(timestamp);
+                        dateDisplay = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+                    }
+                } catch (e) { }
+
+                const card = document.createElement('div');
+                card.className = `notif-item ${unreadClass}`;
+                card.innerHTML = `
+                    <div class="notif-header">
+                        <h3 class="notif-title">${title}</h3>
+                        <div class="red-dot"></div>
+                    </div>
+                    <p class="notif-body">${msg}</p>
+                    <span class="notif-date">${dateDisplay}</span>
+                `;
+
+                // Click Event
+                card.addEventListener('click', () => {
+                    // 1. Mark as Read
+                    if (!readHistory.includes(timestamp)) {
+                        readHistory.push(timestamp);
+                        localStorage.setItem('mq_read_notifs', JSON.stringify(readHistory));
+                    }
+
+                    // 2. Open Link
+                    if (link && link.startsWith('http')) {
+                        window.location.href = link;
+                    } else {
+                        // Kalau gak ada link, cukup hilangkan dot merah visual aja
+                        card.classList.remove('unread');
+                    }
+                });
+
+                container.appendChild(card);
+            });
+
+            if (validCount === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <p>Belum ada notifikasi baru.</p>
+                    </div>`;
+            }
+        }
+
+        // Start
+        loadNotifications();
+    </script>
+</body>
+
+</html>

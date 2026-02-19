@@ -227,10 +227,27 @@
                 <span>Truth & Clarity</span>
             </div>
         </div>
-        <div class="menu-toggle" onclick="toggleSidebar()">
-            <span></span>
-            <span></span>
-            <span></span>
+        <div class="menu-toggle" style="display: flex; align-items: center; gap: 15px;">
+            <!-- BELL NOTIFICATION ICON -->
+            <a href="notifikasi.html" class="nav-icon-btn"
+                style="color: inherit; text-decoration: none; display: flex; align-items: center;">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </a>
+
+            <!-- HAMBURGER -->
+            <div onclick="toggleSidebar()"
+                style="display: flex; flex-direction: column; justify-content: space-between; width: 25px; height: 18px; cursor: pointer;">
+                <span
+                    style="display: block; width: 100%; height: 2px; background-color: var(--text-main); border-radius: 2px;"></span>
+                <span
+                    style="display: block; width: 100%; height: 2px; background-color: var(--text-main); border-radius: 2px;"></span>
+                <span
+                    style="display: block; width: 100%; height: 2px; background-color: var(--text-main); border-radius: 2px;"></span>
+            </div>
         </div>
     </header>
 
