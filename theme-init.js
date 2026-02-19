@@ -67,7 +67,7 @@
     // --- COOKIE CONSENT BANNER (STICKY BOTTOM TOAST) ---
     function initCookieBanner() {
         const consent = localStorage.getItem('cookieConsent');
-        if (consent === 'true') return; // User udah setuju, diem aja
+        // if (consent === 'true') return; // User udah setuju, diem aja
 
         // 1. Load CSS
         const link = document.createElement('link');

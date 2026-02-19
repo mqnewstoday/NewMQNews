@@ -92,3 +92,33 @@ body.dark-mode .cookie-text {
         margin-top: 5px;
     }
 }
+
+/* TOMBOL CLOSE (X) */
+.cookie-close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #999;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.cookie-close-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+body.dark-mode .cookie-close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
