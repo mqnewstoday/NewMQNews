@@ -345,9 +345,10 @@
                         localStorage.setItem('mq_read_notifs', JSON.stringify(readHistory));
                     }
 
-                    // 2. Open Link
+                    // 2. Open Link with Source Param
                     if (link && link.startsWith('http')) {
-                        window.location.href = link;
+                        let separator = link.includes('?') ? '&' : '?';
+                        window.location.href = link + separator + 'source=notif';
                     } else {
                         // Kalau gak ada link, cukup hilangkan dot merah visual aja
                         card.classList.remove('unread');

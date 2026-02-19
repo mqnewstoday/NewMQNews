@@ -830,11 +830,18 @@
     <!-- Script goBack Updated for Smart Back -->
     <script>
         function goSmartBack() {
-            // KHUSUS DARI NOTIFIKASI
+            // 1. Cek Parameter URL 'source=notif' (Paling Kuat)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('source') === 'notif') {
+                window.location.href = 'notifikasi.html';
+                return;
+            }
+
+            // 2. Cek Referrer (Fallback)
             if (document.referrer && document.referrer.includes('notifikasi.html')) {
                 window.location.href = 'notifikasi.html';
             }
-            // Smart Back Umum
+            // 3. Smart Back Umum
             else if (document.referrer && document.referrer.includes(window.location.hostname)) {
                 window.history.back();
             } else {
