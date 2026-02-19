@@ -218,6 +218,38 @@
         <!-- Google AdSense Script Here -->
     </div>
     <script src="theme-init.js?v=2"></script>
+
+    <!-- NUCLEAR CACHE KILLER (EMERGENCY FIX) -->
+    <script>
+        (function () {
+            // 1. Unregister Service Workers (Penyebab Utama Cache Bandel)
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                    for (let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }
+
+            // 2. Paksa Reload Sekali jika versi baru belum terdeteksi
+            // Kita pakai sessionStorage biar gak reload terus-terusan (loop).
+            if (!sessionStorage.getItem('CACHE_BUSTED_V2')) {
+                // Hapus Cache Storage API juga kalau ada
+                if ('caches' in window) {
+                    caches.keys().then(function (names) {
+                        for (let name of names) caches.delete(name);
+                    });
+                }
+
+                // Tandai sudah dibersihkan
+                sessionStorage.setItem('CACHE_BUSTED_V2', 'true');
+
+                // Reload Keras dari Server
+                console.log("FORCE RELOAD FOR UPDATE...");
+                window.location.reload(true);
+            }
+        })();
+    </script>
     <header>
 
         <div class="brand">
