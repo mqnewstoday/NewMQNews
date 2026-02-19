@@ -227,10 +227,11 @@
                 <span>Truth & Clarity</span>
             </div>
         </div>
-        <div class="nav-right-actions" style="display: flex; align-items: center; gap: 15px;">
+        <div class="nav-right-actions"
+            style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 15px; z-index: 100;">
             <!-- BELL NOTIFICATION ICON -->
             <a href="notifikasi.html" class="nav-icon-btn"
-                style="color: inherit; text-decoration: none; display: flex; align-items: center;">
+                style="display: flex; align-items: center; justify-content: center; color: inherit; text-decoration: none;">
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -238,8 +239,9 @@
                 </svg>
             </a>
 
-            <!-- HAMBURGER ORIGINAL (RESTORED) -->
-            <div class="menu-toggle" onclick="toggleSidebar()">
+            <!-- HAMBURGER ORIGINAL (FORCED STATIC) -->
+            <div class="menu-toggle" onclick="toggleSidebar()"
+                style="position: static !important; margin: 0 !important;">
                 <span></span>
                 <span></span>
                 <span></span>
