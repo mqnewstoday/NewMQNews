@@ -424,14 +424,15 @@
         };
 
         function updateSaveButtonUI() {
-            if (!currentArticle) return;
+            if (!currentArticle || !window.bookmarkManager) return;
+
             const btn = document.getElementById('btn-save-main');
             const icon = document.getElementById('icon-save-main');
             const txt = document.getElementById('text-save-main');
 
             const title = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
 
-            // Check via Bookmark Manager
+            // Check via Bookmark Manager V2 (Already handles normalization internally usually, but we be safe)
             const isSaved = bookmarkManager.isBookmarkedSync('news', title);
 
             if (isSaved) {
@@ -439,17 +440,21 @@
                 btn.style.background = "#e53935"; // Red
                 btn.style.color = "white";
                 btn.style.borderColor = "#e53935";
-                icon.setAttribute('fill', 'white');
-                icon.setAttribute('stroke', 'white');
-                txt.innerText = "Disimpan";
+                if (icon) {
+                    icon.setAttribute('fill', 'white');
+                    icon.setAttribute('stroke', 'white');
+                }
+                if (txt) txt.innerText = "Disimpan";
             } else {
                 // UNSAVED STATE
                 btn.style.background = "var(--bg-card)";
                 btn.style.color = "var(--text-main)";
                 btn.style.borderColor = "var(--border)";
-                icon.setAttribute('fill', 'none');
-                icon.setAttribute('stroke', 'currentColor');
-                txt.innerText = "Simpan";
+                if (icon) {
+                    icon.setAttribute('fill', 'none');
+                    icon.setAttribute('stroke', 'currentColor');
+                }
+                if (txt) txt.innerText = "Simpan";
             }
         }
 
@@ -688,55 +693,13 @@
             }
         };
 
-        function updateSaveButtonUI() {
-            if (!currentArticle || !window.bookmarkManager) return;
-            const title = getVal(currentArticle, 'judul') || getVal(currentArticle, 'title');
-            const isSaved = window.bookmarkManager.isBookmarkedSync('news', title);
-
-            const btn = document.getElementById('btn-save-article'); // Need ID in HTML
-            if (btn) {
-                const icon = btn.querySelector('svg');
-                const text = btn.querySelector('span');
-
-                if (isSaved) {
-                    btn.classList.add('saved');
-                    if (icon) {
-                        icon.setAttribute('fill', 'currentColor'); // Solid fill
-                    }
-                    if (text) text.innerText = "Tersimpan";
-                } else {
-                    btn.classList.remove('saved');
-                    if (icon) {
-                        icon.setAttribute('fill', 'none'); // Outline
-                    }
-                    if (text) text.innerText = "Simpan";
-                }
-            }
-        }
+        // DUPLICATE updateSaveButtonUI REMOVED
 
         // Listen for manager updates
         window.addEventListener('bookmarks-loaded', updateSaveButtonUI);
         window.addEventListener('auth-ready', updateSaveButtonUI);
 
-        // AUTO-IMPORT MANAGER IF NOT PRESENT IN MODULE (We do it via script tag or dynamic import if needed, 
-        // but let's assume index.html logic or add it here)
-        // Wait, baca.html doesn't import bookmark-manager in the view I saw.
-        // I MUST ADD IT IMPORT.
-        const audioUrl = getVal(item, 'audio') || getVal(item, 'Audio');
-        const audioBox = document.getElementById('audio-container');
-        const player = document.getElementById('news-player');
-
-        if (audioUrl && audioUrl.length > 5) {
-            player.src = audioUrl;
-            audioBox.style.display = 'flex';
-            // Reset Player UI
-            document.getElementById('icon-play').style.display = 'block';
-            document.getElementById('icon-pause').style.display = 'none';
-            document.getElementById('audio-status').innerText = "Klik untuk memutar";
-        } else {
-            audioBox.style.display = 'none';
-            player.src = "";
-        }
+        // AUDIO SETUP ALREADY HANDLED IN renderArticle
 
 
         // AUDIO TOGGLE LOGIC
@@ -916,17 +879,17 @@
         // UNIFIED BACK BUTTON LOGIC
         function goBack() {
             const urlParams = new URLSearchParams(window.location.search);
-            // 1. Cek Parameter URL 'source=notif' (Paling Kuat)
+            // 1. Cek Parameter URL 'source=notif'
             if (urlParams.get('source') === 'notif') {
                 window.location.href = 'notifikasi.html';
                 return;
             }
 
-            // 2. Cek Referrer (Fallback)
-            if (document.referrer && document.referrer.includes('notifikasi.html')) {
-                window.location.href = 'notifikasi.html';
+            // 2. Smart Back: Dari Bookmark
+            if (document.referrer && document.referrer.includes('simpan.html')) {
+                window.location.href = 'simpan.html#berita';
             }
-            // 3. Smart Back Umum
+            // 3. Referrer lain dalam domain
             else if (document.referrer && document.referrer.includes(window.location.hostname)) {
                 window.history.back();
             } else {
