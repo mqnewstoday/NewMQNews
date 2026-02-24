@@ -20,45 +20,78 @@ class CommentManager {
 
     _start() {
         this.renderUI();
+        // Wait for potential auth initialization
         setTimeout(() => {
             this.loadComments(true);
-        }, 500);
+        }, 1000);
     }
 
     renderUI() {
         const container = document.getElementById(this.containerId);
         if (!container) return;
 
+        const isGuest = !auth.currentUser;
+
         container.innerHTML = `
             <div class="comments-wrapper" style="margin-top:30px; border-top:1px solid var(--border); padding-top:20px;">
                 <h3 style="font-family:'Cinzel', serif; color:var(--primary); margin-bottom:15px;">KOMENTAR TERBARU</h3>
                 
-                <div class="comment-form" style="margin-bottom:25px;">
-                    <textarea id="comment-input" class="form-input" placeholder="Tulis komentar Anda..." rows="3" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border); font-family:inherit; resize:vertical; background:var(--input-bg); color:var(--text-main);"></textarea>
-                    <button id="btn-post-comment" style="margin-top:10px; background:var(--primary); color:white; border:none; padding:8px 20px; border-radius:50px; cursor:pointer; font-weight:bold;">Kirim Komentar</button>
+                <div class="comment-form" style="margin-bottom:25px; position:relative;">
+                    <textarea id="comment-input" class="form-input" placeholder="${isGuest ? 'Login untuk berkomentar...' : 'Tulis komentar Anda...'}" 
+                        ${isGuest ? 'readonly' : ''}
+                        rows="3" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border); font-family:inherit; resize:vertical; background:var(--input-bg); color:var(--text-main);"></textarea>
+                    
+                    <button id="btn-post-comment" style="margin-top:10px; background:var(--primary); color:white; border:none; padding:8px 20px; border-radius:50px; cursor:pointer; font-weight:bold; ${isGuest ? 'opacity:0.6;' : ''}">Kirim Komentar</button>
                     <div id="comment-status" style="margin-top:5px; font-size:0.8rem;"></div>
+                    
+                    ${isGuest ? `<div id="comment-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:5; cursor:pointer;" onclick="window.commentManager.handleGuestInteraction()"></div>` : ''}
                 </div>
 
                 <div id="comment-list-ui">
-                    <!-- Comments injected here -->
-                    <div class="skeleton-text" style="height:60px; margin-bottom:10px;"></div>
+                    ${isGuest ? `
+                    <div class="guest-placeholder" style="text-align:center; padding:30px; background:rgba(0,0,0,0.02); border-radius:12px; border:1px dashed var(--border);">
+                        <svg viewBox="0 0 24 24" width="40" height="40" style="opacity:0.2; margin-bottom:10px;" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <p style="font-size:0.9rem; color:var(--text-muted);">Silakan masuk untuk melihat dan mengirim komentar.</p>
+                        <button onclick="window.location.href='login.html'" style="margin-top:12px; border:1px solid var(--primary); background:transparent; color:var(--primary); padding:6px 15px; border-radius:20px; font-size:0.8rem; font-weight:bold; cursor:pointer;">Masuk / Daftar</button>
+                    </div>` : '<div class="skeleton-text" style="height:60px; margin-bottom:10px;"></div>'}
                 </div>
                 
-                <!-- NO LOAD MORE BUTTON (AUTO ROTATE STRATEGY) -->
                 <div style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-top:15px; font-style:italic;">
                     Menampilkan 5 komentar terbaru.
                 </div>
             </div>
         `;
 
-        document.getElementById('btn-post-comment').onclick = () => this.postComment();
+        // Only bind if not guest, or let the overlay handle it for guests
+        if (!isGuest) {
+            document.getElementById('btn-post-comment').onclick = () => this.postComment();
+        }
+    }
+
+    handleGuestInteraction() {
+        if (window.showCustomNotif) {
+            window.showCustomNotif("Fitur Khusus Member. Silakan Masuk terlebih dahulu.", "error");
+        } else {
+            alert("Silakan masuk untuk menggunakan fitur komentar.");
+        }
     }
 
     async loadComments(isReset = true) {
+        // AUTH GUARD: Skip for guests to save read costs
+        if (!auth.currentUser) {
+            console.log("[CommentManager] Guest detected - Skipping Fetch (Read Cost Saved)");
+            return;
+        }
+
         // ALWAYS RESET: Strategy is just show top 5
         this.commentsList = [];
         const listContainer = document.getElementById('comment-list-ui');
-        listContainer.innerHTML = '';
+        if (listContainer) listContainer.innerHTML = '';
 
         try {
             // Simple Query: Top 5 Descending
