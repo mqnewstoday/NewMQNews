@@ -494,11 +494,10 @@
         import { auth, db } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { collection, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import bookmarkManager from "./bookmark-manager.js"; // CRITICAL IMPORT
+        import bookmarkManager from "./bookmark-manager.js";
 
-        // Expose to window for inline onclicks (handleBack, manualRefresh, etc.)
+        // Expose to window for inline onclicks
         window.bookmarkManager = bookmarkManager;
-        console.log("[Simpan] Bookmark Manager loaded:", !!bookmarkManager);
 
         const viewMenu = document.getElementById('view-menu');
         const viewList = document.getElementById('view-list');
@@ -506,98 +505,68 @@
         let currentUser = null;
         let currentView = 'menu';
 
-        // Data Cache
-        const bookmarksData = {
-            news: [],
-            audio: [],
-            mimpi: []
-        };
-
-        // --- 1. AUTH CHECK ---
+        // --- 1. INITIALIZATION ---
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if (user) {
-                // Load counts
                 updateCounts();
-                // If hash is present, load that category
                 checkHash();
             } else {
-                // Show Guest State
                 renderGuestState();
             }
         });
 
-        // LISTENER UPDATE DATA (CRITICAL)
+        // Listen for manager updates
         window.addEventListener('bookmarks-loaded', () => {
-            // Update Counts
+            console.log("[Simpan] Bookmarks V2 arrived");
             updateCounts();
-
-            // If viewing a list, refresh it
-            if (currentView !== 'menu') {
-                renderList(currentView);
-            }
+            if (currentView !== 'menu') renderList(currentView);
         });
 
         function renderGuestState() {
             viewMenu.innerHTML = `
                 <div class="empty-state">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:60px;height:60px;margin-bottom:20px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:60px;height:60px;margin-bottom:20px;opacity:0.3;">
                         <circle cx="12" cy="7" r="4"></circle>
                         <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path>
                     </svg>
                     <h3>Anda Belum Login</h3>
-                    <p style="margin-bottom:20px;">Silakan login untuk melihat dan mengelola simpanan Anda.</p>
-                    <button onclick="window.location.href='login.html'" class="btn-confirm btn-yes" style="width:auto; padding:10px 40px;">Login / Daftar</button>
+                    <p style="margin-bottom:20px; color:var(--text-muted);">Silakan login untuk melihat dan mengelola simpanan Anda.</p>
+                    <button onclick="window.location.href='login.html'" class="btn-confirm btn-yes" style="width:auto; padding:12px 40px; border-radius:30px;">Login / Daftar</button>
                 </div>
              `;
-            // Disable counts
-            document.querySelectorAll('.cat-count').forEach(el => el.style.display = 'none');
         }
 
         async function updateCounts() {
-            if (!currentUser || !window.bookmarkManager) return;
-
-            try {
-                // Gunakan Data Cache Manager (Sync)
-                // Manager punya: this.dataCache.news (Array)
-                // Kita akses via getter atau direct property kalau exposed.
-                // Manager kita expose getBookmarkList(cat).
-
-                const cats = ['news', 'audio', 'mimpi'];
-                cats.forEach(cat => {
-                    const list = window.bookmarkManager.getBookmarkList(cat);
-                    const count = list.length;
-
-                    // UI ID: count-berita, count-audio, count-mimpi
-                    const uiId = cat === 'news' ? 'count-berita' : 'count-' + cat;
-                    const el = document.getElementById(uiId);
-                    if (el) el.innerText = count;
-                });
-
-            } catch (e) {
-                console.error("Error updating counts:", e);
-            }
+            if (!currentUser || !window.bookmarkManager || !window.bookmarkManager.isLoaded) return;
+            const cats = ['news', 'audio', 'mimpi'];
+            cats.forEach(cat => {
+                const list = window.bookmarkManager.getBookmarkList(cat);
+                const uiId = cat === 'news' ? 'count-berita' : 'count-' + cat;
+                const el = document.getElementById(uiId);
+                if (el) el.innerText = list.length;
+            });
         }
 
         function checkHash() {
-            if (window.location.hash === '#berita') openCategory('berita');
-            if (window.location.hash === '#audio') openCategory('audio');
-            if (window.location.hash === '#mimpi') openCategory('mimpi');
+            const h = window.location.hash;
+            if (h === '#berita') openCategory('berita');
+            else if (h === '#audio') openCategory('audio');
+            else if (h === '#mimpi') openCategory('mimpi');
         }
 
-        // --- 2. LOGIKA NAVIGASI ---
+        // --- 2. NAVIGATION ---
         window.openCategory = async function (type) {
-            if (!currentUser) return;
-
             currentView = type;
             viewMenu.style.display = 'none';
             viewList.style.display = 'block';
-            titleEl.innerText = type === 'berita' ? "BERITA TERSIMPAN" : (type === 'mimpi' ? "MIMPI TERSIMPAN" : "AUDIO TERSIMPAN");
+            titleEl.innerText = type.toUpperCase() + " TERSIMPAN";
 
-            // Show Loading
-            viewList.innerHTML = '<div style="text-align:center; padding:40px;">Checking Cloud...</div>';
-
-            await renderList(type);
+            if (window.bookmarkManager && window.bookmarkManager.isLoaded) {
+                await renderList(type);
+            } else {
+                viewList.innerHTML = '<div style="text-align:center; padding:40px;">Checking Cloud...</div>';
+            }
             history.pushState({ view: type }, null, `#${type}`);
         };
 
@@ -607,14 +576,14 @@
                 titleEl.innerText = "BOOKMARK";
                 viewMenu.style.display = 'flex';
                 viewList.style.display = 'none';
-                updateCounts(); // Refresh counts
+                updateCounts();
                 history.replaceState(null, null, 'simpan.html');
             } else {
                 window.location.href = 'index.html';
             }
         };
 
-        window.onpopstate = function (event) {
+        window.onpopstate = (event) => {
             if (!event.state || !event.state.view) {
                 if (currentView !== 'menu') handleBack();
             }
@@ -623,36 +592,37 @@
         window.manualRefresh = function () {
             if (window.bookmarkManager) {
                 viewList.innerHTML = '<div style="text-align:center; padding:40px;">Refreshing Data...</div>';
-                window.bookmarkManager._fetchAllBookmarks(); // Force Reload from Firestore
+                window.bookmarkManager._fetchAllBookmarks();
             } else {
                 window.location.reload();
             }
         };
 
-        // --- 3. FETCH & RENDER DATA ---
+        // --- 3. RENDERING ---
         async function fetchBookmarks(type) {
-            // Use Manager Cache directly (Already loaded)
+            const managerCat = type === 'berita' ? 'news' : type;
             if (window.bookmarkManager) {
-                return window.bookmarkManager.getBookmarkList(type);
+                return window.bookmarkManager.getBookmarkList(managerCat);
             }
             return [];
         }
 
         async function renderList(type) {
             const data = await fetchBookmarks(type);
-
             viewList.innerHTML = "";
 
             if (data.length === 0) {
                 viewList.innerHTML = `
                     <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px; height:48px; opacity:0.2; margin-bottom:15px;">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                        </svg>
                         <p>Belum ada ${type} tersimpan.</p>
                     </div>`;
                 return;
             }
 
-            data.forEach((item, index) => {
+            data.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'item-card';
                 if (type === 'mimpi') card.classList.add('mimpi-mode');
@@ -661,31 +631,26 @@
 
                 if (type === 'berita') {
                     title = item.title || item.judul || "No Title";
-                    // Fallbacks for legacy/mixed data structure
                     desc = item.desc || item.isi || "";
-                    thumb = item.image || item.gambar || "https://placehold.co/100?text=IMG";
-                    targetUrl = item.url || "#";
-                    // Ensure local link logic if url is full path
-                    // If stored URL is full absolute, let it be.
+                    thumb = item.image || item.gambar || 'ALT_LogoMQN.png';
+                    targetUrl = `baca.html?title=${encodeURIComponent(title)}`;
                 } else if (type === 'mimpi') {
                     title = item.title || "Mimpi";
-                    desc = item.desc || item.narasi || "Narasi mimpi...";
-                    thumb = item.image || "https://placehold.co/100?text=IMG";
+                    desc = item.desc || item.narasi || "Narasi...";
+                    thumb = item.image || 'ALT_LogoMQN.png';
                     targetUrl = `mimpi.html?title=${encodeURIComponent(title)}`;
                 } else {
-                    // Audio
-                    title = item.title;
+                    title = item.title || "Audio MQ";
                     desc = item.desc || "Audio MQ News";
-                    thumb = item.image || item.thumb || "https://placehold.co/100?text=AUDIO";
-                    targetUrl = `audio.html?track=${encodeURIComponent(item.title)}`;
+                    thumb = item.image || item.thumb || 'ALT_LogoMQN.png';
+                    targetUrl = `pasca-audio.html?bg=${encodeURIComponent(title)}`;
                 }
 
-                // Clean HTML tags from desc
                 desc = desc ? desc.replace(/<[^>]*>?/gm, '') : "";
 
                 card.innerHTML = `
                     <div class="item-thumb">
-                        <img src="${thumb}" loading="lazy" onerror="this.src='https://placehold.co/100?text=IMG'">
+                        <img src="${thumb}" loading="lazy" onerror="this.src='ALT_LogoMQN.png'">
                     </div>
                     <div class="item-info" onclick="window.location.href='${targetUrl}'">
                         <div class="item-title">${title}</div>
@@ -699,63 +664,33 @@
             });
         }
 
-        // --- 4. DELETE LOGIC ---
+        // --- 4. DELETE ---
         let pendingDelete = null;
 
-        window.confirmDelete = function (type, docId) {
+        window.confirmDelete = (type, docId) => {
             pendingDelete = { type, docId };
             document.getElementById('confirmModal').style.display = 'flex';
         };
 
         window.executeDelete = async function () {
-            if (!pendingDelete || !currentUser) return;
+            if (!pendingDelete || !currentUser || !window.bookmarkManager) return;
 
             const btn = document.querySelector('.btn-confirm.btn-yes');
             const originalText = btn.innerText;
             btn.innerText = "Menghapus...";
 
             const { type, docId } = pendingDelete;
-            const cat = type === 'berita' ? 'news' : type;
+            const managerCat = type === 'berita' ? 'news' : type;
 
             try {
-                // Gunakan Manager V2
-                const result = await window.bookmarkManager.toggleBookmark(type, { title: docId }); // Trick: ID disimpan sbg Title karena sanitize sama
-                // TAPI TUNGGU: toggleBookmark butuh DATA ASLI buat ngecek ID di sanitize
-                // Di V2, kita butuh ID yang PERSIS.
-                // Masalah: toggleBookmark nge-sanitize title lagi.
-                // SOLUSI: Kita panggil toggleBookmark dengan ID sebagai title, karena sanitize("ID") = "id".
-                // ATAU: Kita bikin fungsi `removeById` di Manager. TAPI biar cepet, kita pake logic toggleBookmark yg ada.
-                // TAPI: docId dari list adalah hasil sanitize, jadi aman.
-
-                // KOREKSI: toggleBookmark logic kita tadi: 
-                // const docId = this._sanitizeId(title);
-                // Kita harus kirim fake object dng Title yg kalau di sanitize hasilnya sama dengan ID.
-                // UNTUK SEKARANG: Di V2 Manager saya belum handle remove by specific ID direct.
-                // TAPI: ID kita generate dari Title. Selama ID di list = Title sanitized, kita bisa kirim ID sebagai Title.
-
-                // REVISI MANAGER DULU? Gak usah, kita assume ID = Sanitized Title.
-                // Cuma masalahnya ID "judul_berita" aslinya "Judul Berita". 
-                // Kalau kita kirim "judul_berita" -> sanitize -> "judul_berita". MATCH!
-
-                if (window.bookmarkManager) {
-                    // Kita perlu tahu ini kategori apa di mata manager (berita -> news)
-                    // TYPE di simpan.html = 'berita', 'audio', 'mimpi'
-                    // DI MANAGER: toggleBookmark param category: 'news', 'audio', 'mimpi'
-                    const managerCat = type === 'berita' ? 'news' : type;
-
-                    // Kita manipulasi cache manager secara manual ATAU panggil toggle.
-                    // Panggil toggle paling aman (handle DB + Cache).
-                    // Kita kirim { title: docId } -> Sanitize(docId) -> docId.
-                    await window.bookmarkManager.toggleBookmark(managerCat, { title: docId });
-
+                const result = await window.bookmarkManager.toggleBookmark(managerCat, { title: docId });
+                if (result === 'removed') {
                     showNotif("Item telah dihapus.", "error");
-                    // Refresh UI
                     await renderList(type);
                     updateCounts();
                 }
-
             } catch (e) {
-                console.error(e);
+                console.error("Delete Error:", e);
                 showNotif("Gagal menghapus.", "error");
             } finally {
                 closeConfirm();
@@ -763,7 +698,7 @@
             }
         };
 
-        window.closeConfirm = function () {
+        window.closeConfirm = () => {
             document.getElementById('confirmModal').style.display = 'none';
             pendingDelete = null;
         };
@@ -785,9 +720,7 @@
             }
 
             setTimeout(() => {
-                box.classList.remove('active');
-                box.classList.remove('success');
-                box.classList.remove('error');
+                box.classList.remove('active', 'success', 'error');
             }, 3000);
         }
     </script>

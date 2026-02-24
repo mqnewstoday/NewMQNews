@@ -25,7 +25,12 @@ class BookmarkManager {
             audio: [],
             mimpi: []
         };
+        this.isLoaded = false;
 
+        this._init();
+    }
+
+    _init() {
         // Listen to Auth State
         onAuthStateChanged(auth, (user) => {
             this.user = user;
@@ -77,10 +82,11 @@ class BookmarkManager {
                     this.cache[cat].clear();
                 }
             }
-
+            this.isLoaded = true; // Mark as fully loaded
             window.dispatchEvent(new CustomEvent('bookmarks-loaded'));
             console.log("Bookmarks V2 loaded:", this.cache);
         } catch (e) {
+            this.isLoaded = true; // Set true even on error to allow UI to show empty/error
             console.error("Error loading bookmarks V2:", e);
         }
     }
