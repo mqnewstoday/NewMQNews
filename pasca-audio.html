@@ -812,9 +812,15 @@
             };
 
             // Call Manager
-            await bookmarkManager.toggleBookmark('audio', data);
+            const result = await bookmarkManager.toggleBookmark('audio', data);
 
-            // UI Update handled by local function, explicitly calling it ensures fast response
+            if (result === 'saved') {
+                showCustomNotif("Berhasil disimpan ke bookmark.", "success");
+            } else if (result === 'removed') {
+                showCustomNotif("Dihapus dari bookmark.", "error");
+            }
+
+            // UI Update handled by local function
             updateSaveButtonUI();
         }
 
