@@ -580,32 +580,28 @@
 
         // INIT
         window.addEventListener('DOMContentLoaded', async () => {
+            console.log("[Player] DOM Ready");
+
             // Listeners for UI Updates
             window.addEventListener('bookmarks-loaded', () => updateSaveButtonUI());
-            window.addEventListener('auth-ready', () => updateSaveButtonUI());
 
-            // Bind Buttons Safely
-            document.getElementById('btn-toggle-play').addEventListener('click', togglePlay);
-            document.getElementById('btn-rewind').addEventListener('click', () => seekRelative(-10));
-            document.getElementById('btn-forward').addEventListener('click', () => seekRelative(10));
+            // Bind Control Buttons
+            const btnPlay = document.getElementById('btn-toggle-play');
+            const btnRewind = document.getElementById('btn-rewind');
+            const btnForward = document.getElementById('btn-forward');
 
-            // Bind Actions (Check IDs if they exist)
-            const btnUnduh = document.querySelector('.btn-action[onclick*="download"]');
-            if (btnUnduh) {
-                btnUnduh.removeAttribute('onclick');
-                btnUnduh.addEventListener('click', downloadCurrent);
-            }
+            if (btnPlay) btnPlay.addEventListener('click', togglePlay);
+            if (btnRewind) btnRewind.addEventListener('click', () => seekRelative(-10));
+            if (btnForward) btnForward.addEventListener('click', () => seekRelative(10));
 
-            const btnSalin = document.querySelector('.btn-action[onclick*="copy"]');
-            if (btnSalin) {
-                btnSalin.removeAttribute('onclick');
-                btnSalin.addEventListener('click', copyLink);
-            }
-
-            // Save is already ID-based: btn-save
-            document.getElementById('btn-save').addEventListener('click', toggleSave);
-            // Remove old onclick attribute if present to avoid conflicts
-            document.getElementById('btn-save').removeAttribute('onclick');
+            // Bind Actions (Download, Save, Copy)
+            document.querySelectorAll('.btn-action').forEach(btn => {
+                btn.removeAttribute('onclick'); // Clear inline
+                const text = btn.innerText.toUpperCase();
+                if (text.includes('UNDUH')) btn.addEventListener('click', downloadCurrent);
+                if (text.includes('SIMPAN')) btn.addEventListener('click', toggleSave);
+                if (text.includes('SALIN')) btn.addEventListener('click', copyLink);
+            });
 
             // Load Data
             await loadData();
@@ -648,11 +644,13 @@
                         else if ((k.includes('deskripsi') || k.includes('desc') || k.includes('ket')) && !desc) desc = v;
                     });
 
-                    if (thumb && thumb.includes('drive.google.com') && thumb.includes('/file/d/')) {
-                        const matches = thumb.match(/\/d\/(.+?)\//);
-                        if (matches && matches[1]) {
-                            thumb = `https://drive.google.com/uc?export=view&id=${matches[1]}`;
-                        }
+                    if (thumb && thumb.includes('drive.google.com')) {
+                        const id = thumb.match(/\/d\/(.+?)\//) || thumb.match(/id=(.+?)(&|$)/);
+                        if (id && id[1]) thumb = `https://drive.google.com/uc?export=view&id=${id[1]}`;
+                    }
+                    if (audioUrl && audioUrl.includes('drive.google.com')) {
+                        const id = audioUrl.match(/\/d\/(.+?)\//) || audioUrl.match(/id=(.+?)(&|$)/);
+                        if (id && id[1]) audioUrl = `https://drive.google.com/uc?export=download&id=${id[1]}`;
                     }
 
                     return {
@@ -717,7 +715,85 @@
             }
         }
 
-        // EXPOSE TO WINDOW (CRITICAL FOR ONCLICK)
+        // --- AUDIO ENGINE ---
+        function togglePlay() {
+            if (!audio.src) return;
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+
+            if (audio.paused) {
+                audio.play().catch(e => console.warn("Autoplay blocked", e));
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                audio.pause();
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            }
+        }
+
+        function seekRelative(seconds) {
+            if (!audio.duration) return;
+            audio.currentTime += seconds;
+        }
+
+        function downloadCurrent() {
+            if (!currentTrack || !currentTrack.link_audio) {
+                showCustomNotif("Link audio tidak ditemukan.", "error");
+                return;
+            }
+            showCustomNotif("Buka link unduhan...", "success");
+            window.open(currentTrack.link_audio, '_blank');
+        }
+
+        function copyLink() {
+            const link = window.location.href;
+            navigator.clipboard.writeText(link).then(() => {
+                showCustomNotif("Link disalin ke clipboard!", "success");
+            }).catch(() => {
+                showCustomNotif("Gagal menyalin link.", "error");
+            });
+        }
+
+        // --- LISTENERS ---
+        const seekSlider = document.getElementById('seek-slider');
+        const currTimeLabel = document.getElementById('curr-time');
+        const totalTimeLabel = document.getElementById('total-time');
+
+        audio.addEventListener('loadedmetadata', () => {
+            seekSlider.max = Math.floor(audio.duration);
+            totalTimeLabel.innerText = formatTime(audio.duration);
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            if (!audio.duration) return;
+            seekSlider.value = Math.floor(audio.currentTime);
+            currTimeLabel.innerText = formatTime(audio.currentTime);
+
+            // Progress Bar Fill
+            const percent = (audio.currentTime / audio.duration) * 100;
+            seekSlider.style.backgroundSize = percent + '% 100%';
+        });
+
+        seekSlider.addEventListener('input', () => {
+            audio.currentTime = seekSlider.value;
+            const percent = (seekSlider.value / seekSlider.max) * 100;
+            seekSlider.style.backgroundSize = percent + '% 100%';
+        });
+
+        audio.addEventListener('ended', () => {
+            document.getElementById('play-icon').style.display = 'block';
+            document.getElementById('pause-icon').style.display = 'none';
+            audio.currentTime = 0;
+        });
+
+        function formatTime(secs) {
+            const m = Math.floor(secs / 60);
+            const s = Math.floor(secs % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        // EXPOSE TO WINDOW
         window.togglePlay = togglePlay;
         window.seekRelative = seekRelative;
         window.downloadCurrent = downloadCurrent;
