@@ -66,10 +66,8 @@ class CommentManager {
     handleGuestInteraction() {
         // Show universal login popup from bookmark manager for consistency
         if (window.bookmarkManager && window.bookmarkManager._showLoginPopup) {
-            window.bookmarkManager._showLoginPopup();
-            if (window.showCustomNotif) {
-                window.showCustomNotif("Silahkan login untuk mengirim komentar.", "error");
-            }
+            // Pass specific message as requested by user
+            window.bookmarkManager._showLoginPopup("Login untuk berkomentar.");
         } else {
             // Fallback if bookmark manager not ready
             if (confirm("Login untuk bergabung dalam diskusi?")) {

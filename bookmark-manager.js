@@ -113,7 +113,7 @@ class BookmarkManager {
      */
     async toggleBookmark(category, data) {
         if (!this.user) {
-            this._showLoginPopup();
+            this._showLoginPopup("Login untuk menyimpan artikel.");
             return 'unauth';
         }
 
@@ -192,14 +192,14 @@ class BookmarkManager {
     }
 
     // --- UTILS (Popup & Notif same as before) ---
-    _showLoginPopup() {
+    _showLoginPopup(message = "Login untuk akses fitur ini.") {
         let popup = document.getElementById('auth-popup-overlay');
         if (!popup) {
             const html = `
             <div id="auth-popup-overlay" class="custom-modal-overlay">
                 <div class="custom-modal-box">
                     <h3 class="modal-title">Fitur Login</h3>
-                    <p class="modal-desc">Login untuk menyimpan artikel.</p>
+                    <p class="modal-desc" id="auth-modal-desc">${message}</p>
                     <div class="modal-actions">
                         <button id="btn-cancel-auth" class="modal-btn btn-cancel">Nanti</button>
                         <button onclick="window.location.href='login.html'" class="modal-btn btn-yes">Login</button>
@@ -209,6 +209,10 @@ class BookmarkManager {
             document.body.insertAdjacentHTML('beforeend', html);
             popup = document.getElementById('auth-popup-overlay');
             document.getElementById('btn-cancel-auth').onclick = () => popup.classList.remove('active');
+        } else {
+            // Update message if already exists
+            const desc = document.getElementById('auth-modal-desc');
+            if (desc) desc.innerText = message;
         }
         setTimeout(() => popup.classList.add('active'), 10);
     }
