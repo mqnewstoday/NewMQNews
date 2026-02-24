@@ -48,17 +48,7 @@ class CommentManager {
                 </div>
 
                 <div id="comment-list-ui">
-                    ${isGuest ? `
-                    <div class="guest-placeholder" style="text-align:center; padding:30px; background:rgba(0,0,0,0.02); border-radius:12px; border:1px dashed var(--border);">
-                        <svg viewBox="0 0 24 24" width="40" height="40" style="opacity:0.2; margin-bottom:10px;" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        <p style="font-size:0.9rem; color:var(--text-muted);">Silakan masuk untuk melihat dan mengirim komentar.</p>
-                        <button onclick="window.location.href='login.html'" style="margin-top:12px; border:1px solid var(--primary); background:transparent; color:var(--primary); padding:6px 15px; border-radius:20px; font-size:0.8rem; font-weight:bold; cursor:pointer;">Masuk / Daftar</button>
-                    </div>` : '<div class="skeleton-text" style="height:60px; margin-bottom:10px;"></div>'}
+                    <div class="skeleton-text" style="height:60px; margin-bottom:10px;"></div>
                 </div>
                 
                 <div style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-top:15px; font-style:italic;">
@@ -67,26 +57,29 @@ class CommentManager {
             </div>
         `;
 
-        // Only bind if not guest, or let the overlay handle it for guests
+        // Only bind if not guest
         if (!isGuest) {
             document.getElementById('btn-post-comment').onclick = () => this.postComment();
         }
     }
 
     handleGuestInteraction() {
-        if (window.showCustomNotif) {
-            window.showCustomNotif("Fitur Khusus Member. Silakan Masuk terlebih dahulu.", "error");
+        // Show universal login popup from bookmark manager for consistency
+        if (window.bookmarkManager && window.bookmarkManager._showLoginPopup) {
+            window.bookmarkManager._showLoginPopup();
+            if (window.showCustomNotif) {
+                window.showCustomNotif("Silahkan login untuk mengirim komentar.", "error");
+            }
         } else {
-            alert("Silakan masuk untuk menggunakan fitur komentar.");
+            // Fallback if bookmark manager not ready
+            if (confirm("Login untuk bergabung dalam diskusi?")) {
+                window.location.href = "login.html";
+            }
         }
     }
 
     async loadComments(isReset = true) {
-        // AUTH GUARD: Skip for guests to save read costs
-        if (!auth.currentUser) {
-            console.log("[CommentManager] Guest detected - Skipping Fetch (Read Cost Saved)");
-            return;
-        }
+        // ALL USERS CAN READ (Guest Read allowed again)
 
         // ALWAYS RESET: Strategy is just show top 5
         this.commentsList = [];
