@@ -210,6 +210,7 @@
             margin-bottom: 4px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
+            line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -219,6 +220,7 @@
             color: var(--text-muted);
             display: -webkit-box;
             -webkit-line-clamp: 1;
+            line-clamp: 1;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -266,6 +268,48 @@
             border-color: var(--primary);
             color: white;
         }
+
+        /* CUSTOM NOTIF: TOP POSITION AS REQUESTED */
+        .custom-notif {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            color: var(--text-main);
+            padding: 12px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            min-width: 280px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-notif.active {
+            top: 80px;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .custom-notif.success {
+            border-left: 5px solid #2e7d32;
+        }
+
+        .custom-notif.error {
+            border-left: 5px solid #d32f2f;
+        }
+
+        .custom-notif span {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--text-main);
+        }
     </style>
 </head>
 
@@ -273,9 +317,15 @@
     <script src="theme-init.js"></script>
     <script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');</script>
 
+    <!-- NOTIF BOX Same as other pages -->
+    <div id="notifBox" class="custom-notif">
+        <div id="notifIcon"></div>
+        <span id="notifText">Notifikasi</span>
+    </div>
+
     <!-- HEADER -->
     <div class="simple-header">
-        <a href="index.html" class="btn-back">
+        <a href="javascript:void(0)" onclick="goBack()" class="btn-back">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
                 <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
@@ -437,9 +487,48 @@
             const result = await bookmarkManager.toggleBookmark('audio', data);
 
             if (result === 'saved') {
+                showCustomNotif("Berhasil disimpan ke bookmark.", "success");
                 updateButtonState(btn, true);
             } else if (result === 'removed') {
+                showCustomNotif("Dihapus dari bookmark.", "error");
                 updateButtonState(btn, false);
+            }
+        };
+
+        function showCustomNotif(msg, type) {
+            const box = document.getElementById('notifBox');
+            const text = document.getElementById('notifText');
+            const iconDiv = document.getElementById('notifIcon');
+
+            text.innerText = msg;
+            box.className = 'custom-notif';
+            void box.offsetWidth;
+            box.classList.add('active');
+
+            if (type === 'success') {
+                box.classList.add('success');
+                iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#2e7d32" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+            } else {
+                box.classList.add('error');
+                iconDiv.innerHTML = `<svg style="width:24px;height:24px;fill:#d32f2f" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>`;
+            }
+
+            setTimeout(() => {
+                box.classList.remove('active');
+                box.classList.remove('success');
+                box.classList.remove('error');
+                iconDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        window.goBack = function () {
+            // Smart back logic: if from bookmark, go back there
+            if (document.referrer && document.referrer.includes('simpan.html')) {
+                window.location.href = 'simpan.html#audio';
+            } else if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
             }
         };
 

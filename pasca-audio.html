@@ -461,7 +461,7 @@
     </div>
 
     <header class="profile-header-nav">
-        <a href="audio.html" class="header-icon-btn">
+        <a href="javascript:void(0)" onclick="goBack()" class="header-icon-btn">
             <svg viewBox="0 0 24 24">
                 <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
@@ -799,6 +799,17 @@
         window.downloadCurrent = downloadCurrent;
         window.copyLink = copyLink;
         window.toggleSave = toggleSave;
+
+        window.goBack = function () {
+            // Smart back logic: if from bookmark, go back there
+            if (document.referrer && document.referrer.includes('simpan.html')) {
+                window.location.href = 'simpan.html#audio';
+            } else if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'audio.html';
+            }
+        };
 
         async function toggleSave() {
             if (!currentTrack) return;
