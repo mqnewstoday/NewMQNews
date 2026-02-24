@@ -642,11 +642,17 @@
                 } else {
                     title = item.title || "Audio MQ";
                     desc = item.desc || "Audio MQ News";
+                    // Audio: Check both image and thumb for backward compatibility
                     thumb = item.image || item.thumb || 'ALT_LogoMQN.png';
                     targetUrl = `pasca-audio.html?bg=${encodeURIComponent(title)}`;
                 }
 
+                // Global sanitization for broken data strings
+                if (thumb === "undefined" || thumb === "null") thumb = 'ALT_LogoMQN.png';
+
+                // Clean Description (HTML removal + length limit)
                 desc = desc ? desc.replace(/<[^>]*>?/gm, '') : "";
+                if (desc.length > 80) desc = desc.substring(0, 80) + "...";
 
                 card.innerHTML = `
                     <div class="item-thumb">

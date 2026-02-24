@@ -449,6 +449,7 @@
                 // Escape for onclick
                 const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const safeDesc = desc.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                // Resolved Thumb for saving
                 const safeThumb = finalThumb.replace(/'/g, "\\'");
 
                 card.innerHTML = `
@@ -476,12 +477,13 @@
             }
         }
 
-        window.toggleAudioSave = async function (title, desc, thumb, btn) {
-            // Construct data
+        window.toggleAudioSave = async function (title, desc, image, btn) {
+            // Construct data (Standardized key 'image')
             const data = {
                 title: title,
                 desc: desc,
-                thumb: thumb
+                image: image || 'ALT_LogoMQN.png',
+                url: window.location.href
             };
 
             const result = await bookmarkManager.toggleBookmark('audio', data);

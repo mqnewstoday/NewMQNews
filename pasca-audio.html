@@ -814,11 +814,14 @@
         async function toggleSave() {
             if (!currentTrack) return;
 
+            // Resolve Artwork for Saving
+            const finalImage = (currentTrack.gambar && currentTrack.gambar.trim() !== "") ? currentTrack.gambar : 'ALT_LogoMQN.png';
+
             // Construct Data Object (Corrected for Manager V2)
             const data = {
                 title: currentTrack.judul,
                 desc: currentTrack.deskripsi,
-                image: currentTrack.gambar, // Use 'image' key
+                image: finalImage,        // Use resolved image URL
                 url: window.location.href   // Save current player URL
             };
 

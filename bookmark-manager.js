@@ -155,13 +155,19 @@ class BookmarkManager {
             } else {
                 // SAVE: ADD TO ARRAY
                 // Sanitize STRICTLY to avoid undefined values rejected by Firestore
+                // Clean data for storage (Prevent literal "undefined" or "null" strings)
+                const sanitize = (val) => {
+                    if (!val || val === "undefined" || val === "null") return "";
+                    return String(val);
+                };
+
                 const safeData = {
                     id: docId,
                     title: String(title || "No Title").substring(0, 150),
-                    url: String(data.url || window.location.href),
-                    image: String(data.image || data.gambar || data.thumbnail || data.thumb || ''),
-                    date: String(data.date || data.tanggal || new Date().toISOString()),
-                    desc: String(data.desc || data.narasi || data.isi || data.description || ''),
+                    url: sanitize(data.url || window.location.href),
+                    image: sanitize(data.image || data.gambar || data.thumbnail || data.thumb),
+                    date: sanitize(data.date || data.tanggal || new Date().toISOString()),
+                    desc: sanitize(data.desc || data.narasi || data.isi || data.description),
                     savedAt: new Date().toISOString()
                 };
 
