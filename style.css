@@ -672,7 +672,8 @@ header {
 .art-content-box {
     max-width: 800px;
     margin: 0 auto;
-    padding: 30px 20px;
+    padding: 5px 20px 30px;
+    /* Reduced top padding to 5px for tighter spacing with audio/images */
 }
 
 .art-meta {
