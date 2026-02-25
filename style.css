@@ -2007,7 +2007,8 @@ body.dark-mode .editor-title {
    ========================================= */
 .ad-in-article-wrapper {
     width: 100%;
-    margin: 30px 0;
+    margin: 10px 0;
+    /* Reduced vertical margin from 30px */
     display: flex;
     justify-content: center;
 }
@@ -2022,7 +2023,8 @@ body.dark-mode .editor-title {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 0;
+    /* Removed border-radius for square look */
     border: 1px dashed #cbd5e1;
 }
 
