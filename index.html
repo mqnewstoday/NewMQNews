@@ -2062,12 +2062,14 @@
 
             return `
             <article class="news-card">
-                <div class="card-img-wrap" style="aspect-ratio: 16/9 !important;">
+                <a href="${targetUrl}" class="card-img-wrap" style="aspect-ratio: 16/9 !important; display: block; text-decoration: none;">
                     <div class="card-category-float">${kategori}</div>
-                    <img src="${gambar}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400?text=Image+Error'" onclick="handleArticleClick('${targetUrl}')" style="cursor:pointer">
-                </div>
+                    <img src="${gambar}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400?text=Image+Error'">
+                </a>
                 <div class="card-body">
-                    <h3 class="card-title" onclick="handleArticleClick('${targetUrl}')" style="cursor: pointer" title="${judul}">${judul}</h3>
+                    <a href="${targetUrl}" style="text-decoration: none; color: inherit;">
+                        <h3 class="card-title" title="${judul}">${judul}</h3>
+                    </a>
                     
                     <div class="card-footer">
                         <div style="display:flex; align-items:center; gap:8px;">
@@ -2083,7 +2085,7 @@
                             </button>
                         </div>
 
-                        <a onclick="handleArticleClick('${targetUrl}')" class="read-btn" href="javascript:void(0)">BACA &rarr;</a>
+                        <a href="${targetUrl}" class="read-btn">BACA &rarr;</a>
                     </div>
                 </div>
             </article>`;
