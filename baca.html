@@ -498,9 +498,21 @@
                             return found ? itm[found] : "";
                         };
 
+                        // Helper normalizing for robust matching (straight vs smart quotes)
+                        const cleanForMatch = (str) => {
+                            return (str || "")
+                                .toLowerCase()
+                                .replace(/[\u2018\u2019\u201C\u201D]/g, "'") // Convert smart quotes to straight
+                                .replace(/["'"`]/g, "'") // Normalize all quotes to single
+                                .replace(/\s+/g, " ") // Collapse multiple spaces
+                                .trim();
+                        };
+
+                        const targetMatch = cleanForMatch(judulAsli);
+
                         const ketemu = allNews.find(i => {
-                            const t = (getProp(i, 'judul') || getProp(i, 'title') || '').trim();
-                            return t.toLowerCase() === judulAsli.toLowerCase();
+                            const t = (getProp(i, 'judul') || getProp(i, 'title') || '');
+                            return cleanForMatch(t) === targetMatch;
                         });
 
                         if (ketemu) {

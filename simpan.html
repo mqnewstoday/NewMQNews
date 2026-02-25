@@ -648,15 +648,12 @@
                 } else {
                     title = item.title || "Audio MQ";
                     desc = item.desc || "Audio MQ News";
-                    // Audio: Check both image and thumb for backward compatibility
                     thumb = item.image || item.thumb || 'ALT_LogoMQN.png';
                     targetUrl = `pasca-audio.html?bg=${encodeURIComponent(title)}`;
                 }
 
-                // Global sanitization for broken data strings
                 if (thumb === "undefined" || thumb === "null") thumb = 'ALT_LogoMQN.png';
 
-                // Clean Description (HTML removal + length limit)
                 desc = desc ? desc.replace(/<[^>]*>?/gm, '') : "";
                 if (desc.length > 80) desc = desc.substring(0, 80) + "...";
 
@@ -664,10 +661,10 @@
                     <div class="item-thumb">
                         <img src="${thumb}" loading="lazy" onerror="this.src='ALT_LogoMQN.png'">
                     </div>
-                    <div class="item-info" onclick="window.location.href='${targetUrl}'">
+                    <a href="${targetUrl}" class="item-info" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; flex:1; padding:10px; justify-content:center;">
                         <div class="item-title">${title}</div>
                         <div class="item-desc">${desc}</div>
-                    </div>
+                    </a>
                     <div class="btn-delete" onclick="window.confirmDelete('${type}', '${item.id}')">
                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                     </div>
