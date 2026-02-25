@@ -11,6 +11,7 @@
     <link rel="shortcut icon" href="ALT_LogoMQN.png" type="image/png">
     <title>Baca Berita - MQ News Today</title>
     <link id="canonical-link" rel="canonical" href="https://mqnewstoday.my.id/baca.html">
+    <meta id="meta-description" name="description" content="Baca berita selengkapnya di MQ News Today.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -561,6 +562,11 @@
             // Update Canonical URL for SEO
             const canonicalTag = document.getElementById('canonical-link');
             if (canonicalTag) canonicalTag.setAttribute('href', window.location.href);
+
+            // Update Meta Description for SEO
+            const descText = (getVal(item, 'isi') || "").substring(0, 160).replace(/\n/g, ' ').trim();
+            const metaDesc = document.getElementById('meta-description');
+            if (metaDesc) metaDesc.setAttribute('content', descText || "Baca berita selengkapnya di MQ News Today.");
 
             document.getElementById('art-title').innerText = articleTitle;
 
