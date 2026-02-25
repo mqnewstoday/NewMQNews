@@ -26,17 +26,16 @@
     <link rel="apple-touch-icon" href="ALT_LogoMQN.png">
 
     <!-- Open Graph / Social Media Meta Tags (Default) -->
-    <!-- Note: Modifikasi dinamis untuk preview WhatsApp hanya bisa dilakukan dengan Server Side Rendering / Edge Function -->
     <meta property="og:title" content="Baca Berita - MQ News Today">
     <meta property="og:description" content="Baca berita selengkapnya di MQ News Today.">
-    <meta id="og-image" property="og:image" content="https://mqnewstoday.my.id/og-image-link.png">
+    <meta property="og:image" content="https://mqnewstoday.my.id/og-image-link.png">
     <meta property="og:type" content="article">
 
     <!-- Twitter Card Meta Tags (Explicit for X) -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Baca Berita - MQ News Today">
     <meta name="twitter:description" content="Baca berita selengkapnya di MQ News Today.">
-    <meta id="twitter-image" name="twitter:image" content="https://mqnewstoday.my.id/og-image-link.png">
+    <meta name="twitter:image" content="https://mqnewstoday.my.id/og-image-link.png">
     <meta property="og:site_name" content="MQ News Today">
 
     <!-- Schema for Google Site Name -->
@@ -601,12 +600,6 @@
                 const imgEl = document.getElementById('art-img');
                 imgEl.src = imgUrl;
                 imgEl.style.display = 'block';
-
-                // Update OG/Twitter Images dynamically
-                const ogImg = document.getElementById('og-image');
-                const twImg = document.getElementById('twitter-image');
-                if (ogImg) ogImg.setAttribute('content', imgUrl);
-                if (twImg) twImg.setAttribute('content', imgUrl);
             }
 
             const vType = getVal(item, 'VideoType'); const vID = getVal(item, 'VideoID');
