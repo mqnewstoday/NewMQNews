@@ -18,6 +18,7 @@
     <style>
         /* CSS TAMBAHAN KHUSUS HALAMAN INI (Layout List) */
         body {
+            --white: #ffffff;
             background-color: var(--bg);
             /* Pake variabel dari theme.css */
             color: var(--text);
@@ -48,6 +49,11 @@
             font-weight: 700;
             flex-grow: 1;
             text-align: center;
+            /* FIX: Prevent overlap/wrap on small screens */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 0 10px;
         }
 
         .header-icon-btn {
