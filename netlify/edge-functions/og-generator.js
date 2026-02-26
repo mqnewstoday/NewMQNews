@@ -150,15 +150,22 @@ export default async (request, context) => {
         replaceMeta('og:url', canonicalUrl);
 
         let imgUrl = foundArticle.image;
-        if (!imgUrl || imgUrl.length < 5) {
-            imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
-        }
-        replaceMeta('og:image', imgUrl);
 
-        // C. Twitter Card Tags
+        // Ensure Absolute URL for OG Image
+        const ensureAbsolute = (url) => {
+            if (!url) return "https://mqnewstoday.my.id/og-image-link.png";
+            if (url.startsWith('http')) return url;
+            return `https://mqnewstoday.my.id/${url.startsWith('/') ? url.substring(1) : url}`;
+        };
+
+        const finalImg = ensureAbsolute(imgUrl);
+        replaceMeta('og:image', finalImg);
+
+        // D. Twitter Card Tags
         replaceMeta('twitter:title', foundArticle.title);
         replaceMeta('twitter:description', desc);
-        replaceMeta('twitter:image', imgUrl);
+        replaceMeta('twitter:image', finalImg);
+        replaceMeta('twitter:card', 'summary_large_image');
 
         updatedPage += "\n<!-- Processed by Hybrid SSR (Netlify Edge Functions) -->";
 
