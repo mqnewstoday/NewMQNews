@@ -116,7 +116,7 @@ export default async (request, context) => {
 
         // Helper untuk replace meta tag dengan aman (bisa property atau name)
         const replaceMeta = (key, content) => {
-            const regex = new RegExp(`<meta\\s+(property|name)=["']${key}["']\\s+content=["'].*?["']\\s*\\/?>`, 'i');
+            const regex = new RegExp(`<meta\\s+[^>]*?(property|name)=["']${key}["'][^>]*?content=["'].*?["'][^>]*?>`, 'i');
             const attr = key.startsWith('twitter:') ? 'name' : 'property';
             updatedPage = updatedPage.replace(regex, `<meta ${attr}="${key}" content="${content}">`);
         };
@@ -124,31 +124,43 @@ export default async (request, context) => {
         // A. Title Page
         updatedPage = updatedPage.replace(/<title>[\s\S]*?<\/title>/i, `<title>${foundArticle.title} - MQ News Today</title>`);
 
-        // B. Open Graph Tags
-        replaceMeta('og:title', foundArticle.title);
+        // B. Description Meta & Open Graph Labels
+        const desc = `Dapatkan berita mendalam tentang ${foundArticle.title}. Fokus pada kebenaran dan analisis eskatologi Islam. Terbit pada ${foundArticle.date}.`;
 
-        let imgUrl = foundArticle.image;
-
-        // Validasi URL Gambar
-        if (imgIdx === -1 || !imgUrl) {
-            imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
-        } else if (imgUrl.length < 5) {
-            imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
+        // 1. Meta Description (name="description")
+        const metaDescRegex = /<meta\s+[^>]*name=["']description["'][^>]*content=["'].*?["'][^>]*>/i;
+        if (metaDescRegex.test(updatedPage)) {
+            updatedPage = updatedPage.replace(metaDescRegex, `<meta name="description" content="${desc}">`);
+        } else {
+            updatedPage = updatedPage.replace('</head>', `<meta name="description" content="${desc}">\n</head>`);
         }
 
-        // Build Deskripsi Tanpa Debug Message (Clean Version)
-        const desc = `Baca selengkapnya tentang ${foundArticle.title}. ${foundArticle.date}`;
-        replaceMeta('og:description', desc);
+        // 2. Canonical Link (rel="canonical")
+        const canonicalRegex = /<link\s+[^>]*rel=["']canonical["'][^>]*href=["'].*?["'][^>]*>/i;
+        const canonicalUrl = `https://mqnewstoday.my.id/baca.html?title=${encodeURIComponent(foundArticle.title)}`;
+        if (canonicalRegex.test(updatedPage)) {
+            updatedPage = updatedPage.replace(canonicalRegex, `<link rel="canonical" href="${canonicalUrl}">`);
+        } else {
+            updatedPage = updatedPage.replace('</head>', `<link rel="canonical" href="${canonicalUrl}">\n</head>`);
+        }
 
-        // Link Gambar
+        // 3. Open Graph Tags
+        replaceMeta('og:title', foundArticle.title);
+        replaceMeta('og:description', desc);
+        replaceMeta('og:url', canonicalUrl);
+
+        let imgUrl = foundArticle.image;
+        if (!imgUrl || imgUrl.length < 5) {
+            imgUrl = "https://mqnewstoday.my.id/ALT_LogoMQN.png";
+        }
         replaceMeta('og:image', imgUrl);
 
-        // C. Twitter Card Tags (Explicit Replacements)
+        // C. Twitter Card Tags
         replaceMeta('twitter:title', foundArticle.title);
         replaceMeta('twitter:description', desc);
         replaceMeta('twitter:image', imgUrl);
 
-        updatedPage += "\n<!-- Processed by Netlify Edge Functions -->";
+        updatedPage += "\n<!-- Processed by Hybrid SSR (Netlify Edge Functions) -->";
 
         return new Response(updatedPage, response);
 
