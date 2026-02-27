@@ -107,6 +107,75 @@ header {
     transform: rotate(-45deg) translate(7px, -8px);
 }
 
+/* Header Notification Bell */
+.header-notif-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--primary);
+    background: rgba(157, 27, 27, 0.05);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.header-notif-btn:hover {
+    background: rgba(157, 27, 27, 0.1);
+    transform: scale(1.1);
+}
+
+.header-notif-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.notif-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 10px;
+    height: 10px;
+    background: #ef4444;
+    /* Bright red for visibility */
+    border: 2px solid var(--white);
+    border-radius: 50%;
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+/* Dark Mode Adjustments */
+body.dark-mode .header-notif-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: #eee;
+}
+
+body.dark-mode .header-notif-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .notif-dot {
+    border-color: #1e293b;
+}
+
 /* =========================================
    3. SIDEBAR & NAVIGASI
    ========================================= */
