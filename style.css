@@ -2105,7 +2105,7 @@ body.dark-mode .editor-title {
 }
 
 .rec-title {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Playfair Display', serif;
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--text-main);
