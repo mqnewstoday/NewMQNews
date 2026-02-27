@@ -1378,9 +1378,17 @@
             </script>
 
             <!-- AD PLACEHOLDER SLIM (IKLAN) -->
-            <div class="ad-box-slim">
-                IKLAN
+            <!-- REKOMENDASI SECTION -->
+            <div class="recommend-section-wrapper">
+                <div class="section-label">
+                    <span>REKOMENDASI</span>
+                    <div class="section-line"></div>
+                </div>
+                <div class="recommend-list" id="recommendation-container">
+                    <div class="loader">Memuat Rekomendasi...</div>
+                </div>
             </div>
+
         </main>
 
         <!-- STYLES FOR FAQ (Embedded for Speed) -->
@@ -1659,6 +1667,7 @@
                 if (window.activeData && window.activeData.length > 0) {
                     renderPage(currentPage);
                     if (typeof renderEditorPicks === 'function') renderEditorPicks();
+                    if (typeof renderRecommendations === 'function') renderRecommendations();
                 }
             }
         });
@@ -1760,6 +1769,9 @@
                             if (typeof renderEditorPicks === 'function') {
                                 renderEditorPicks();
                             }
+                            if (typeof renderRecommendations === 'function') {
+                                renderRecommendations();
+                            }
                         } catch (parseLogicErr) {
                             showError("Data Error: " + parseLogicErr.message);
                         }
@@ -1838,6 +1850,51 @@
                 container.insertAdjacentHTML('beforeend', html);
             });
         };
+
+        // Fungsi Render REKOMENDASI (Latest 10)
+        window.renderRecommendations = function () {
+            const container = document.getElementById('recommendation-container');
+            if (!container) return;
+
+            container.innerHTML = "";
+
+            if (!allNews || allNews.length === 0) {
+                container.innerHTML = '<div class="loader">Menunggu data...</div>';
+                return;
+            }
+
+            // Ambil 10 Berita Terbaru
+            let source = allNews.slice().reverse().filter(item => {
+                const j = getVal(item, 'judul') || getVal(item, 'title');
+                return j && j.trim().length > 0;
+            });
+
+            const selected = source.slice(0, 10);
+
+            selected.forEach(item => {
+                const judul = getVal(item, 'judul') || getVal(item, 'title');
+                const kategori = getVal(item, 'kategori') || 'News';
+                let gambar = getVal(item, 'gambar') || getVal(item, 'image') || getVal(item, 'thumbnail');
+
+                if (!gambar || gambar.length < 5) gambar = "https://via.placeholder.com/150x150?text=MQ";
+
+                const targetUrl = 'baca.html?title=' + encodeURIComponent(judul);
+
+                const html = `
+                <a href="${targetUrl}" class="recommend-card">
+                    <div class="rec-img-wrap">
+                        <img src="${gambar}" loading="lazy" alt="${judul}" onerror="this.src='https://via.placeholder.com/150x150?text=Err'">
+                    </div>
+                    <div class="rec-info">
+                        <span class="rec-category">${kategori}</span>
+                        <h4 class="rec-title">${judul}</h4>
+                    </div>
+                </a>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        };
+
 
         // --- SCRIPT JAM REDAKSI ---
         function updateClock() {
