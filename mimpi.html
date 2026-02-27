@@ -386,7 +386,6 @@
         /* IKLAN GEPENG STYLE */
         .ad-box-slim {
             width: calc(100% - 40px);
-            /* Adjust with padding */
             max-width: 800px;
             height: 50px;
             background: #f4f4f4;
@@ -398,20 +397,19 @@
             font-weight: 700;
             letter-spacing: 2px;
             border: 1px dashed #ddd;
-            margin: 5px auto;
+            margin: 10px auto !important;
+        }
 
-            /* SANGAT RAPAT (Very Tight) */
-            @media (min-width: 768px) {
-                .ad-box-slim {
-                    width: 100%;
-                    /* On desktop, maybe max-width handles it */
-                }
-            }
+        #comments-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px 20px;
+        }
 
-            /* Force tight grouping */
-            .related-section {
-                margin-bottom: 5px !important;
-            }
+        /* Force tight grouping */
+        .related-section {
+            margin-bottom: 5px !important;
+        }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5035531780463708"
         crossorigin="anonymous"></script>
@@ -487,27 +485,25 @@
     </div>
 
     <!-- KOMENTAR SECTION (NEW) -->
-    <div id="comments-container" style="padding: 0 20px 20px;"></div>
+    <div id="comments-container"></div>
 
-    <!-- Tombol Simpan (Pindah Bawah) -->
+    <!-- Tombol Simpan -->
     <div class="action-block">
-        <div class="action-block">
-            <div class="btn-save-dream" id="btn-save" onclick="toggleSave()" style="width: fit-content;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <span>Simpan</span>
-            </div>
-            <!-- DOWNLOAD BUTTON -->
-            <div class="btn-save-dream" id="btn-download" onclick="downloadAudio()"
-                style="width: fit-content; border-color:var(--text-muted); color:var(--text-main);">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                <span>Unduh</span>
-            </div>
+        <div class="btn-save-dream" id="btn-save" onclick="toggleSave()" style="width: fit-content;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Simpan</span>
+        </div>
+        <!-- DOWNLOAD BUTTON -->
+        <div class="btn-save-dream" id="btn-download" onclick="downloadAudio()"
+            style="width: fit-content; border-color:var(--text-muted); color:var(--text-main);">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Unduh</span>
         </div>
     </div>
 
