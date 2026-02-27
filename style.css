@@ -2205,33 +2205,32 @@ body.dark-mode .rec-title {
 /* --- MOBILE HEADER OPTIMIZATION --- */
 @media screen and (max-width: 480px) {
     header {
-        padding: 12px 15px;
-        gap: 8px;
+        padding: 12px 20px;
+        /* Aligned with content containers */
+        gap: 6px;
     }
 
     .brand {
-        gap: 6px;
-        /* Tightened gap to save space */
+        gap: 4px;
+        /* Minimum gap for maximum text space */
     }
 
     .brand img {
         height: 45px;
-        /* Restored size */
     }
 
     .brand-text h1 {
         font-size: 1.25rem;
-        /* Restored size */
     }
 
     .brand-text span {
         font-size: 0.6rem;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
     }
 
     .nav-right-actions {
-        gap: 8px !important;
-        /* Tightened gap */
+        gap: 6px !important;
+        /* Tightened actions gap */
     }
 
     .header-notif-btn {
@@ -2248,7 +2247,8 @@ body.dark-mode .rec-title {
 /* Extra Small Screens */
 @media screen and (max-width: 360px) {
     header {
-        padding: 10px 10px;
+        padding: 10px 15px;
+        /* Slightly reduced for XS to avoid overflow */
     }
 
     .brand img {
