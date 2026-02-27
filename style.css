@@ -63,6 +63,7 @@ header {
     font-weight: 700;
     line-height: 1;
     margin: 0;
+    white-space: nowrap;
 }
 
 .brand-text span {
@@ -73,6 +74,7 @@ header {
     display: block;
     margin-top: 4px;
     font-weight: 700;
+    white-space: nowrap;
 }
 
 /* Hamburger Menu Icon */
@@ -2198,4 +2200,54 @@ body.dark-mode .recommend-card:hover {
 
 body.dark-mode .rec-title {
     color: #eee;
+}
+
+/* --- MOBILE HEADER OPTIMIZATION --- */
+@media screen and (max-width: 480px) {
+    header {
+        padding: 10px 15px;
+        gap: 10px;
+    }
+
+    .brand {
+        gap: 8px;
+    }
+
+    .brand img {
+        height: 38px;
+    }
+
+    .brand-text h1 {
+        font-size: 1.1rem;
+    }
+
+    .brand-text span {
+        font-size: 0.55rem;
+        letter-spacing: 1px;
+    }
+
+    .nav-right-actions {
+        gap: 10px !important;
+    }
+
+    .header-notif-btn {
+        width: 35px;
+        height: 35px;
+    }
+
+    .header-notif-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* Extra Small Screens */
+@media screen and (max-width: 360px) {
+    .brand img {
+        height: 32px;
+    }
+
+    .brand-text h1 {
+        font-size: 1rem;
+    }
 }
