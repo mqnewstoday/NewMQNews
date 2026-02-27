@@ -2205,34 +2205,38 @@ body.dark-mode .rec-title {
 /* --- MOBILE HEADER OPTIMIZATION --- */
 @media screen and (max-width: 480px) {
     header {
-        padding: 10px 15px;
-        gap: 10px;
-    }
-
-    .brand {
+        padding: 12px 15px;
         gap: 8px;
     }
 
+    .brand {
+        gap: 6px;
+        /* Tightened gap to save space */
+    }
+
     .brand img {
-        height: 38px;
+        height: 45px;
+        /* Restored size */
     }
 
     .brand-text h1 {
-        font-size: 1.1rem;
+        font-size: 1.25rem;
+        /* Restored size */
     }
 
     .brand-text span {
-        font-size: 0.55rem;
+        font-size: 0.6rem;
         letter-spacing: 1px;
     }
 
     .nav-right-actions {
-        gap: 10px !important;
+        gap: 8px !important;
+        /* Tightened gap */
     }
 
     .header-notif-btn {
-        width: 35px;
-        height: 35px;
+        width: 38px;
+        height: 38px;
     }
 
     .header-notif-btn svg {
@@ -2243,11 +2247,15 @@ body.dark-mode .rec-title {
 
 /* Extra Small Screens */
 @media screen and (max-width: 360px) {
+    header {
+        padding: 10px 10px;
+    }
+
     .brand img {
-        height: 32px;
+        height: 40px;
     }
 
     .brand-text h1 {
-        font-size: 1rem;
+        font-size: 1.15rem;
     }
 }
