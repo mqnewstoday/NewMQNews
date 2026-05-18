@@ -1,0 +1,502 @@
+/* ============================================================
+   AudioPlayerDetail Styles — Modern Media Player
+   ============================================================ */
+
+.audio-player-detail {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  box-shadow: var(--shadow-lg);
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-3xl);
+  transition: all var(--transition-base);
+}
+
+.audio-player-detail:hover {
+  box-shadow: var(--shadow-xl);
+}
+
+.audio-player-detail__layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--space-2xl);
+  align-items: center;
+}
+
+/* Thumbnail area (Vinyl Record Container) */
+.audio-player-detail__thumb-container {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Vinyl disc element that will spin */
+.audio-player-detail__vinyl-disc {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  background: #121212;
+  border: 4px solid var(--color-border-dark, #2a2a2a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  animation: spinVinyl 12s linear infinite;
+  animation-play-state: paused;
+}
+
+.audio-player-detail__vinyl-disc:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.audio-player-detail__vinyl-disc--playing {
+  animation-play-state: running;
+}
+
+/* Center spindle hole of the vinyl disc */
+.audio-player-detail__vinyl-disc::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: var(--color-bg-card, #fff);
+  border: 3px solid #000;
+  border-radius: 50%;
+  z-index: 4;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* Glossy grooves overlay on vinyl */
+.audio-player-detail__vinyl-disc::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: 
+    radial-gradient(circle, transparent 30%, rgba(0,0,0,0.85) 31%, transparent 32%, rgba(0,0,0,0.85) 50%, transparent 51%, rgba(0,0,0,0.8) 70%, transparent 71%),
+    linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.06) 55%, transparent 60%),
+    linear-gradient(-45deg, transparent 40%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.06) 55%, transparent 60%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Center label containing the cover art */
+.audio-player-detail__img {
+  width: 65%;
+  height: 65%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #080808;
+  z-index: 2;
+  pointer-events: none;
+}
+
+@keyframes spinVinyl {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Visual Waveform Overlay */
+.audio-player-detail__waveform {
+  position: absolute;
+  bottom: var(--space-md);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(8px);
+  z-index: 5;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wave-bar {
+  width: 3px;
+  height: 100%;
+  background: var(--color-secondary);
+  border-radius: var(--radius-full);
+  animation: wavePulse 1.2s ease-in-out infinite alternate;
+  transform-origin: bottom;
+}
+
+.wave-bar:nth-child(1) { animation-delay: 0.1s; height: 40%; }
+.wave-bar:nth-child(2) { animation-delay: 0.3s; height: 80%; }
+.wave-bar:nth-child(3) { animation-delay: 0s; height: 100%; }
+.wave-bar:nth-child(4) { animation-delay: 0.4s; height: 60%; }
+.wave-bar:nth-child(5) { animation-delay: 0.2s; height: 30%; }
+
+@keyframes wavePulse {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1); }
+}
+
+/* Info Section */
+.audio-player-detail__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.audio-player-detail__title {
+  font-family: var(--font-heading);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-xs);
+  line-height: 1.25;
+}
+
+.audio-player-detail__desc {
+  font-size: 0.92rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-xl);
+}
+
+/* Seek Bar / Range slider */
+.audio-player-detail__progress-container {
+  width: 100%;
+  margin-bottom: var(--space-lg);
+}
+
+.audio-player-detail__seek-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: all var(--transition-fast);
+}
+
+.audio-player-detail__seek-bar::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+}
+
+.audio-player-detail__seek-bar::-webkit-slider-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -5px;
+  box-shadow: 0 2px 6px rgba(157, 27, 27, 0.4);
+  transition: transform var(--transition-fast);
+}
+
+.audio-player-detail__seek-bar::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.audio-player-detail__time-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-top: var(--space-xs);
+}
+
+/* Player Controls Grid */
+.audio-player-detail__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.control-btn {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  color: var(--color-text-secondary);
+}
+
+.control-btn:hover:not(:disabled) {
+  color: var(--color-primary);
+  transform: scale(1.08);
+}
+
+.control-btn:disabled {
+  color: var(--color-border-dark);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.control-btn--skip {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+}
+
+.control-btn--skip:hover {
+  background: var(--color-bg-alt);
+}
+
+.control-btn--play-pause {
+  width: 62px;
+  height: 62px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 6px 20px rgba(157, 27, 27, 0.4);
+  transition: all var(--transition-spring);
+}
+
+.control-btn--play-pause:hover {
+  background: var(--color-primary-light);
+  transform: scale(1.08);
+  box-shadow: 0 8px 24px rgba(157, 27, 27, 0.5);
+  color: white;
+}
+
+.control-btn--play-pause.playing {
+  background: #1a1a1a;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.control-btn--play-pause.playing:hover {
+  background: #2a2a2a;
+}
+
+/* Actions: Download & Bookmark */
+.audio-player-detail__actions {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.audio-action-btn {
+  flex: 1;
+  padding: 12px 24px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius-md) !important;
+  transition: all var(--transition-base);
+}
+
+.audio-action-btn--saved {
+  background: var(--color-primary) !important;
+  color: white !important;
+  border-color: var(--color-primary) !important;
+}
+
+.audio-action-btn--saved:hover {
+  background: var(--color-primary-dark) !important;
+  color: white !important;
+}
+
+/* WhatsApp and Copy styles for consistency */
+.audio-action-btn--whatsapp {
+  border-color: #25d366 !important;
+  color: #25d366 !important;
+  background: transparent !important;
+}
+
+.audio-action-btn--whatsapp:hover {
+  background: #25d366 !important;
+  color: white !important;
+  border-color: #25d366 !important;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+}
+
+.audio-action-btn--copy {
+  border-color: var(--color-border-dark) !important;
+  color: var(--color-text-secondary) !important;
+}
+
+.audio-action-btn--copy:hover {
+  background: var(--color-bg-alt) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-text) !important;
+}
+
+.audio-action-btn--copied {
+  background: #15803d !important;
+  color: white !important;
+  border-color: #15803d !important;
+  animation: copiedScale 0.3s ease-in-out;
+}
+
+.audio-action-btn--animating {
+  animation: bookmarkScale 0.4s ease-in-out;
+}
+
+@keyframes bookmarkScale {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes copiedScale {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .audio-player-detail {
+    padding: var(--space-lg);
+  }
+  
+  .audio-player-detail__layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+  
+  .audio-player-detail__thumb-container {
+    max-width: 220px;
+    margin: 0 auto;
+  }
+  
+  .audio-player-detail__title {
+    font-size: 1.45rem;
+    text-align: center;
+  }
+  
+  .audio-player-detail__desc {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+  }
+  
+  .audio-player-detail__actions {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+}
+
+/* Audio Player Modal Popup */
+.audio-player-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInModal var(--transition-fast) ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.audio-player-modal__close {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.audio-player-modal__close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1) rotate(90deg);
+}
+
+.audio-player-modal__content {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: scaleUpModal 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scaleUpModal {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Modal Vinyl Disc Sizing */
+.audio-player-detail__vinyl-disc--modal {
+  width: 240px;
+  height: 240px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Spectrum Ring Container */
+.audio-player-modal__spectrum-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Circular glowing bars */
+.modal-spectrum-bar {
+  position: absolute;
+  width: 3px;
+  height: 12px;
+  background: var(--color-secondary);
+  border-radius: var(--radius-full);
+  transform-origin: center bottom;
+  box-shadow: 0 0 8px var(--color-secondary);
+  transition: height 0.15s ease;
+}
+
+.modal-spectrum-bar--playing {
+  animation: circularPulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes circularPulse {
+  0% {
+    height: 12px;
+    opacity: 0.4;
+  }
+  100% {
+    height: 38px;
+    opacity: 1;
+    background: var(--color-primary-light);
+    box-shadow: 0 0 12px var(--color-primary-light);
+  }
+}

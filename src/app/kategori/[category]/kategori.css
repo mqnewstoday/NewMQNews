@@ -1,0 +1,63 @@
+/* Category Page Styles */
+
+.category-page {
+  min-height: 60vh;
+}
+
+.category-page__header {
+  margin-bottom: var(--space-2xl);
+}
+
+.category-page__title {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+.category-page__title-accent {
+  display: inline-block;
+  width: 5px;
+  height: 36px;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.category-page__desc {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  padding-left: 21px;
+}
+
+/* Empty State */
+.category-page__empty {
+  text-align: center;
+  padding: var(--space-3xl) var(--space-lg);
+}
+
+.category-page__empty-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-md);
+}
+
+.category-page__empty h3 {
+  font-size: 1.5rem;
+  margin-bottom: var(--space-sm);
+}
+
+.category-page__empty p {
+  max-width: 400px;
+  margin: 0 auto var(--space-lg);
+}
+
+@media (max-width: 768px) {
+  .category-page__title {
+    font-size: 1.75rem;
+  }
+}

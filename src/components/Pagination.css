@@ -1,0 +1,52 @@
+/* ============================================================
+   Pagination Styles (Warisan)
+   ============================================================ */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: var(--space-3xl);
+  margin-bottom: var(--space-lg);
+}
+
+.pagination__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  color: #1a568a; /* Soft blueish text for inactive as seen in screenshot */
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.15rem;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: all var(--transition-fast);
+}
+
+.pagination__item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  color: var(--color-primary);
+}
+
+.pagination__item--active {
+  background: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 6px 18px rgba(157, 27, 27, 0.35);
+}
+
+.pagination__item--active:hover {
+  transform: none;
+  color: #ffffff;
+}
+
+.pagination__item--next {
+  color: #1a568a;
+}

@@ -1,0 +1,128 @@
+/* TrendingSidebar Styles */
+
+.trending-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  position: sticky;
+  top: 100px; /* Offset to clear the sticky main header */
+  align-self: start; /* Critical: prevents the sidebar from stretching to full height, enabling sticky scroll */
+}
+
+.sidebar-section {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+.sidebar-section__title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-md);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.sidebar-section__list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Newsletter */
+.sidebar-section--newsletter {
+  border: none;
+  padding: 0;
+  background: none;
+}
+
+.newsletter-card {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  color: white;
+  text-align: center;
+}
+
+.newsletter-card__icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-sm);
+}
+
+.newsletter-card__title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: var(--space-sm);
+}
+
+.newsletter-card__desc {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: var(--space-lg);
+  line-height: 1.5;
+}
+
+.newsletter-card__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.newsletter-card__input {
+  padding: 12px var(--space-md);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  font-size: 0.9rem;
+  transition: all var(--transition-fast);
+}
+
+.newsletter-card__input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.newsletter-card__input:focus {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.newsletter-card__btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 0.95rem;
+}
+
+/* Tags */
+.sidebar-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.sidebar-tag {
+  display: inline-flex;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+}
+
+.sidebar-tag:hover {
+  background: var(--color-secondary);
+  color: #1a2e00;
+  border-color: var(--color-secondary);
+  transform: translateY(-1px);
+}

@@ -1,0 +1,127 @@
+/* Bookmark Page Styles */
+
+.bookmark-page {
+  min-height: 75vh;
+  padding-bottom: var(--space-4xl);
+}
+
+.bookmark-page__header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.bookmark-page__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: rgba(157, 27, 27, 0.08);
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+}
+
+.bookmark-page__title {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: var(--space-sm);
+}
+
+.bookmark-page__desc {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Tab Navigation Styles */
+.bookmark-tabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: var(--space-sm);
+}
+
+.bookmark-tab-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  padding: 12px 24px;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-base);
+  border-radius: 10px;
+}
+
+.bookmark-tab-btn:hover {
+  color: var(--color-primary);
+  background: rgba(157, 27, 27, 0.05);
+}
+
+.bookmark-tab-btn--active {
+  color: var(--color-primary);
+  background: rgba(157, 27, 27, 0.08);
+}
+
+.bookmark-tab-btn--active::after {
+  content: '';
+  position: absolute;
+  bottom: -10px; /* Alignment with tab border-bottom */
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+
+/* Tab Content Transitions */
+.bookmark-tab-content {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.bookmark-page__empty {
+  text-align: center;
+  padding: var(--space-3xl) var(--space-lg);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.bookmark-page__empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: var(--space-md);
+}
+
+.bookmark-page__empty h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+  color: var(--color-text);
+}
+
+.bookmark-page__empty p {
+  max-width: 400px;
+  margin: 0 auto var(--space-lg);
+  color: var(--color-text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.skeleton-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
