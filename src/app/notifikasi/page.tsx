@@ -52,7 +52,7 @@ export default function NotifikasiPage() {
             (window as any).OneSignal = (window as any).OneSignal || [];
             (window as any).OneSignal.push(() => {
               (window as any).OneSignal.init({
-                appId: '8f51a44e-1282-45e0-b6ab-e1293fb8e29a', // Placeholder ID
+                appId: '542c9bb4-d7e3-4938-b453-cf7ad6bef22c',
                 safari_web_id: '',
                 notifyButton: {
                   enable: false,
@@ -263,8 +263,8 @@ function onEdit(e) {
   // Parameter Konfigurasi (Sesuaikan):
   var SHEET_NAME = "Berita";              // Nama sheet artikel Anda
   var TRIGGER_COLUMN = 11;                // Nomor kolom trigger (Kolom K = 11)
-  var ONESIGNAL_APP_ID = "YOUR_ONESIGNAL_APP_ID";
-  var ONESIGNAL_REST_KEY = "YOUR_ONESIGNAL_REST_API_KEY";
+  var ONESIGNAL_APP_ID = "542c9bb4-d7e3-4938-b453-cf7ad6bef22c";
+  var ONESIGNAL_REST_KEY = "iomqrw472u6un7mmy3iaytqdx";
   
   // Pastikan perubahan terjadi pada sheet dan kolom trigger yang tepat (bukan baris judul)
   if (sheet.getName() === SHEET_NAME && range.getColumn() === TRIGGER_COLUMN && range.getRow() > 1) {
