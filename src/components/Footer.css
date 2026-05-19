@@ -157,6 +157,17 @@
   color: var(--color-primary);
 }
 
+.footer__contact-item--link {
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.footer__contact-item--link:hover {
+  color: var(--color-primary);
+  transform: translateX(3px);
+}
+
 /* Bottom */
 .footer__bottom {
   display: flex;
