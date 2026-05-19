@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import fs from 'fs';
 import path from 'path';
 
@@ -147,6 +147,24 @@ PANDUAN GAYA BAHASA DAN INTRUKSI UTAMA:
         const model = genAI.getGenerativeModel({
           model: 'gemini-2.5-flash',
           systemInstruction: systemInstruction,
+          safetySettings: [
+            {
+              category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+              threshold: HarmBlockThreshold.BLOCK_NONE,
+            },
+            {
+              category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+              threshold: HarmBlockThreshold.BLOCK_NONE,
+            },
+            {
+              category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+              threshold: HarmBlockThreshold.BLOCK_NONE,
+            },
+            {
+              category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+              threshold: HarmBlockThreshold.BLOCK_NONE,
+            },
+          ],
         });
 
         // The last message is the current user input, the rest is history
@@ -156,7 +174,7 @@ PANDUAN GAYA BAHASA DAN INTRUKSI UTAMA:
         const chat = model.startChat({
           history: history,
           generationConfig: {
-            maxOutputTokens: 1000,
+            maxOutputTokens: 2000,
             temperature: 0.4,
           },
         });
