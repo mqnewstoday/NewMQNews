@@ -29,7 +29,7 @@ const readAndOptimizeFile = (filename: string): string | null => {
   return null;
 };
 
-// Load Knowledge Base (combining the main dream book and both Pakistan speeches)
+// Load Knowledge Base (combining the main dream book and all 5 Pakistan speeches)
 const loadKnowledgeBase = (): string => {
   if (cachedKnowledgeBase) {
     return cachedKnowledgeBase;
@@ -42,11 +42,12 @@ const loadKnowledgeBase = (): string => {
       bookContent = readAndOptimizeFile('buku_mimpi.txt') || 'Gagal memuat basis data buku mimpi Muhammad Qasim.';
     }
 
-    // 2. Load Speech 1
+    // 2. Load Speeches 1 to 5
     const speech1Content = readAndOptimizeFile('Pidato Pertama Muhammad Qasim di Pakistan.txt') || '';
-
-    // 3. Load Speech 2
     const speech2Content = readAndOptimizeFile('Pidato Kedua Muhammad Qasim di Pakistan.txt') || '';
+    const speech3Content = readAndOptimizeFile('Pidato Ketiga Muhammad Qasim di Pakistan.txt') || '';
+    const speech4Content = readAndOptimizeFile('Pidato Keempat Muhammad Qasim di Pakistan.txt') || '';
+    const speech5Content = readAndOptimizeFile('Pidato Kelima Muhammad Qasim di Pakistan.txt') || '';
 
     // Combine them beautifully with descriptive headers
     let combined = `=== [DOKUMEN 1: BUKU KUMPULAN MIMPI MUHAMMAD QASIM INDO MALAY] ===\n${bookContent}\n\n`;
@@ -57,6 +58,18 @@ const loadKnowledgeBase = (): string => {
     
     if (speech2Content) {
       combined += `=== [DOKUMEN 3: PIDATO KEDUA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech2Content}\n\n`;
+    }
+
+    if (speech3Content) {
+      combined += `=== [DOKUMEN 4: PIDATO KETIGA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech3Content}\n\n`;
+    }
+
+    if (speech4Content) {
+      combined += `=== [DOKUMEN 5: PIDATO KEEMPAT MUHAMMAD QASIM DI PAKISTAN] ===\n${speech4Content}\n\n`;
+    }
+
+    if (speech5Content) {
+      combined += `=== [DOKUMEN 6: PIDATO KELIMA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech5Content}\n\n`;
     }
 
     combined = combined.trim();
