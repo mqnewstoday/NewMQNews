@@ -4,9 +4,61 @@
 }
 
 .berita-page__header {
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-xl);
   border-bottom: 1px solid var(--color-border);
   padding-bottom: var(--space-lg);
+}
+
+/* Dynamic Premium Category Tabs Filter */
+.berita-filters-container {
+  margin-bottom: var(--space-2xl);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-md);
+  width: 100%;
+}
+
+.berita-filters-scroll {
+  display: flex;
+  gap: var(--space-xs);
+  overflow-x: auto;
+  scrollbar-width: none; /* Hide scrollbar Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar IE */
+  padding-bottom: 4px;
+}
+
+.berita-filters-scroll::-webkit-scrollbar {
+  display: none; /* Hide scrollbar Chrome/Safari */
+}
+
+.berita-filter-pill {
+  white-space: nowrap;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all var(--transition-base);
+  border: 1.5px solid var(--color-border);
+}
+
+.berita-filter-pill:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary-light);
+  background: rgba(157, 27, 27, 0.03);
+}
+
+[data-theme="dark"] .berita-filter-pill:hover {
+  background: rgba(255, 77, 77, 0.03);
+}
+
+.berita-filter-pill.active {
+  background: var(--color-primary) !important;
+  color: white !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: var(--shadow-sm);
 }
 
 .berita-page__title {

@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: AudioDetailPageProps): Promis
     openGraph: {
       title: item.title,
       description: cleanDescription,
-      type: 'music.song',
+      type: 'article',
       url: `https://mqnewstoday.my.id/audio/${item.id}`,
       siteName: 'MQ News Today',
       images: item.thumbnail ? [{ url: item.thumbnail, width: 1200, height: 630, alt: item.title }] : undefined,

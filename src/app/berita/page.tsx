@@ -16,7 +16,14 @@ export default async function BeritaPage({
   const page = parseInt((params.page as string) || '1', 10);
   const ITEMS_PER_PAGE = 6;
 
-  let articles = await fetchBerita();
+  const allArticles = await fetchBerita();
+  
+  // Extract all unique categories dynamically BEFORE filtering
+  const uniqueCategories = Array.from(
+    new Set(allArticles.map(a => a.category).filter(Boolean))
+  ) as string[];
+
+  let articles = [...allArticles];
   
   // Apply category filtering if present
   const kategori = params.kategori as string;
@@ -52,6 +59,31 @@ export default async function BeritaPage({
         <p className="berita-page__desc">
           Kumpulan berita, geopolitik, eskatologi, dan informasi terlengkap seputar kebenaran akhir zaman.
         </p>
+      </div>
+
+      {/* Dynamic Premium Category Tabs Filter */}
+      <div className="berita-filters-container">
+        <div className="berita-filters-scroll">
+          <Link 
+            href="/berita" 
+            className={`berita-filter-pill ${!kategori || kategori === 'semua' ? 'active' : ''}`}
+          >
+            Semua Berita
+          </Link>
+          {uniqueCategories.map((cat) => {
+            const slug = cat.toLowerCase();
+            const isActive = kategori?.toLowerCase() === slug;
+            return (
+              <Link 
+                key={cat}
+                href={`/berita?kategori=${encodeURIComponent(slug)}`} 
+                className={`berita-filter-pill ${isActive ? 'active' : ''}`}
+              >
+                {cat}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
       {currentArticles.length > 0 ? (
