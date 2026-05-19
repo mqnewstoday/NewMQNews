@@ -521,7 +521,7 @@
 @media (max-width: 768px) {
   /* Aligns page spacing and margins with header and footer perfectly */
   .settings-page {
-    padding-top: var(--space-md) !important;
+    padding-top: var(--space-xl) !important;
   }
 
   .settings-container {
