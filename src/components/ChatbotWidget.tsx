@@ -44,6 +44,10 @@ export default function ChatbotWidget() {
     return () => clearInterval(timer);
   }, [countdown]);
 
+  const [position, setPosition] = useState({ x: -1, y: -1 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, y: 0 });
+
   // Focus input on toggle open
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -51,7 +55,105 @@ export default function ChatbotWidget() {
     }
   }, [isOpen]);
 
-  const handleToggle = () => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('.chatbot-fab') && !target.closest('.chatbot-window__header')) {
+      return;
+    }
+    if (target.closest('.chatbot-window__close') || target.closest('svg') && target.closest('.chatbot-window__close')) {
+      return;
+    }
+
+    setIsDragging(false);
+    const container = document.getElementById('draggable-chatbot');
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    dragStart.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const newX = moveEvent.clientX - dragStart.current.x;
+      const newY = moveEvent.clientY - dragStart.current.y;
+      
+      const distance = Math.sqrt(
+        Math.pow(moveEvent.clientX - e.clientX, 2) + 
+        Math.pow(moveEvent.clientY - e.clientY, 2)
+      );
+      if (distance > 5) {
+        setIsDragging(true);
+      }
+
+      const clampedX = Math.max(10, Math.min(window.innerWidth - rect.width - 10, newX));
+      const clampedY = Math.max(10, Math.min(window.innerHeight - rect.height - 10, newY));
+
+      setPosition({ x: clampedX, y: clampedY });
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('.chatbot-fab') && !target.closest('.chatbot-window__header')) {
+      return;
+    }
+    if (target.closest('.chatbot-window__close')) {
+      return;
+    }
+
+    setIsDragging(false);
+    const container = document.getElementById('draggable-chatbot');
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const touch = e.touches[0];
+    dragStart.current = {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
+    };
+
+    const handleTouchMove = (moveEvent: TouchEvent) => {
+      const touchMove = moveEvent.touches[0];
+      const newX = touchMove.clientX - dragStart.current.x;
+      const newY = touchMove.clientY - dragStart.current.y;
+
+      const distance = Math.sqrt(
+        Math.pow(touchMove.clientX - touch.clientX, 2) + 
+        Math.pow(touchMove.clientY - touch.clientY, 2)
+      );
+      if (distance > 5) {
+        setIsDragging(true);
+      }
+
+      const clampedX = Math.max(10, Math.min(window.innerWidth - rect.width - 10, newX));
+      const clampedY = Math.max(10, Math.min(window.innerHeight - rect.height - 10, newY));
+
+      setPosition({ x: clampedX, y: clampedY });
+    };
+
+    const handleTouchEnd = () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
+  };
+
+  const handleToggle = (e?: React.MouseEvent) => {
+    if (isDragging) {
+      if (e) e.preventDefault();
+      return;
+    }
     setIsOpen(!isOpen);
   };
 
@@ -139,7 +241,24 @@ export default function ChatbotWidget() {
   };
 
   return (
-    <div className="chatbot-widget-container">
+    <div 
+      id="draggable-chatbot"
+      className="chatbot-widget-container"
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+      style={
+        position.x !== -1 
+          ? { 
+              left: `${position.x}px`, 
+              top: `${position.y}px`, 
+              bottom: 'auto', 
+              right: 'auto', 
+              cursor: 'grab',
+              touchAction: 'none'
+            } 
+          : { cursor: 'grab', touchAction: 'none' }
+      }
+    >
       {/* Floating Action Button (FAB) */}
       <button 
         className={`chatbot-fab ${isOpen ? 'chatbot-fab--active' : ''}`}
