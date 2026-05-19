@@ -12,6 +12,7 @@ interface NotificationItem {
   date: string;
   slug: string;
   category: string;
+  imageUrl?: string;
 }
 
 export default function NotifikasiPage() {
@@ -79,7 +80,7 @@ export default function NotifikasiPage() {
   useEffect(() => {
     const fetchLiveFeed = async () => {
       try {
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=0&single=true&output=csv';
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTOAltvE7tpJsTkKbqMoqLZe-7K9cGk_uPUqeigV7qvWUm5crdAiOJ_hNAvchnjNrE8cA0F-ybuZhKd/pub?gid=1630354903&single=true&output=csv';
         const res = await fetch(SHEET_URL);
         if (!res.ok) throw new Error('Network response not ok');
         const csvText = await res.text();
@@ -130,50 +131,61 @@ export default function NotifikasiPage() {
 
         const headers = rows[0]?.map(h => (h || '').trim().toLowerCase()) || [];
         const judulIdx = headers.indexOf('judul');
-        const tglIdx = headers.indexOf('tanggal');
-        const isiIdx = headers.indexOf('isi');
-        const katIdx = headers.indexOf('kategori');
+        const tglIdx = headers.indexOf('timestamp');
+        const pesanIdx = headers.indexOf('pesan');
+        const imgIdx = headers.indexOf('link gambar');
+        const linkIdx = headers.indexOf('link berita');
+        const statusIdx = headers.indexOf('status');
 
         const items: NotificationItem[] = [];
         
-        // Reverse array to show newest articles first, take up to 5 items
+        // Reverse array to show newest articles first, take up to 10 items
         for (let i = rows.length - 1; i > 0; i--) {
           const row = rows[i];
           if (!row || row.length === 0) continue;
 
-          let title = (judulIdx >= 0 && row[judulIdx] ? row[judulIdx] : '').trim();
-          title = title.replace(/<[^>]+>/g, '').trim();
-          if (!title || title.length < 5) continue;
+          // HANYA tampilkan notifikasi yang statusnya "TERKIRIM"
+          const status = (statusIdx >= 0 && row[statusIdx] ? row[statusIdx] : '').trim().toUpperCase();
+          if (status !== 'TERKIRIM') continue;
+
+          const title = (judulIdx >= 0 && row[judulIdx] ? row[judulIdx] : '').trim();
+          if (!title) continue;
 
           const rawDate = (tglIdx >= 0 && row[tglIdx] ? row[tglIdx] : '').trim();
-          const isi = (isiIdx >= 0 && row[isiIdx] ? row[isiIdx] : '').trim();
-          const category = (katIdx >= 0 && row[katIdx] ? row[katIdx] : 'Geopolitik').trim().split(',')[0];
+          const pesan = (pesanIdx >= 0 && row[pesanIdx] ? row[pesanIdx] : '').trim();
+          const imageUrl = (imgIdx >= 0 && row[imgIdx] ? row[imgIdx] : '').trim();
+          const linkBerita = (linkIdx >= 0 && row[linkIdx] ? row[linkIdx] : '').trim();
           
-          // Generate simple slug matching Next.js slugs
-          const slug = title.toLowerCase()
-            .replace(/[^\w\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-')
-            .substring(0, 80)
-            .replace(/^-+|-+$/g, '');
-
-          // Strip HTML tags for feed excerpt
-          const excerpt = isi
-            .replace(/<[^>]+>/g, '')
-            .replace(/\s+/g, ' ')
-            .substring(0, 110)
-            .trim() + '...';
+          // Parsing URL berita untuk redirect internal/eksternal
+          let slug = '/';
+          if (linkBerita) {
+            try {
+              if (linkBerita.startsWith('/') || linkBerita.startsWith('http')) {
+                if (linkBerita.includes('mqnewstoday.my.id')) {
+                  const urlObj = new URL(linkBerita);
+                  slug = urlObj.pathname + urlObj.search;
+                } else {
+                  slug = linkBerita;
+                }
+              } else {
+                slug = linkBerita;
+              }
+            } catch (e) {
+              slug = linkBerita;
+            }
+          }
 
           items.push({
             id: String(i),
             title,
-            excerpt,
+            excerpt: pesan,
             date: rawDate || new Date().toLocaleDateString('id-ID'),
             slug,
-            category
+            category: 'Pengumuman',
+            imageUrl
           });
 
-          if (items.length >= 5) break;
+          if (items.length >= 10) break;
         }
 
         setFeedItems(items);
@@ -501,30 +513,50 @@ function slugify(text) {
               </div>
             ) : feedItems.length > 0 ? (
               <div className="feed-list">
-                {feedItems.map((item) => (
-                  <Link href={`/artikel/${item.slug}`} key={item.id} className="feed-item">
-                    <div className="feed-item-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                      </svg>
-                    </div>
-                    <div className="feed-item-content">
-                      <span className="feed-item-title">{item.title}</span>
-                      <span className="feed-item-desc">{item.excerpt}</span>
-                      <div className="feed-item-meta">
-                        <span style={{ color: 'var(--color-primary)' }}>{item.category}</span>
-                        <span>•</span>
-                        <span>{item.date}</span>
+                {feedItems.map((item) => {
+                  const targetHref = (item.slug.startsWith('/') || item.slug.startsWith('http'))
+                    ? item.slug
+                    : `/artikel/${item.slug}`;
+                  
+                  return (
+                    <Link href={targetHref} key={item.id} className="feed-item">
+                      <div className="feed-item-icon">
+                        {item.imageUrl ? (
+                          <img 
+                            src={item.imageUrl} 
+                            alt="" 
+                            className="feed-item-thumb" 
+                            style={{ 
+                              width: '40px', 
+                              height: '40px', 
+                              borderRadius: 'var(--radius-sm)', 
+                              objectFit: 'cover' 
+                            }} 
+                          />
+                        ) : (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                          </svg>
+                        )}
                       </div>
-                    </div>
-                    <div className="feed-item-arrow">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m9 18 6-6-6-6" />
-                      </svg>
-                    </div>
-                  </Link>
-                ))}
+                      <div className="feed-item-content">
+                        <span className="feed-item-title">{item.title}</span>
+                        <span className="feed-item-desc">{item.excerpt}</span>
+                        <div className="feed-item-meta">
+                          <span style={{ color: 'var(--color-primary)' }}>{item.category}</span>
+                          <span>•</span>
+                          <span>{item.date}</span>
+                        </div>
+                      </div>
+                      <div className="feed-item-arrow">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m9 18 6-6-6-6" />
+                        </svg>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             ) : (
               <div className="feed-empty">
