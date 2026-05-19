@@ -711,19 +711,9 @@
     display: none !important;
   }
 
-  /* Mobile Clock - Visible on Mobile Only */
+  /* Mobile Clock - Hidden on Mobile to prioritize Logo & Hamburger space */
   .header__mobile-clock {
-    display: block;
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: var(--color-primary);
-    background: var(--color-bg-alt);
-    border: 1.5px solid var(--color-border);
-    padding: 5px 12px;
-    border-radius: var(--radius-full);
-    font-family: monospace;
-    letter-spacing: 0.02em;
-    box-shadow: var(--shadow-sm);
+    display: none !important;
   }
 }
 
