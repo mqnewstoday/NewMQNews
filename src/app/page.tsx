@@ -16,17 +16,19 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero Banner Slider */}
-      {banners && banners.length > 0 && (
-        <BannerSlider banners={banners} />
-      )}
-
       {/* Main Content & Sidebar Grid */}
-      <section className="home-content section" id="berita-terupdate">
+      <section className="home-content section" id="berita-terupdate" style={{ paddingTop: 'var(--space-xl)' }}>
         <div className="container">
           <div className="grid-main-sidebar">
             {/* Left Column (News + Audio) */}
             <div>
+              {/* Hero Banner Slider (Moved inside left column for stunning grid alignment!) */}
+              {banners && banners.length > 0 && (
+                <div className="home-hero-banner-wrapper" style={{ marginBottom: 'var(--space-xl)' }}>
+                  <BannerSlider banners={banners} />
+                </div>
+              )}
+
               {/* Berita Terupdate Section Header */}
               <div className="section-header">
                 <h2 className="section-title">Berita Terupdate</h2>
