@@ -2,6 +2,11 @@
    Auth Pages — Centered Floating Card Design
    ============================================================ */
 
+/* Remove global header spacer padding on auth pages */
+#main-content:has(.auth-page__backdrop) {
+  padding-top: 0 !important;
+}
+
 /* Full page backdrop */
 .auth-page__backdrop {
   display: flex;
