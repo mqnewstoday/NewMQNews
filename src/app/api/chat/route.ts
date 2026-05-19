@@ -6,19 +6,10 @@ import path from 'path';
 // Memory cache for knowledge base content to prevent repeating disk read I/O
 let cachedKnowledgeBase: string | null = null;
 
-// Load Knowledge Base
-const loadKnowledgeBase = (): string => {
-  if (cachedKnowledgeBase) {
-    return cachedKnowledgeBase;
-  }
-
+// Helper function to read and optimize file content
+const readAndOptimizeFile = (filename: string): string | null => {
   try {
-    // Try to load the full 462KB book first
-    let filePath = path.join(process.cwd(), 'src/data/Mimpi Muhammad Qasim Indo Malay.txt');
-    if (!fs.existsSync(filePath)) {
-      filePath = path.join(process.cwd(), 'src/data/buku_mimpi.txt');
-    }
-
+    const filePath = path.join(process.cwd(), 'src/data', filename);
     if (fs.existsSync(filePath)) {
       let content = fs.readFileSync(filePath, 'utf-8');
       
@@ -30,13 +21,51 @@ const loadKnowledgeBase = (): string => {
         .replace(/\n\s*\n+/g, '\n')
         .replace(/[ \t]+/g, ' ')
         .trim();
-
-      console.log(`Successfully loaded and optimized knowledge base: ${content.length} characters.`);
-      cachedKnowledgeBase = content;
-      return cachedKnowledgeBase;
+      return content;
     }
   } catch (error) {
-    console.error('Failed to load knowledge base:', error);
+    console.error(`Failed to load file ${filename}:`, error);
+  }
+  return null;
+};
+
+// Load Knowledge Base (combining the main dream book and both Pakistan speeches)
+const loadKnowledgeBase = (): string => {
+  if (cachedKnowledgeBase) {
+    return cachedKnowledgeBase;
+  }
+
+  try {
+    // 1. Load Main Book
+    let bookContent = readAndOptimizeFile('Mimpi Muhammad Qasim Indo Malay.txt');
+    if (!bookContent) {
+      bookContent = readAndOptimizeFile('buku_mimpi.txt') || 'Gagal memuat basis data buku mimpi Muhammad Qasim.';
+    }
+
+    // 2. Load Speech 1
+    const speech1Content = readAndOptimizeFile('Pidato Pertama Muhammad Qasim di Pakistan.txt') || '';
+
+    // 3. Load Speech 2
+    const speech2Content = readAndOptimizeFile('Pidato Kedua Muhammad Qasim di Pakistan.txt') || '';
+
+    // Combine them beautifully with descriptive headers
+    let combined = `=== [DOKUMEN 1: BUKU KUMPULAN MIMPI MUHAMMAD QASIM INDO MALAY] ===\n${bookContent}\n\n`;
+    
+    if (speech1Content) {
+      combined += `=== [DOKUMEN 2: PIDATO PERTAMA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech1Content}\n\n`;
+    }
+    
+    if (speech2Content) {
+      combined += `=== [DOKUMEN 3: PIDATO KEDUA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech2Content}\n\n`;
+    }
+
+    combined = combined.trim();
+
+    console.log(`Successfully loaded and optimized full knowledge base (combined): ${combined.length} characters.`);
+    cachedKnowledgeBase = combined;
+    return cachedKnowledgeBase;
+  } catch (error) {
+    console.error('Failed to load combined knowledge base:', error);
   }
   return 'Gagal memuat basis data buku mimpi Muhammad Qasim.';
 };
@@ -69,7 +98,7 @@ export async function POST(request: Request) {
 
     // Construct the System Instruction
     const systemInstruction = `
-Anda adalah AI pendamping resmi untuk portal berita "MQ News Today". Tugas Anda adalah menjawab pertanyaan pembaca secara cerdas, ramah, bijaksana, dan akurat berdasarkan basis pengetahuan resmi mengenai mimpi-mimpi Muhammad Qasim bin Abdul Karim berikut ini:
+Anda adalah AI pendamping resmi untuk portal berita "MQ News Today". Tugas Anda adalah menjawab pertanyaan pembaca secara cerdas, ramah, bijaksana, dan akurat berdasarkan basis pengetahuan resmi mengenai kumpulan mimpi Muhammad Qasim bin Abdul Karim serta naskah pidato-pidatonya di Pakistan berikut ini:
 
 =========================================
 KNOWLEDGE BASE (BASIS PENGETAHUAN RESMI):
