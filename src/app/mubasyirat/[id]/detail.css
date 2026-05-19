@@ -68,8 +68,17 @@
   margin-top: var(--space-md);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .mubasyirat-detail {
+    padding-top: var(--space-md);
+  }
+
+  .mubasyirat-detail__title {
+    font-size: 1.35rem !important;
+  }
+
   .mubasyirat-detail__related .mubasyirat-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
   }
 }

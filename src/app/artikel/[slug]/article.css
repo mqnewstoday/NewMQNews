@@ -257,8 +257,12 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .article-page {
+    padding-top: var(--space-md) !important;
+  }
+
   .article-page__title {
-    font-size: 1.6rem;
+    font-size: 1.35rem !important;
   }
 
   .article-page__meta {
@@ -268,7 +272,7 @@
   }
 
   .article-page__related-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
   }
 }

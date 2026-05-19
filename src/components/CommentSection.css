@@ -201,15 +201,74 @@
   margin: 0;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .comment-section {
+    margin-top: var(--space-xl) !important;
+    padding-top: var(--space-md) !important;
+  }
+  
+  .comment-section__title {
+    font-size: 1.15rem !important;
+    margin-bottom: var(--space-md) !important;
+  }
+  
+  .comment-form {
+    padding: var(--space-md) !important;
+    margin-bottom: var(--space-lg) !important;
+    border-radius: var(--radius-md) !important;
+  }
+  
+  .comment-form__title {
+    font-size: 0.95rem !important;
+    margin-bottom: var(--space-sm) !important;
+  }
+  
+  .comment-form__input {
+    padding: 8px 12px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .comment-form__textarea {
+    min-height: 80px !important;
+  }
+  
+  .comment-form__actions {
+    margin-top: var(--space-sm) !important;
+    gap: var(--space-sm) !important;
+  }
+  
+  .comment-form__submit-btn {
+    padding: 8px 16px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .comment-list {
+    gap: var(--space-sm) !important;
+  }
+  
   .comment-bubble {
-    padding: var(--space-md);
+    padding: 10px !important;
+    gap: 8px !important;
+    border-radius: var(--radius-md) !important;
   }
   
   .comment-bubble__avatar {
-    width: 38px;
-    height: 38px;
-    font-size: 0.95rem;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .comment-bubble__name {
+    font-size: 0.82rem !important;
+  }
+  
+  .comment-bubble__time {
+    font-size: 0.72rem !important;
+  }
+  
+  .comment-bubble__text {
+    font-size: 0.82rem !important;
+    line-height: 1.4 !important;
   }
 }
 

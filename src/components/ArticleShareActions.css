@@ -111,18 +111,33 @@
   transform: translateY(-1px);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .article-share-actions {
-    gap: var(--space-sm);
-    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
   }
   
   .share-action-btn,
   .article-share-actions .bookmark-btn {
-    flex: 1;
-    justify-content: center;
-    padding: 10px 12px !important;
-    font-size: 0.8rem !important;
-    height: 40px !important;
+    flex: none !important;
+    width: 100% !important;
+    height: 36px !important;
+    padding: 6px 4px !important;
+    font-size: 0.72rem !important;
+    gap: 4px !important;
+    justify-content: center !important;
+  }
+
+  .share-action-btn__icon,
+  .article-share-actions .bookmark-btn__icon {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .share-action-btn__label,
+  .article-share-actions .bookmark-btn__label {
+    font-size: 0.72rem !important;
   }
 }
