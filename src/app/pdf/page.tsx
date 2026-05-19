@@ -2,6 +2,7 @@ import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 import { fetchPdfBooks } from '@/utils/sheetsApi';
 import PdfSmartBack from '@/components/PdfSmartBack';
+import PdfBooksGrid from '@/components/PdfBooksGrid';
 import './pdf.css';
 
 export const metadata = {
@@ -78,34 +79,7 @@ export default async function PdfPage({
         </p>
 
         {filteredBooks && filteredBooks.length > 0 ? (
-          <div className="pdf-books-grid">
-            {filteredBooks.map((book) => (
-              <div key={book.id} className="pdf-book-card" id={`pdf-book-${book.id}`}>
-                <div className="pdf-book-card__img-container">
-                  <img 
-                    src={book.imageUrl} 
-                    alt={book.name} 
-                    className="pdf-book-card__img"
-                    loading="lazy"
-                  />
-                </div>
-                <h3 className="pdf-book-card__title">{book.name}</h3>
-                <a 
-                  href={book.pdfUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="pdf-book-card__btn"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                  Unduh / View PDF
-                </a>
-              </div>
-            ))}
-          </div>
+          <PdfBooksGrid books={filteredBooks} />
         ) : (
           <div className="pdf-books-empty" style={{ background: 'var(--color-bg-card)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-xl)', padding: 'var(--space-4xl) var(--space-xl)', textAlign: 'center' }}>
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 'var(--space-md)', opacity: 0.7 }}>
