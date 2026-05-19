@@ -237,11 +237,21 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
+.chatbot-msg__bubble p,
+.chatbot-msg__bubble li,
+.chatbot-msg__bubble strong {
+  color: inherit !important;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
 .chatbot-msg--user .chatbot-msg__bubble {
-  background: var(--color-primary, #9d1b1b);
-  color: #ffffff;
+  background: linear-gradient(135deg, #ef4444, #dc2626); /* Vibrant bright red brand gradient */
+  color: #ffffff !important;
   border-bottom-right-radius: 4px;
-  box-shadow: 0 4px 12px rgba(157, 27, 27, 0.15);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
 .chatbot-msg--assistant .chatbot-msg__bubble {
@@ -253,7 +263,7 @@
 
 [data-theme="dark"] .chatbot-msg--assistant .chatbot-msg__bubble {
   background: rgba(30, 41, 59, 0.5);
-  color: #f8fafc;
+  color: #f8fafc !important;
 }
 
 /* Typing Indicator Animation */
