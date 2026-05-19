@@ -1,43 +1,9 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import './Footer.css';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    };
-  }, []);
-
-  const handleInstallApp = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log(`User response to PWA prompt: ${outcome}`);
-      setDeferredPrompt(null);
-    } else {
-      alert(
-        "Untuk mengunduh dan memasang aplikasi PWA 'MQ News Today':\n\n" +
-        "• Di Chrome / Edge: Klik tombol 'Instal Aplikasi' pada bilah alamat browser Anda (ikon monitor/panah) atau temukan di menu tiga titik browser.\n" +
-        "• Di iOS Safari (iPhone / iPad): Ketuk tombol 'Share' (Bagi) di bagian bawah layar browser, lalu pilih 'Add to Home Screen' (Tambah ke Layar Utama).\n" +
-        "• Di Android Firefox / Opera: Klik menu tiga titik di sebelah kanan atas browser, lalu pilih 'Pasang' / 'Install'."
-      );
-    }
-  };
 
   return (
     <footer className="footer" id="main-footer">
@@ -95,11 +61,6 @@ export default function Footer() {
               <li><Link href="/pdf">PDF</Link></li>
               <li><Link href="/audio">Audio</Link></li>
               <li><Link href="/bookmark">Bookmark</Link></li>
-              <li>
-                <a href="#" onClick={handleInstallApp} className="footer__install-btn" style={{ fontWeight: 'bold', color: '#80df06' }}>
-                  Get App 📲
-                </a>
-              </li>
             </ul>
           </div>
 

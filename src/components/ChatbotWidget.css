@@ -8,12 +8,6 @@
   right: 24px;
   z-index: 999999 !important;
   font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
-  cursor: grab;
-  user-select: none;
-}
-
-.chatbot-widget-container:active {
-  cursor: grabbing;
 }
 
 /* --- Floating Action Button (FAB) --- */
