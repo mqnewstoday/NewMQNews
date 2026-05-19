@@ -1,0 +1,4 @@
+# Configuration for Netlify Next.js App Router Deployment
+[build]
+  command = "npm run build"
+  publish = ".next"
