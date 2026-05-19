@@ -480,39 +480,202 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .profile-details-grid {
-    grid-template-columns: 1fr;
+  /* Aligns page spacing and margins with header and footer perfectly */
+  .profile-page {
+    padding-top: var(--space-xl) !important;
   }
-  
+
+  .profile-container {
+    width: 100% !important;
+  }
+
+  .profile-card {
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-md) !important;
+  }
+
+  .profile-cover {
+    height: 120px !important;
+  }
+
+  .profile-avatar-container {
+    width: 110px !important;
+    height: 110px !important;
+    border-width: 4px !important;
+    margin-bottom: var(--space-sm) !important;
+  }
+
+  .profile-avatar-placeholder {
+    font-size: 2.2rem !important;
+  }
+
   .profile-header-wrapper {
-    padding: 0 var(--space-md) var(--space-lg);
+    margin-top: -55px !important;
+    padding: 0 12px 14px !important;
   }
-  
+
+  .profile-name-row {
+    gap: var(--space-xs) !important;
+    margin-bottom: 2px !important;
+  }
+
   .profile-name {
-    font-size: 1.5rem;
+    font-size: 1.3rem !important;
   }
-  
-  .image-upload-wrapper {
-    flex-direction: column;
-    text-align: center;
-    align-items: center;
-    gap: 6px;
-    padding: var(--space-sm);
+
+  .profile-badge {
+    padding: 2px 8px !important;
+    font-size: 0.65rem !important;
   }
-  
-  .custom-file-upload-btn {
-    max-width: 100%;
+
+  .profile-email {
+    font-size: 0.85rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  .profile-bio {
+    font-size: 0.82rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 12px !important;
+    padding: 0 4px !important;
+  }
+
+  .profile-edit-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Details Grid */
+  .profile-details-section {
+    padding: 14px 12px !important;
+  }
+
+  .profile-details-title {
+    font-size: 1.05rem !important;
+    margin-bottom: 12px !important;
+  }
+
+  .profile-details-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .profile-detail-item {
+    padding: 10px !important;
+    gap: 10px !important;
+    border-radius: var(--radius-sm) !important;
+  }
+
+  /* Target span 2 columns on joining date to span only 1 on mobile */
+  .profile-detail-item[style*="grid-column"], 
+  .profile-detail-item[style*="gridColumn"] {
+    grid-column: span 1 !important;
+  }
+
+  .profile-detail-icon {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: var(--radius-sm) !important;
+  }
+
+  .profile-detail-icon svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .profile-detail-label {
+    font-size: 0.65rem !important;
+  }
+
+  .profile-detail-value {
+    font-size: 0.85rem !important;
+    word-break: break-all !important;
+  }
+
+  /* Modal responsive adjustments */
+  .modal-overlay {
+    padding: 10px !important;
   }
 
   .modal-content {
-    max-height: 90vh; /* Adjust slightly for mobile screen heights */
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    border-radius: var(--radius-md) !important;
   }
-}
 
-@media (max-width: 576px) {
+  .modal-header {
+    padding: 10px 14px !important;
+  }
+
+  .modal-title {
+    font-size: 1rem !important;
+  }
+
+  .modal-body {
+    padding: 12px 14px !important;
+  }
+
   .form-row-2 {
-    grid-template-columns: 1fr;
-    gap: 0;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+
+  .form-group {
+    margin-bottom: 8px !important;
+  }
+
+  .form-label {
+    font-size: 0.74rem !important;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 8px 10px !important;
+    font-size: 0.85rem !important;
+    height: 38px !important;
+  }
+
+  .form-textarea {
+    height: auto !important;
+    min-height: 50px !important;
+  }
+
+  .image-upload-wrapper {
+    flex-direction: row !important;
+    text-align: left !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .upload-preview-container {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .custom-file-upload-btn {
+    padding: 4px 8px !important;
+    font-size: 0.72rem !important;
+  }
+
+  .upload-info-text {
+    font-size: 0.65rem !important;
+  }
+
+  .modal-footer {
+    padding: 8px 14px !important;
+    gap: 8px !important;
+  }
+
+  .modal-footer .btn {
+    flex: 1 !important;
+    padding: 9px !important;
+    font-size: 0.8rem !important;
+    justify-content: center !important;
   }
 }
 

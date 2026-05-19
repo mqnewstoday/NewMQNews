@@ -84,30 +84,51 @@ export default function NotifikasiPage() {
         if (!res.ok) throw new Error('Network response not ok');
         const csvText = await res.text();
         
-        // Simple CSV row parser
-        const rows = csvText.split(/\r?\n/).map(row => {
-          // Splitting by comma handling basic quotes
-          const result: string[] = [];
-          let current = '';
-          let inQuotes = false;
-          for (let i = 0; i < row.length; i++) {
-            const char = row[i];
-            if (char === '"') {
-              inQuotes = !inQuotes;
-            } else if (char === ',' && !inQuotes) {
-              result.push(current);
-              current = '';
+        // Robust quote-aware and multiline-aware CSV parser
+        const rows: string[][] = [];
+        let currentRow: string[] = [];
+        let currentCell = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < csvText.length; i++) {
+          const char = csvText[i];
+          const nextChar = csvText[i + 1];
+          
+          if (char === '"') {
+            if (inQuotes && nextChar === '"') {
+              // Escaped double quote inside double quotes ("") -> append single double quote
+              currentCell += '"';
+              i++; // Skip the next quote character
             } else {
-              current += char;
+              // Toggle quote state
+              inQuotes = !inQuotes;
             }
+          } else if (char === ',' && !inQuotes) {
+            // End of cell
+            currentRow.push(currentCell);
+            currentCell = '';
+          } else if ((char === '\r' || char === '\n') && !inQuotes) {
+            // End of row
+            if (char === '\r' && nextChar === '\n') {
+              i++; // Skip \n
+            }
+            currentRow.push(currentCell);
+            rows.push(currentRow);
+            currentRow = [];
+            currentCell = '';
+          } else {
+            currentCell += char;
           }
-          result.push(current);
-          return result;
-        });
+        }
+        // Push the last cell/row if any
+        if (currentCell !== '' || currentRow.length > 0) {
+          currentRow.push(currentCell);
+          rows.push(currentRow);
+        }
 
         if (rows.length < 2) throw new Error('Data empty');
 
-        const headers = rows[0].map(h => h.trim().toLowerCase());
+        const headers = rows[0]?.map(h => (h || '').trim().toLowerCase()) || [];
         const judulIdx = headers.indexOf('judul');
         const tglIdx = headers.indexOf('tanggal');
         const isiIdx = headers.indexOf('isi');
@@ -118,12 +139,15 @@ export default function NotifikasiPage() {
         // Reverse array to show newest articles first, take up to 5 items
         for (let i = rows.length - 1; i > 0; i--) {
           const row = rows[i];
-          const title = (judulIdx >= 0 ? row[judulIdx] : '').trim();
+          if (!row || row.length === 0) continue;
+
+          let title = (judulIdx >= 0 && row[judulIdx] ? row[judulIdx] : '').trim();
+          title = title.replace(/<[^>]+>/g, '').trim();
           if (!title || title.length < 5) continue;
 
-          const rawDate = (tglIdx >= 0 ? row[tglIdx] : '').trim();
-          const isi = (isiIdx >= 0 ? row[isiIdx] : '').trim();
-          const category = (katIdx >= 0 ? row[katIdx] : 'Geopolitik').trim().split(',')[0];
+          const rawDate = (tglIdx >= 0 && row[tglIdx] ? row[tglIdx] : '').trim();
+          const isi = (isiIdx >= 0 && row[isiIdx] ? row[isiIdx] : '').trim();
+          const category = (katIdx >= 0 && row[katIdx] ? row[katIdx] : 'Geopolitik').trim().split(',')[0];
           
           // Generate simple slug matching Next.js slugs
           const slug = title.toLowerCase()
@@ -325,13 +349,11 @@ function slugify(text) {
   };
 
   return (
-    <div className="notif-page">
-      <div className="container section">
-        
-        {/* Smart Back Button */}
-        <BackButton />
+    <div className="notif-page container section">
+      {/* Smart Back Button */}
+      <BackButton />
 
-        <div className="notif-container">
+      <div className="notif-container">
           
           {/* Main Control Subscription Card */}
           <div className="notif-card animate-fade-in-up">
@@ -510,9 +532,7 @@ function slugify(text) {
               </div>
             )}
           </div>
-
         </div>
-      </div>
 
       {/* Global Notification Toast */}
       {toastMessage && (

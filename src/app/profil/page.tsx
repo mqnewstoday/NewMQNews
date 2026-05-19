@@ -249,18 +249,16 @@ export default function ProfilePage() {
   // Loading skeleton view
   if (authLoading || dataLoading) {
     return (
-      <div className="profile-page">
-        <div className="container section">
-          <div className="skeleton" style={{ width: '80px', height: '28px', borderRadius: '4px', marginBottom: '24px' }}></div>
-          <div className="profile-container">
-            <div className="profile-card" style={{ height: '400px', display: 'flex', flexDirection: 'column' }}>
-              <div className="skeleton" style={{ height: '180px', width: '100%' }}></div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '-80px', flex: 1, padding: '24px' }}>
-                <div className="skeleton" style={{ width: '150px', height: '150px', borderRadius: '50%', marginBottom: '16px' }}></div>
-                <div className="skeleton" style={{ width: '220px', height: '24px', borderRadius: '4px', marginBottom: '8px' }}></div>
-                <div className="skeleton" style={{ width: '160px', height: '16px', borderRadius: '4px', marginBottom: '24px' }}></div>
-                <div className="skeleton" style={{ width: '120px', height: '40px', borderRadius: '8px' }}></div>
-              </div>
+      <div className="profile-page container section">
+        <div className="skeleton" style={{ width: '80px', height: '28px', borderRadius: '4px', marginBottom: '24px' }}></div>
+        <div className="profile-container">
+          <div className="profile-card" style={{ height: '400px', display: 'flex', flexDirection: 'column' }}>
+            <div className="skeleton" style={{ height: '180px', width: '100%' }}></div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '-80px', flex: 1, padding: '24px' }}>
+              <div className="skeleton" style={{ width: '150px', height: '150px', borderRadius: '50%', marginBottom: '16px' }}></div>
+              <div className="skeleton" style={{ width: '220px', height: '24px', borderRadius: '4px', marginBottom: '8px' }}></div>
+              <div className="skeleton" style={{ width: '160px', height: '16px', borderRadius: '4px', marginBottom: '24px' }}></div>
+              <div className="skeleton" style={{ width: '120px', height: '40px', borderRadius: '8px' }}></div>
             </div>
           </div>
         </div>
@@ -271,36 +269,33 @@ export default function ProfilePage() {
   // Access Denied / Unauthenticated Screen
   if (!user) {
     return (
-      <div className="profile-page">
-        <div className="container section">
-          <div className="access-denied-container">
-            <div className="access-denied-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-            </div>
-            <h2 className="access-denied-title">Akses Terbatas</h2>
-            <p className="access-denied-desc">
-              Silakan masuk atau daftarkan akun Anda terlebih dahulu untuk melihat dan mengelola halaman profil Anda.
-            </p>
-            <Link href="/login" className="btn btn-primary">
-              Masuk ke Akun
-            </Link>
+      <div className="profile-page container section">
+        <div className="access-denied-container">
+          <div className="access-denied-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
           </div>
+          <h2 className="access-denied-title">Akses Terbatas</h2>
+          <p className="access-denied-desc">
+            Silakan masuk atau daftarkan akun Anda terlebih dahulu untuk melihat dan mengelola halaman profil Anda.
+          </p>
+          <Link href="/login" className="btn btn-primary">
+            Masuk ke Akun
+          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="profile-page">
-      <div className="container section">
-        {/* Consistent Smart Back Button */}
-        <BackButton />
+    <div className="profile-page container section">
+      {/* Consistent Smart Back Button */}
+      <BackButton />
 
-        <div style={{ marginTop: 'var(--space-sm)' }}>
-          <div className="profile-container animate-fade-in-up">
+      <div style={{ marginTop: 'var(--space-sm)' }}>
+        <div className="profile-container animate-fade-in-up">
             {/* Cover and Main Details Card */}
             <div className="profile-card">
               {/* Cover Banner */}
@@ -440,7 +435,6 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-      </div>
 
       {/* Edit Profile Modal Popup via React Portal (Always perfectly fixed relative to body) */}
       {isModalOpen && mounted && createPortal(
