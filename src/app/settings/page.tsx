@@ -248,13 +248,12 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="settings-page">
-      <div className="container section">
-        {/* Back Button */}
-        <BackButton />
+    <div className="settings-page container section">
+      {/* Back Button */}
+      <BackButton />
 
-        <div className="settings-container">
-          <div className="settings-grid animate-fade-in-up">
+      <div className="settings-container">
+        <div className="settings-grid animate-fade-in-up">
             
             {/* Display & Layout Settings */}
             <div className="settings-section-card">
@@ -526,7 +525,6 @@ export default function SettingsPage() {
 
           </div>
         </div>
-      </div>
 
       {/* Cache Clearing Simulated Modal Popup */}
       {cacheLoading && mounted && createPortal(

@@ -514,3 +514,272 @@
 [data-theme="dark"] .form-input:focus {
   box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.1);
 }
+
+/* ============================================================
+   RESPONSIVE DESIGN SYSTEM OVERRIDES (MOBILE & TABLET MODE)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Aligns page spacing and margins with header and footer perfectly */
+  .settings-page {
+    padding-top: var(--space-md) !important;
+  }
+
+  .settings-container {
+    margin-top: var(--space-sm) !important;
+  }
+
+  .settings-grid {
+    gap: var(--space-md) !important;
+    margin-bottom: var(--space-xl) !important;
+  }
+
+  /* Compact premium layout inside cards */
+  .settings-section-card {
+    padding: 14px 12px !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .settings-section-title {
+    font-size: 1.15rem !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .settings-section-title svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .settings-section-subtitle {
+    font-size: 0.76rem !important;
+    margin-bottom: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Theme display choices - grid fits perfectly 2 columns */
+  .pref-row {
+    margin-bottom: 14px !important;
+    gap: 6px !important;
+  }
+
+  .pref-label {
+    font-size: 0.85rem !important;
+  }
+
+  .pref-options-grid {
+    gap: 8px !important;
+  }
+
+  /* Theme Row layout (Exactly 2 cards) */
+  .pref-row:nth-of-type(1) .pref-options-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Font size Row layout (Exactly 3 cards) */
+  .pref-row:nth-of-type(2) .pref-options-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Precision card adjustments */
+  .pref-option-card {
+    padding: 10px 4px !important;
+    gap: 6px !important;
+    border-radius: var(--radius-sm) !important;
+    border-width: 1.5px !important;
+  }
+
+  .pref-option-icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .pref-option-icon svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .pref-option-title {
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+  }
+
+  /* Compact desc text within cards to ensure no wrapping */
+  .pref-option-desc {
+    font-size: 0.62rem !important;
+    line-height: 1.25 !important;
+    padding: 0 2px !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  .pref-option-check {
+    top: 4px !important;
+    right: 4px !important;
+    width: 14px !important;
+    height: 14px !important;
+    font-size: 8px !important;
+  }
+
+  /* Text preview box */
+  .font-preview-box {
+    padding: 8px 10px !important;
+    font-size: 0.8rem !important;
+    margin-top: 6px !important;
+    line-height: 1.5 !important;
+  }
+
+  .font-preview-tag {
+    font-size: 0.65rem !important;
+  }
+
+  /* Maintenance: Stack elements vertically */
+  .maintenance-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    text-align: center !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+
+  .maintenance-info {
+    text-align: center !important;
+    gap: 2px !important;
+  }
+
+  .maintenance-title {
+    font-size: 0.88rem !important;
+  }
+
+  .maintenance-desc {
+    font-size: 0.74rem !important;
+    text-align: center !important;
+  }
+
+  .maintenance-row .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Guest Warning block */
+  .settings-guest-card {
+    padding: 14px !important;
+    gap: 10px !important;
+  }
+
+  .settings-guest-text {
+    font-size: 0.78rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .settings-guest-card .btn {
+    width: 100% !important;
+    padding: 10px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Security change password inputs */
+  .security-form-container {
+    margin-bottom: var(--space-lg) !important;
+  }
+
+  .security-form-title {
+    font-size: 0.95rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  .form-group {
+    margin-bottom: 10px !important;
+    gap: 4px !important;
+  }
+
+  .form-label {
+    font-size: 0.78rem !important;
+  }
+
+  .form-input {
+    padding: 8px 10px !important;
+    font-size: 0.85rem !important;
+    height: 38px !important;
+  }
+
+  /* Change Password button container */
+  .security-form-container form > div[style*="justify-content: flex-end"] {
+    margin-top: 12px !important;
+  }
+
+  .security-form-container form button[type="submit"] {
+    width: 100% !important;
+    padding: 10px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Danger Zone Card */
+  .danger-zone-card {
+    padding: 12px !important;
+  }
+
+  .danger-zone-header {
+    font-size: 0.88rem !important;
+    margin-bottom: 6px !important;
+  }
+
+  .danger-zone-desc {
+    font-size: 0.74rem !important;
+    margin-bottom: 10px !important;
+    line-height: 1.5 !important;
+  }
+
+  .btn-danger {
+    width: 100% !important;
+    padding: 10px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Modals and overlay */
+  .security-modal-content {
+    max-width: 95vw !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .security-modal-header {
+    padding: 10px 14px !important;
+  }
+
+  .security-modal-title {
+    font-size: 1rem !important;
+  }
+
+  .security-modal-body {
+    padding: 14px !important;
+  }
+
+  .security-modal-alert {
+    padding: 8px 10px !important;
+    font-size: 0.75rem !important;
+    gap: 6px !important;
+    margin-bottom: 10px !important;
+    line-height: 1.5 !important;
+  }
+
+  .security-modal-prompt {
+    font-size: 0.78rem !important;
+    margin-bottom: 10px !important;
+    line-height: 1.5 !important;
+  }
+
+  .security-modal-footer {
+    padding: 10px 14px !important;
+    gap: 8px !important;
+  }
+
+  .security-modal-footer .btn {
+    flex: 1 !important;
+    padding: 9px !important;
+    font-size: 0.8rem !important;
+    justify-content: center !important;
+  }
+}
