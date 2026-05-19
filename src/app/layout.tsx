@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Header from '@/components/Header';
 import FooterWrapper from '@/components/FooterWrapper';
+import ChatbotWidget from '@/components/ChatbotWidget';
 import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
@@ -91,6 +92,7 @@ export default function RootLayout({
             {children}
           </main>
           <FooterWrapper />
+          <ChatbotWidget />
         </AuthProvider>
       </body>
     </html>
