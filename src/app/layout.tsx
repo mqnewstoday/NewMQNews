@@ -47,6 +47,12 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'MQ News Today — Truth & Clarity',
     description: 'Portal berita yang berdedikasi menyajikan informasi yang sering luput dari media arus utama.',
+    images: ['/LogoMQN144.png'],
+  },
+  icons: {
+    icon: '/LogoMQN144.png',
+    shortcut: '/LogoMQN144.png',
+    apple: '/LogoMQN144.png',
   },
   verification: {
     google: 'YOUR_GOOGLE_VERIFICATION_CODE',
