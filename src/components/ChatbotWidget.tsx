@@ -172,8 +172,8 @@ export default function ChatbotWidget() {
               <span className="chatbot-window__status-dot"></span>
             </div>
             <div className="chatbot-window__title-group">
-              <h4 className="chatbot-window__title">Tanya AI Mimpi Qasim</h4>
-              <span className="chatbot-window__subtitle">Asisten Resmi MQ News</span>
+              <h4 className="chatbot-window__title" style={{ color: '#80df06' }}>Tanya AI Mimpi Muhammad Qasim</h4>
+              <span className="chatbot-window__subtitle">Asisten AI MQ News Today</span>
             </div>
           </div>
           <button className="chatbot-window__close" onClick={handleToggle} aria-label="Tutup">
