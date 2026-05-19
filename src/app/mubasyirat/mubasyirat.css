@@ -175,6 +175,26 @@
 
 @media (max-width: 640px) {
   .mubasyirat-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .mubasyirat-card__thumb {
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  .mubasyirat-card__body {
+    padding: 8px !important;
+  }
+
+  .mubasyirat-card__title {
+    font-size: 0.8rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 4px !important;
+  }
+
+  .mubasyirat-card__excerpt {
+    font-size: 0.72rem !important;
+    line-height: 1.35 !important;
   }
 }

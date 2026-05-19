@@ -483,10 +483,12 @@
   /* Aligns page spacing and margins with header and footer perfectly */
   .profile-page {
     padding-top: var(--space-xl) !important;
+    padding-bottom: var(--space-3xl) !important;
   }
 
   .profile-container {
     width: 100% !important;
+    margin-bottom: var(--space-xl) !important;
   }
 
   .profile-card {
