@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -21,7 +22,8 @@ export default function BookmarkButton({
 }: BookmarkButtonProps) {
   const [bookmarked, setBookmarked] = useState(false);
   const [animating, setAnimating] = useState(false);
-  const { user } = useAuth();
+  const { user, triggerLoginPrompt } = useAuth();
+  const router = useRouter();
 
   const getStorageKey = () => {
     if (type === 'mubasyirat') return 'mq_mubasyirat_bookmarks';
@@ -73,6 +75,14 @@ export default function BookmarkButton({
   const toggleBookmark = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!user) {
+      const confirmLogin = await triggerLoginPrompt();
+      if (confirmLogin) {
+        router.push('/login');
+      }
+      return;
+    }
 
     setAnimating(true);
     setTimeout(() => setAnimating(false), 400);

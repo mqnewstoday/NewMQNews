@@ -33,12 +33,17 @@ export default function Header() {
   const [timeString, setTimeString] = useState('');
   const [dateString, setDateString] = useState('');
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const { user, logout } = useAuth();
   const headerRef = useRef<HTMLElement>(null);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Don't render Header on auth pages at all (prevents hydration mismatch)
   const isAuthPage = pathname === '/login' || pathname === '/daftar' || pathname === '/lupa-sandi';
@@ -285,12 +290,12 @@ export default function Header() {
                 {/* Profile Button Container with Dropdown */}
                 <div className="header__profile-container" ref={profileDropdownRef}>
                   <button 
-                    className={`header__action-btn header__action-btn--profile ${!user?.photoURL ? 'header__action-btn--profile-text' : ''}`} 
+                    className={`header__action-btn header__action-btn--profile ${!(isMounted && user?.photoURL) ? 'header__action-btn--profile-text' : ''}`} 
                     aria-label="Profil Pengguna" 
                     id="profile-btn"
                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                   >
-                    {user?.photoURL ? (
+                    {isMounted && user?.photoURL ? (
                       <img src={user.photoURL} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                     ) : (
                       <span className="header__profile-text">Profil</span>
@@ -300,7 +305,7 @@ export default function Header() {
                   {/* Dropdown menu */}
                   {profileDropdownOpen && (
                     <div className="header__profile-dropdown">
-                      {!user ? (
+                      {!(isMounted && user) ? (
                         <>
                           <Link 
                             href="/login" 
@@ -430,6 +435,7 @@ export default function Header() {
             />
             <div className="header__logo-text">
               <span className="header__logo-name" style={{ fontSize: '1rem' }}>MQ NEWS TODAY</span>
+              <span className="header__logo-tagline" style={{ display: 'block' }}>TRUTH & CLARITY</span>
             </div>
           </Link>
           <button
@@ -451,7 +457,7 @@ export default function Header() {
 
         {/* Mobile Profile Section */}
         <div className="mobile-menu__profile-section">
-          {user ? (
+          {isMounted && user ? (
             <div className="mobile-menu__user-info">
               <div className="mobile-menu__avatar-wrapper">
                 {user.photoURL ? (
@@ -500,35 +506,22 @@ export default function Header() {
           </form>
         </div>
 
-        {/* Mobile Menu & Categories Nav List */}
+        {/* Mobile Menu Nav Grid (2 Columns, Balanced & Compact Text-Only) */}
         <nav className="mobile-menu__nav">
           <div className="mobile-menu__section-label">Menu Utama</div>
-          {NAV_ITEMS.map((item, i) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="mobile-menu__link"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ animationDelay: `${i * 40}ms` }}
-            >
-              {item.label}
-            </Link>
-          ))}
-          
-          <div className="mobile-menu__divider" />
-          
-          <div className="mobile-menu__section-label">Kategori Berita</div>
-          {BERITA_CATEGORIES.map((cat, i) => (
-            <Link
-              key={cat.label}
-              href={cat.href}
-              className="mobile-menu__link mobile-menu__link--sub"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ animationDelay: `${(i + NAV_ITEMS.length) * 40}ms` }}
-            >
-              {cat.label}
-            </Link>
-          ))}
+          <div className="mobile-menu__grid">
+            {NAV_ITEMS.map((item, i) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="mobile-menu__grid-btn"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ animationDelay: `${i * 30}ms` }}
+              >
+                <span className="mobile-menu__grid-label">{item.label}</span>
+              </Link>
+            ))}
+          </div>
         </nav>
 
         {/* Mobile Menu Footer Actions */}
@@ -561,7 +554,7 @@ export default function Header() {
             </Link>
 
             {/* Profile (If Logged In) */}
-            {user && (
+            {isMounted && user && (
               <Link 
                 href="/profil" 
                 className="mobile-menu__footer-btn"
@@ -582,7 +575,7 @@ export default function Header() {
           </div>
 
           {/* Logout Button (If Logged In) */}
-          {user && (
+          {isMounted && user && (
             <button 
               className="mobile-menu__logout-btn" 
               onClick={async () => {

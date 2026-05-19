@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -21,6 +22,7 @@ interface AuthContextType {
   loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
+  triggerLoginPrompt: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -69,13 +71,22 @@ function mapFirebaseError(code: string): string {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmPromise, setConfirmPromise] = useState<{ resolve: (value: boolean) => void } | null>(null);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [loginPromptPromise, setLoginPromptPromise] = useState<{ resolve: (value: boolean) => void } | null>(null);
 
   useEffect(() => {
+    setMounted(true);
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
     });
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      setMounted(false);
+    };
   }, []);
 
   const loginWithEmail = async (email: string, password: string) => {
@@ -135,8 +146,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const logout = async () => {
-    await signOut(auth);
+  const logout = () => {
+    setShowConfirmModal(true);
+    return new Promise<void>((resolve, reject) => {
+      setConfirmPromise({
+        resolve: (confirmed) => {
+          if (confirmed) {
+            signOut(auth).then(() => resolve()).catch(reject);
+          } else {
+            resolve();
+          }
+        }
+      });
+    });
   };
 
   const resetPassword = async (email: string) => {
@@ -155,11 +177,141 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const triggerLoginPrompt = () => {
+    setShowLoginPrompt(true);
+    return new Promise<boolean>((resolve) => {
+      setLoginPromptPromise({ resolve });
+    });
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, loading, loginWithEmail, registerWithEmail, loginWithGoogle, logout, resetPassword }}
+      value={{ user, loading, loginWithEmail, registerWithEmail, loginWithGoogle, logout, resetPassword, triggerLoginPrompt }}
     >
       {children}
+      {mounted && showConfirmModal && createPortal(
+        <LogoutConfirmModal
+          onConfirm={() => {
+            if (confirmPromise) confirmPromise.resolve(true);
+            setShowConfirmModal(false);
+            setConfirmPromise(null);
+          }}
+          onCancel={() => {
+            if (confirmPromise) confirmPromise.resolve(false);
+            setShowConfirmModal(false);
+            setConfirmPromise(null);
+          }}
+        />,
+        document.body
+      )}
+      {mounted && showLoginPrompt && createPortal(
+        <LoginPromptModal
+          onConfirm={() => {
+            if (loginPromptPromise) loginPromptPromise.resolve(true);
+            setShowLoginPrompt(false);
+            setLoginPromptPromise(null);
+          }}
+          onCancel={() => {
+            if (loginPromptPromise) loginPromptPromise.resolve(false);
+            setShowLoginPrompt(false);
+            setLoginPromptPromise(null);
+          }}
+        />,
+        document.body
+      )}
     </AuthContext.Provider>
+  );
+}
+
+interface LogoutConfirmModalProps {
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+function LogoutConfirmModal({ onConfirm, onCancel }: LogoutConfirmModalProps) {
+  return (
+    <div className="custom-dialog-overlay">
+      <div className="custom-dialog-box" role="dialog" aria-modal="true">
+        <div className="custom-dialog-icon custom-dialog-icon--warning">
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </div>
+        <h3 className="custom-dialog-title">Konfirmasi Keluar</h3>
+        <p className="custom-dialog-message">
+          Apakah Anda yakin ingin keluar dari akun Anda? Sesi Anda akan dihentikan.
+        </p>
+        <div className="custom-dialog-actions">
+          <button
+            type="button"
+            className="custom-dialog-btn custom-dialog-btn--cancel"
+            onClick={onCancel}
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            className="custom-dialog-btn custom-dialog-btn--confirm"
+            onClick={onConfirm}
+          >
+            Keluar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LoginPromptModal({ onConfirm, onCancel }: LogoutConfirmModalProps) {
+  return (
+    <div className="custom-dialog-overlay">
+      <div className="custom-dialog-box" role="dialog" aria-modal="true">
+        <div className="custom-dialog-icon custom-dialog-icon--info" style={{ color: 'var(--color-primary)', background: 'rgba(157, 27, 27, 0.08)' }}>
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+          </svg>
+        </div>
+        <h3 className="custom-dialog-title">Fitur Khusus Terdaftar</h3>
+        <p className="custom-dialog-message">
+          Fitur menyimpan artikel ke bookmark hanya tersedia bagi pembaca yang telah masuk atau terdaftar. Yuk, login sekarang!
+        </p>
+        <div className="custom-dialog-actions">
+          <button
+            type="button"
+            className="custom-dialog-btn custom-dialog-btn--cancel"
+            onClick={onCancel}
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            className="custom-dialog-btn custom-dialog-btn--confirm"
+            onClick={onConfirm}
+          >
+            Masuk / Daftar
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

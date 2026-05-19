@@ -150,13 +150,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
 
-            {/* Tags / Bottom actions */}
+            {/* Bottom Actions Share Bar */}
             <div className="article-page__bottom">
-              <div className="article-page__tags">
-                <Link href={`/kategori/${article.category.toLowerCase()}`} className="sidebar-tag">
-                  {article.category}
-                </Link>
-              </div>
               <div className="article-page__bottom-actions">
                 <ArticleShareActions articleId={article.id} title={article.title} />
               </div>

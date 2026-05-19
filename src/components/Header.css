@@ -548,7 +548,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-lg);
+  padding: 12px var(--space-lg);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -623,6 +623,68 @@
   background: var(--color-bg-alt);
   border-left-color: var(--color-primary);
   color: var(--color-primary);
+}
+
+/* --- Upgraded Compact 2-Column Grid Layout (Text-Only) --- */
+.mobile-menu__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 4px var(--space-lg) var(--space-md);
+}
+
+.mobile-menu__grid-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 6px;
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  min-height: 40px;
+}
+
+.mobile-menu__grid-btn:hover {
+  background: rgba(157, 27, 27, 0.05) !important;
+  border-color: var(--color-primary-light) !important;
+  transform: translateY(-1px);
+}
+
+.mobile-menu__grid-btn:active {
+  transform: scale(0.97);
+}
+
+.mobile-menu__grid-label {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  transition: color 0.2s ease;
+}
+
+.mobile-menu__grid-btn:hover .mobile-menu__grid-label {
+  color: var(--color-primary) !important;
+}
+
+/* Dark Mode Adaptations for Nav Grid */
+[data-theme="dark"] .mobile-menu__grid-btn {
+  background: var(--color-bg-card) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+[data-theme="dark"] .mobile-menu__grid-btn:hover {
+  background: rgba(255, 77, 77, 0.08) !important;
+  border-color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .mobile-menu__grid-btn:hover .mobile-menu__grid-label {
+  color: var(--color-primary) !important;
 }
 
 /* Responsive */
@@ -731,32 +793,33 @@
    ============================================================ */
 
 .mobile-menu__datetime {
-  padding: var(--space-lg);
-  background: var(--color-bg-alt);
+  padding: 10px var(--space-lg);
+  background: transparent;
   border-bottom: 1px solid var(--color-border);
   display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  text-align: center;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
 }
 
 .mobile-menu__time {
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-size: 0.88rem;
+  font-weight: 700;
   color: var(--color-primary);
   font-family: monospace;
   letter-spacing: 0.02em;
 }
 
 .mobile-menu__date {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--color-text-secondary);
   font-weight: 600;
 }
 
 .mobile-menu__profile-section {
-  padding: var(--space-lg);
-  background: var(--color-bg-alt);
+  padding: 16px var(--space-lg);
+  background: transparent;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -844,7 +907,7 @@
 .mobile-menu__footer {
   padding: var(--space-md) var(--space-lg) calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--color-border);
-  background: var(--color-bg-alt);
+  background: transparent;
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);

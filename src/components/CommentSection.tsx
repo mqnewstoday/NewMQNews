@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import { createPortal } from 'react-dom';
 import './CommentSection.css';
 
 interface Comment {
@@ -18,12 +21,61 @@ interface CommentSectionProps {
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyl9DM70aeZcnccVl6CLSnGg45VNLcZ8OOAZXX27Ja4CpedbklI2jhQN98HcjkTXuPEWQ/exec';
 
 export default function CommentSection({ itemId, category }: CommentSectionProps) {
+  const { user } = useAuth();
+  const router = useRouter();
+
   const [comments, setComments] = useState<Comment[]>([]);
   const [name, setName] = useState('');
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const commentsPerPage = 10;
+
+  // Limit alert states
+  const [showGuestModal, setShowGuestModal] = useState(false);
+  const [showToastLimit, setShowToastLimit] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  // Auto-fill logged-in user's name
+  useEffect(() => {
+    if (user) {
+      setName(user.displayName || user.email?.split('@')[0] || 'Pembaca Setia');
+    } else {
+      setName('');
+    }
+  }, [user]);
+
+  // Comment limits check helpers (backed by LocalStorage per content)
+  const getCommentCount = (): number => {
+    if (user) {
+      const keyUser = `mq_comments_count_${itemId}_${user.uid}`;
+      return parseInt(localStorage.getItem(keyUser) || '0', 10);
+    } else {
+      const keyGuest = `mq_comments_count_${itemId}_guest`;
+      return parseInt(localStorage.getItem(keyGuest) || '0', 10);
+    }
+  };
+
+  const incrementCommentCount = () => {
+    if (user) {
+      const keyUser = `mq_comments_count_${itemId}_${user.uid}`;
+      const current = parseInt(localStorage.getItem(keyUser) || '0', 10);
+      localStorage.setItem(keyUser, (current + 1).toString());
+    } else {
+      const keyGuest = `mq_comments_count_${itemId}_guest`;
+      const current = parseInt(localStorage.getItem(keyGuest) || '0', 10);
+      localStorage.setItem(keyGuest, (current + 1).toString());
+    }
+  };
 
   // Generate deterministic background color based on name string
   const getAvatarBg = (userName: string) => {
@@ -85,11 +137,29 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
 
   useEffect(() => {
     fetchComments();
+    setCurrentPage(1); // Reset page back to 1 on content change
   }, [itemId, category]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !text.trim() || submitting) return;
+
+    // Verify comment limits first
+    const currentCount = getCommentCount();
+    if (user) {
+      // Logged in user limit: 2 comments
+      if (currentCount >= 2) {
+        setShowToastLimit(true);
+        setTimeout(() => setShowToastLimit(false), 4000);
+        return;
+      }
+    } else {
+      // Guest user limit: 1 comment
+      if (currentCount >= 1) {
+        setShowGuestModal(true);
+        return;
+      }
+    }
 
     setSubmitting(true);
 
@@ -114,6 +184,7 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
       // Clear text field and show success
       setText('');
       setSubmitted(true);
+      incrementCommentCount();
       setTimeout(() => setSubmitted(false), 3000);
 
       // Re-fetch comments to show the new comment on the page.
@@ -126,6 +197,24 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
       console.error('Error saving comment:', err);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(comments.length / commentsPerPage);
+  const indexOfLastComment = currentPage * commentsPerPage;
+  const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+  const currentComments = comments.slice(indexOfFirstComment, indexOfLastComment);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -148,11 +237,11 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
               id="comment-name"
               type="text"
               className="comment-form__input"
-              placeholder="Masukkan nama Anda..."
+              placeholder={user ? "Nama profil terisi otomatis" : "Masukkan nama Anda..."}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              disabled={submitting}
+              disabled={submitting || !!user} // Locked when logged in for security and premium UX
             />
           </div>
         </div>
@@ -197,7 +286,7 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
             <span>Memuat komentar...</span>
           </div>
         ) : comments.length > 0 ? (
-          comments.map((comment, index) => (
+          currentComments.map((comment, index) => (
             <div
               key={comment.id}
               className="comment-bubble"
@@ -225,6 +314,92 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
           </div>
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="comment-pagination animate-fade-in">
+          <button
+            type="button"
+            className="comment-pagination__btn"
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            title="Komentar Terbaru"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '6px' }}>
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Komentar Terbaru
+          </button>
+          <span className="comment-pagination__info">
+            Halaman {currentPage} dari {totalPages}
+          </span>
+          <button
+            type="button"
+            className="comment-pagination__btn"
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            title="Komentar Lainnya"
+          >
+            Komentar Lainnya
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: '6px' }}>
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {/* Guest Limit Alert Modal Dialog (Identical to save/logout prompt, teleported to body) */}
+      {mounted && showGuestModal && createPortal(
+        <div className="custom-dialog-overlay">
+          <div className="custom-dialog-box animate-scale-in" role="dialog" aria-modal="true">
+            <div className="custom-dialog-icon custom-dialog-icon--warning" style={{ color: 'var(--color-primary)', background: 'rgba(157, 27, 27, 0.08)' }}>
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+            <h3 className="custom-dialog-title">Batas Komentar Tamu</h3>
+            <p className="custom-dialog-message">
+              Pembaca tamu hanya diperbolehkan menulis 1 komentar per konten. Silakan masuk atau mendaftar sekarang untuk bisa berdiskusi lebih banyak!
+            </p>
+            <div className="custom-dialog-actions">
+              <button
+                type="button"
+                className="custom-dialog-btn custom-dialog-btn--cancel"
+                onClick={() => setShowGuestModal(false)}
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                className="custom-dialog-btn custom-dialog-btn--confirm"
+                onClick={() => {
+                  setShowGuestModal(false);
+                  router.push('/login');
+                }}
+              >
+                Masuk / Daftar
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Registered User Limit Alert Toast (Identical to subscription active status toggle toast) */}
+      {showToastLimit && (
+        <div className="toast animate-slide-in-right">
+          Batas komentar tercapai. Pembaca terdaftar dibatasi maksimal 2 komentar per konten.
+        </div>
+      )}
     </section>
   );
 }

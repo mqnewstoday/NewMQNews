@@ -186,7 +186,7 @@ export default async function MubasyiratDetailPage({ params }: MubasyiratDetailP
                 </div>
                 <div className="mubasyirat-card__body">
                   <h4 className="mubasyirat-card__title">{dream.title}</h4>
-                  <p className="mubasyirat-card__excerpt">{dream.excerpt}</p>
+                  {dream.year && <span className="mubasyirat-card__date">Tahun: {dream.year}</span>}
                 </div>
               </Link>
             ))}

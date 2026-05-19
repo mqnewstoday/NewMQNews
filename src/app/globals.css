@@ -586,15 +586,23 @@ p {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  padding: var(--space-md) var(--space-lg);
-  background: var(--color-text);
-  color: white;
+  padding: 12px 20px;
+  background: var(--color-primary); /* Beautiful brand crimson red (same as header in light mode) */
+  color: #ffffff !important;
   border-radius: var(--radius-md);
-  font-size: 0.9rem;
-  font-weight: 500;
-  box-shadow: var(--shadow-xl);
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(157, 27, 27, 0.25); /* Matching subtle crimson shadow */
   z-index: 9999;
-  animation: slideInRight 0.3s ease, fadeIn 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12); /* Subtle glass white border */
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1), fadeIn 0.2s ease;
+}
+
+[data-theme="dark"] .toast {
+  background: #1e293b; /* Distinct slate navy for dark mode popups */
+  color: #f8fafc !important;
+  border: 1px solid var(--color-primary); /* Premium glowing brand-red border in dark mode */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* ---------- Breadcrumb ---------- */
@@ -669,5 +677,162 @@ p {
     padding: var(--space-sm) var(--space-md) !important;
     margin: 1.2em 0 !important;
     font-size: 0.88rem !important;
+  }
+}
+
+/* ============================================================
+   Custom Premium Confirmation Modal Dialog
+   ============================================================ */
+.custom-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  animation: customDialogFadeIn 0.22s ease-out forwards;
+}
+
+.custom-dialog-box {
+  background: var(--color-bg-card, #ffffff);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-xl) var(--space-lg) var(--space-lg);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: customDialogScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.custom-dialog-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* Type warning */
+.custom-dialog-icon--warning {
+  background: rgba(157, 27, 27, 0.08); /* Primary brand crimson overlay */
+  color: #9d1b1b;
+}
+
+[data-theme="dark"] .custom-dialog-icon--warning {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ff4d4d;
+}
+
+/* Type info */
+.custom-dialog-icon--info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+/* Type success */
+.custom-dialog-icon--success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.custom-dialog-title {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-xs);
+  letter-spacing: -0.01em;
+}
+
+.custom-dialog-message {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xl);
+}
+
+.custom-dialog-actions {
+  display: flex;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.custom-dialog-btn {
+  flex: 1;
+  padding: 11px var(--space-md);
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.92rem;
+  transition: all var(--transition-base);
+  text-align: center;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.custom-dialog-btn--cancel {
+  background: var(--color-bg-alt, #f3f4f6);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.custom-dialog-btn--cancel:hover {
+  background: var(--color-border);
+}
+
+.custom-dialog-btn--confirm {
+  background: var(--color-primary);
+  color: #ffffff !important;
+}
+
+.custom-dialog-btn--confirm:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Bold deep crimson in dark mode for all confirm buttons, avoiding pale/pink colors */
+[data-theme="dark"] .custom-dialog-btn--confirm {
+  background: #b91c1c;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .custom-dialog-btn--confirm:hover {
+  background: #991b1b;
+}
+
+@keyframes customDialogFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes customDialogScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }

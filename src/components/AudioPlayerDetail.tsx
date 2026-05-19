@@ -50,7 +50,7 @@ export default function AudioPlayerDetail({ item, prevId, nextId }: AudioPlayerD
     window.open(waUrl, '_blank', 'noopener,noreferrer');
   };
 
-  const { user } = useAuth();
+  const { user, triggerLoginPrompt } = useAuth();
 
   // Check bookmarks on mount/id change and sync with Firestore
   useEffect(() => {
@@ -94,6 +94,14 @@ export default function AudioPlayerDetail({ item, prevId, nextId }: AudioPlayerD
 
   // Toggle bookmark state in LocalStorage & Firestore
   const handleBookmarkToggle = async () => {
+    if (!user) {
+      const confirmLogin = await triggerLoginPrompt();
+      if (confirmLogin) {
+        router.push('/login');
+      }
+      return;
+    }
+
     setAnimating(true);
     setTimeout(() => setAnimating(false), 400);
 
