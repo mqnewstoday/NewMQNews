@@ -31,7 +31,8 @@ const readAndOptimizeFile = (filename: string): string | null => {
 
 // Load Knowledge Base (combining the main dream book and all 5 Pakistan speeches)
 const loadKnowledgeBase = (): string => {
-  if (cachedKnowledgeBase) {
+  // Bypass cache in development mode to ensure newly added or updated files are immediately loaded
+  if (cachedKnowledgeBase && process.env.NODE_ENV !== 'development') {
     return cachedKnowledgeBase;
   }
 
@@ -49,27 +50,42 @@ const loadKnowledgeBase = (): string => {
     const speech4Content = readAndOptimizeFile('Pidato Keempat Muhammad Qasim di Pakistan.txt') || '';
     const speech5Content = readAndOptimizeFile('Pidato Kelima Muhammad Qasim di Pakistan.txt') || '';
 
-    // Combine them beautifully with descriptive headers
-    let combined = `=== [DOKUMEN 1: BUKU KUMPULAN MIMPI MUHAMMAD QASIM INDO MALAY] ===\n${bookContent}\n\n`;
-    
+    // Create an explicit index of available documents at the top of the context
+    // This guarantees the AI knows exactly how many documents and speeches exist!
+    let combined = `=== [DAFTAR DOKUMEN YANG TERSEDIA] ===
+Di bawah ini adalah 6 dokumen resmi yang terlampir secara lengkap dalam basis pengetahuan:
+1. DOKUMEN 1: BUKU KUMPULAN MIMPI MUHAMMAD QASIM INDO MALAY (Basis data utama kumpulan mimpi Muhammad Qasim)
+2. DOKUMEN 2: PIDATO PERTAMA MUHAMMAD QASIM DI PAKISTAN (Disampaikan pada Juli 2023)
+3. DOKUMEN 3: PIDATO KEDUA MUHAMMAD QASIM DI PAKISTAN (Disampaikan setelah pidato pertama, tanggal tidak disebutkan secara rinci)
+4. DOKUMEN 4: PIDATO KETIGA MUHAMMAD QASIM DI PAKISTAN (Disampaikan pada 6 September 2023)
+5. DOKUMEN 5: PIDATO KEEMPAT MUHAMMAD QASIM DI PAKISTAN (Disampaikan pada Oktober 2023)
+6. DOKUMEN 6: PIDATO KELIMA MUHAMMAD QASIM DI PAKISTAN (Disampaikan pada Desember 2023)
+
+==================================================
+
+=== [ISI DOKUMEN 1: BUKU KUMPULAN MIMPI MUHAMMAD QASIM INDO MALAY] ===
+${bookContent}
+
+`;
+
     if (speech1Content) {
-      combined += `=== [DOKUMEN 2: PIDATO PERTAMA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech1Content}\n\n`;
+      combined += `=== [ISI DOKUMEN 2: PIDATO PERTAMA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech1Content}\n\n`;
     }
     
     if (speech2Content) {
-      combined += `=== [DOKUMEN 3: PIDATO KEDUA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech2Content}\n\n`;
+      combined += `=== [ISI DOKUMEN 3: PIDATO KEDUA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech2Content}\n\n`;
     }
 
     if (speech3Content) {
-      combined += `=== [DOKUMEN 4: PIDATO KETIGA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech3Content}\n\n`;
+      combined += `=== [ISI DOKUMEN 4: PIDATO KETIGA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech3Content}\n\n`;
     }
 
     if (speech4Content) {
-      combined += `=== [DOKUMEN 5: PIDATO KEEMPAT MUHAMMAD QASIM DI PAKISTAN] ===\n${speech4Content}\n\n`;
+      combined += `=== [ISI DOKUMEN 5: PIDATO KEEMPAT MUHAMMAD QASIM DI PAKISTAN] ===\n${speech4Content}\n\n`;
     }
 
     if (speech5Content) {
-      combined += `=== [DOKUMEN 6: PIDATO KELIMA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech5Content}\n\n`;
+      combined += `=== [ISI DOKUMEN 6: PIDATO KELIMA MUHAMMAD QASIM DI PAKISTAN] ===\n${speech5Content}\n\n`;
     }
 
     combined = combined.trim();
