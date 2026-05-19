@@ -143,10 +143,9 @@ export default function BookmarkPage() {
   );
 
   return (
-    <div className="bookmark-page">
-      <div className="container section">
-        {/* Smart Back Button */}
-        <BackButton />
+    <div className="bookmark-page container section">
+      {/* Smart Back Button */}
+      <BackButton />
 
         <div className="bookmark-page__header" style={{ marginTop: 'var(--space-sm)' }}>
           <div className="bookmark-page__icon">
@@ -254,7 +253,6 @@ export default function BookmarkPage() {
             )}
           </div>
         )}
-      </div>
     </div>
   );
 }

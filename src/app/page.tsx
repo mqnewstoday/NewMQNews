@@ -64,7 +64,7 @@ export default async function HomePage() {
                   </Link>
                 </div>
 
-                <div className="grid grid-2" style={{ gap: 'var(--space-md)' }}>
+                <div className="grid grid-2 home-audio-grid" style={{ gap: 'var(--space-md)' }}>
                   {audioItems.slice(0, 5).map((item) => (
                     <AudioCard key={item.id} item={item} />
                   ))}

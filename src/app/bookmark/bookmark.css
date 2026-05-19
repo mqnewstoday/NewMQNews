@@ -1,6 +1,7 @@
 /* Bookmark Page Styles */
 
 .bookmark-page {
+  padding-top: var(--space-xl);
   min-height: 75vh;
   padding-bottom: var(--space-4xl);
 }

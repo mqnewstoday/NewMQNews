@@ -628,11 +628,11 @@ p {
 
 /* ---------- Global Fixed Header Spacer ---------- */
 #main-content {
-  padding-top: 114px;
+  padding-top: 120px;
 }
 
 @media (max-width: 768px) {
   #main-content {
-    padding-top: 80px;
+    padding-top: 114px; /* Increased from 80px to perfectly clear the active horizontal mobile navbar */
   }
 }

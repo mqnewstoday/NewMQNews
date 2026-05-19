@@ -24,7 +24,6 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Generate deterministic background color based on name string
   const getAvatarBg = (userName: string) => {
@@ -62,56 +61,30 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
 
   const fetchComments = async () => {
     setLoading(true);
-    setError(null);
     try {
       const res = await fetch(`${SCRIPT_URL}?kontenId=${encodeURIComponent(itemId)}&tipeHalaman=${encodeURIComponent(category)}`);
-      
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
       const data = await res.json();
-      
-      if (!Array.isArray(data)) {
-        throw new Error('Data komentar dari server tidak valid.');
-      }
-      
+
       const mapped: Comment[] = data.map((c: any, idx: number) => ({
         id: `sheet-${idx}-${c.timestamp}`,
         name: c.nama || 'Anonim',
         text: c.pesan || '',
         timestamp: c.timestamp ? new Date(c.timestamp).getTime() : Date.now()
       }));
-      
+
       // Sort comments by timestamp descending (newest first)
       mapped.sort((a, b) => b.timestamp - a.timestamp);
-      
+
       setComments(mapped);
     } catch (err) {
-      console.warn('Silent notice: Failed to retrieve comments from Google App Script.', err);
-      setError('Komentar tidak dapat dimuat saat ini. Pastikan koneksi internet Anda aktif atau nonaktifkan pemblokir iklan (ad-blocker) yang menghalangi Google Apps Script.');
+      console.error('Error fetching comments:', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    let active = true;
-    
-    // Safely execute within useEffect hook boundary
-    const executeFetch = async () => {
-      if (active) {
-        await fetchComments();
-      }
-    };
-    
-    executeFetch().catch((err) => {
-      console.error('Unhandled hook fetch exception:', err);
-    });
-
-    return () => {
-      active = false;
-    };
+    fetchComments();
   }, [itemId, category]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -119,7 +92,7 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
     if (!name.trim() || !text.trim() || submitting) return;
 
     setSubmitting(true);
-    
+
     const payload = {
       tipeHalaman: category,
       kontenId: itemId,
@@ -142,11 +115,11 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
       setText('');
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 3000);
-      
+
       // Re-fetch comments to show the new comment on the page.
       // We wait 1.2s to ensure the Google Sheet write thread completes!
       setTimeout(() => {
-        fetchComments().catch(() => {});
+        fetchComments();
       }, 1200);
 
     } catch (err) {
@@ -183,7 +156,7 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
             />
           </div>
         </div>
-        
+
         <div className="comment-form__group" style={{ marginTop: 'var(--space-sm)' }}>
           <label htmlFor="comment-text" className="comment-form__label">Pesan / Komentar</label>
           <textarea
@@ -222,26 +195,6 @@ export default function CommentSection({ itemId, category }: CommentSectionProps
           <div className="comment-section__loading">
             <div className="comment-spinner"></div>
             <span>Memuat komentar...</span>
-          </div>
-        ) : error ? (
-          <div className="comment-section__error" style={{
-            background: 'rgba(157, 27, 27, 0.08)',
-            border: '1px solid rgba(157, 27, 27, 0.2)',
-            borderRadius: 'var(--radius-md)',
-            padding: '14px 18px',
-            fontSize: '0.88rem',
-            color: 'var(--color-text-secondary)',
-            lineHeight: '1.6',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '12px'
-          }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" style={{ flexShrink: 0, marginTop: '2px' }}>
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" x2="12" y1="8" y2="12" />
-              <line x1="12" x2="12.01" y1="16" y2="16" />
-            </svg>
-            <span>{error}</span>
           </div>
         ) : comments.length > 0 ? (
           comments.map((comment, index) => (

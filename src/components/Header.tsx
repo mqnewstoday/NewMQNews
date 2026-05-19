@@ -201,7 +201,12 @@ export default function Header() {
               </div>
             </Link>
 
-            {/* Search Bar - Always Visible */}
+            {/* Compact Mobile Clock (Only visible on Mobile) */}
+            <div className="header__mobile-clock" suppressHydrationWarning>
+              {timeString ? timeString.split(' ')[0] : '00:00'}
+            </div>
+
+            {/* Search Bar - Always Visible on Desktop */}
             <form className="header__search-form" onSubmit={handleSearch} id="search-form">
               <div className="header__search-wrapper">
                 <svg className="header__search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -237,7 +242,7 @@ export default function Header() {
             {/* Date, Actions, & Hamburger */}
             <div className="header__right-section">
               <div className="header__date-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
-              <div className="header__date" suppressHydrationWarning>
+                <div className="header__date" suppressHydrationWarning>
                   {dateString || 'Memuat tanggal...'}
                 </div>
                 <div className="header__time" suppressHydrationWarning style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary-light)', marginTop: '2px', letterSpacing: '0.04em', fontFamily: 'monospace' }}>
@@ -248,7 +253,7 @@ export default function Header() {
               {/* sleek divider */}
               <div className="header__divider"></div>
 
-              {/* Actions Row */}
+              {/* Actions Row (Desktop Only) */}
               <div className="header__actions">
                 {/* Notification Button */}
                 <Link 
@@ -385,7 +390,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Navigation Bar */}
+        {/* Navigation Bar (Desktop & Mobile Category Navbar) */}
         <nav className="header__nav" id="main-nav">
           <div className="container header__nav-inner">
             <div className="header__nav-main">
@@ -413,6 +418,7 @@ export default function Header() {
         onClick={() => setMobileMenuOpen(false)}
       />
       <aside className={`mobile-menu ${mobileMenuOpen ? 'mobile-menu--active' : ''}`} id="mobile-menu">
+        {/* Mobile menu Header */}
         <div className="mobile-menu__header">
           <Link href="/" className="header__logo" onClick={() => setMobileMenuOpen(false)}>
             <Image
@@ -437,6 +443,44 @@ export default function Header() {
           </button>
         </div>
 
+        {/* Mobile Clock & Date Section inside Sidebar */}
+        <div className="mobile-menu__datetime" suppressHydrationWarning>
+          <div className="mobile-menu__time">{timeString || '00:00:00 WIB'}</div>
+          <div className="mobile-menu__date">{dateString || 'Memuat tanggal...'}</div>
+        </div>
+
+        {/* Mobile Profile Section */}
+        <div className="mobile-menu__profile-section">
+          {user ? (
+            <div className="mobile-menu__user-info">
+              <div className="mobile-menu__avatar-wrapper">
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt="" className="mobile-menu__avatar" />
+                ) : (
+                  <div className="mobile-menu__avatar-placeholder">
+                    {user.displayName ? user.displayName[0].toUpperCase() : (user.email ? user.email[0].toUpperCase() : 'U')}
+                  </div>
+                )}
+              </div>
+              <div className="mobile-menu__user-details">
+                <span className="mobile-menu__user-name">{user.displayName || 'Pengguna'}</span>
+                <span className="mobile-menu__user-email">{user.email}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="mobile-menu__auth-prompt">
+              <p className="mobile-menu__auth-text">Masuk untuk menyimpan bookmark, kelola akun, dan berdiskusi.</p>
+              <Link 
+                href="/login" 
+                className="btn btn-primary mobile-menu__login-btn" 
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Masuk / Daftar
+              </Link>
+            </div>
+          )}
+        </div>
+
         {/* Mobile Search */}
         <div className="mobile-menu__search">
           <form onSubmit={(e) => { handleSearch(e); setMobileMenuOpen(false); }}>
@@ -456,20 +500,23 @@ export default function Header() {
           </form>
         </div>
 
+        {/* Mobile Menu & Categories Nav List */}
         <nav className="mobile-menu__nav">
-          <div className="mobile-menu__section-label">Menu</div>
+          <div className="mobile-menu__section-label">Menu Utama</div>
           {NAV_ITEMS.map((item, i) => (
             <Link
               key={item.href}
               href={item.href}
               className="mobile-menu__link"
               onClick={() => setMobileMenuOpen(false)}
-              style={{ animationDelay: `${i * 50}ms` }}
+              style={{ animationDelay: `${i * 40}ms` }}
             >
               {item.label}
             </Link>
           ))}
+          
           <div className="mobile-menu__divider" />
+          
           <div className="mobile-menu__section-label">Kategori Berita</div>
           {BERITA_CATEGORIES.map((cat, i) => (
             <Link
@@ -477,12 +524,81 @@ export default function Header() {
               href={cat.href}
               className="mobile-menu__link mobile-menu__link--sub"
               onClick={() => setMobileMenuOpen(false)}
-              style={{ animationDelay: `${(i + NAV_ITEMS.length) * 50}ms` }}
+              style={{ animationDelay: `${(i + NAV_ITEMS.length) * 40}ms` }}
             >
               {cat.label}
             </Link>
           ))}
         </nav>
+
+        {/* Mobile Menu Footer Actions */}
+        <div className="mobile-menu__footer">
+          <div className="mobile-menu__footer-actions">
+            {/* Notification */}
+            <Link 
+              href="/notifikasi" 
+              className="mobile-menu__footer-btn"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              Notifikasi
+            </Link>
+
+            {/* Settings */}
+            <Link 
+              href="/settings" 
+              className="mobile-menu__footer-btn"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+              Pengaturan
+            </Link>
+
+            {/* Profile (If Logged In) */}
+            {user && (
+              <Link 
+                href="/profil" 
+                className="mobile-menu__footer-btn"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ gridColumn: 'span 2' }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="16" rx="2" />
+                  <circle cx="9" cy="10" r="2" />
+                  <path d="M6 16c0-1 1-2 3-2s3 1 3 2" />
+                  <line x1="15" x2="18" y1="8" y2="8" />
+                  <line x1="15" x2="18" y1="12" y2="12" />
+                  <line x1="15" x2="18" y1="16" y2="16" />
+                </svg>
+                Profil Saya
+              </Link>
+            )}
+          </div>
+
+          {/* Logout Button (If Logged In) */}
+          {user && (
+            <button 
+              className="mobile-menu__logout-btn" 
+              onClick={async () => {
+                await logout();
+                setMobileMenuOpen(false);
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Keluar Akun
+            </button>
+          )}
+        </div>
       </aside>
     </>
   );
