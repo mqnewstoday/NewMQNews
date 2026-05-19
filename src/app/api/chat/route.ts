@@ -63,10 +63,17 @@ PANDUAN MENJAWAB:
     // Map history to Gemini format
     // Simple format: list of { role: 'user' | 'model', parts: [{ text: string }] }
     // Note: Gemini expects roles to alternate strictly user -> model -> user -> model...
-    const geminiHistory = messages.map((m: any) => ({
+    let geminiHistory = messages.map((m: any) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }],
     }));
+
+    // CRITICAL: Gemini requires the first message in the chat history to have the role 'user'.
+    // Since our initial greeting message is a static welcome from the assistant (role 'model'),
+    // we must remove any leading model messages from the history!
+    while (geminiHistory.length > 0 && geminiHistory[0].role === 'model') {
+      geminiHistory.shift();
+    }
 
     // System instruction is supplied via model config.
     // Try each API Key in sequence (rotation & fallback)
