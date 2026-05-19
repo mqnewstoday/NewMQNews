@@ -23,7 +23,7 @@ export default function ChatbotWidget() {
     setMessages([
       {
         role: 'assistant',
-        content: 'Assalamualaikum! Saya Asisten AI MQ News Today. Saya siap membantu menjawab pertanyaan Anda seputar kumpulan mimpi Muhammad Qasim secara cerdas berdasarkan basis pengetahuan resmi. Apa yang ingin Anda tanyakan hari ini? ☺️',
+        content: 'Assalamualaikum! Saya Asisten AI MQ News Today. Saya siap membantu menjawab pertanyaan Anda seputar kumpulan mimpi Muhammad Qasim secara cerdas berdasarkan basis pengetahuan resmi. Apa yang ingin Anda tanyakan hari ini?',
       },
     ]);
   }, []);

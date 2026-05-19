@@ -6,8 +6,17 @@ import path from 'path';
 // Load Knowledge Base
 const loadKnowledgeBase = (): string => {
   try {
-    const filePath = path.join(process.cwd(), 'src/data/buku_mimpi.txt');
+    // Try to load the full 462KB book first
+    let filePath = path.join(process.cwd(), 'src/data/Mimpi Muhammad Qasim Indo Malay.txt');
     if (fs.existsSync(filePath)) {
+      console.log('Successfully loaded full book: Mimpi Muhammad Qasim Indo Malay.txt');
+      return fs.readFileSync(filePath, 'utf-8');
+    }
+    
+    // Fallback to placeholder buku_mimpi.txt
+    filePath = path.join(process.cwd(), 'src/data/buku_mimpi.txt');
+    if (fs.existsSync(filePath)) {
+      console.log('Falling back to default book: buku_mimpi.txt');
       return fs.readFileSync(filePath, 'utf-8');
     }
   } catch (error) {
@@ -51,13 +60,12 @@ KNOWLEDGE BASE (BASIS PENGETAHUAN RESMI):
 ${knowledgeBase}
 =========================================
 
-PANDUAN MENJAWAB:
-1. Jawablah menggunakan bahasa Indonesia yang ramah, sopan, dan mudah dipahami.
-2. Jawaban Anda harus didasarkan sepenuhnya pada fakta di dalam KNOWLEDGE BASE di atas. Jika pertanyaan pembaca tidak dapat dijawab berdasarkan dokumen di atas, katakan secara jujur dan sopan bahwa Anda tidak memiliki informasi tersebut di dalam buku mimpi saat ini.
-3. Hindari berspekulasi atau membuat narasi tambahan di luar teks yang disediakan.
-4. Anda dapat menggunakan format bullet-points, bold teks, atau paragraf pendek agar jawaban enak dibaca.
-5. Jawablah secara ringkas dan langsung ke inti pertanyaan.
-6. Ingat, Muhammad Qasim tidak pernah mengklaim dirinya sebagai Nabi atau Imam Mahdi. Mimpi-mimpinya murni merupakan Mubasyirat (kabar gembira).
+PANDUAN GAYA BAHASA DAN INTRUKSI UTAMA:
+1. JAWAB DENGAN SANTAI & PERCAYA DIRI: Jawablah dengan nada yang santai, percaya diri, akrab, bersahabat, dan mengalir secara alami. Hindari gaya bahasa yang kaku, terlalu formal, atau robotic.
+2. DILARANG MENGULANG BOILERPLATE: JANGAN PERNAH mengulang-ulang kalimat kaku seperti "Berdasarkan basis pengetahuan resmi...", "Berdasarkan data yang disediakan...", atau sejenisnya di awal maupun di dalam jawaban Anda. Jawab langsung saja pertanyaan tersebut seolah-olah Anda memang sudah memahami dan menguasai informasi tersebut dengan alami.
+3. BATASAN FAKTA: Jawaban Anda tetap harus didasarkan sepenuhnya pada fakta di dalam KNOWLEDGE BASE di atas. Jika ada pertanyaan pembaca yang benar-benar tidak ada di dalam buku/teks mimpi di atas, katakan saja secara santai dan sopan bahwa Anda belum memiliki informasi tersebut saat ini.
+4. FORMAT NYAMAN DIBACA: Gunakan bold teks, paragraf pendek, atau bullet-points agar jawaban mudah dibaca. Jawab secara ringkas dan langsung ke poin utama.
+5. INFORMASI PENTING: Muhammad Qasim tidak pernah mengklaim dirinya sebagai Nabi atau Imam Mahdi. Mimpi-mimpinya murni merupakan Mubasyirat (kabar gembira).
 `;
 
     // Map history to Gemini format
