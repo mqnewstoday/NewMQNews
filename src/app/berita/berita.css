@@ -29,3 +29,26 @@
   padding: var(--space-3xl) 0;
   color: var(--color-text-muted);
 }
+
+/* Mobile Responsive 2-Column Grid Alignment */
+@media (max-width: 768px) {
+  .berita-page .grid-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  .berita-page .article-card__body {
+    padding: 10px !important;
+  }
+  
+  .berita-page .article-card__excerpt,
+  .berita-page .article-card__footer {
+    display: none !important;
+  }
+
+  .berita-page .article-card__title {
+    font-size: 0.85rem !important;
+    line-height: 1.35 !important;
+    margin-bottom: 0 !important;
+  }
+}

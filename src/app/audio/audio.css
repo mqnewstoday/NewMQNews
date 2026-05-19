@@ -138,15 +138,46 @@
 
 @media (max-width: 768px) {
   .audio-list-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
   }
   
   .audio-player-card {
-    flex-direction: column;
+    flex-direction: column !important;
+    height: 100% !important;
   }
   
   .audio-player-card__thumb {
-    width: 100%;
-    aspect-ratio: 16 / 9;
+    width: 100% !important;
+    aspect-ratio: 16 / 10 !important;
+  }
+  
+  .audio-player-card__content {
+    padding: 10px !important;
+    gap: 6px !important;
+    justify-content: space-between !important;
+  }
+  
+  .audio-player-card__title {
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 2px !important;
+    white-space: normal !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+  
+  .audio-player-card__desc {
+    display: none !important;
+  }
+  
+  .audio-player-card__action-btn {
+    padding: 5px 12px !important;
+    font-size: 0.68rem !important;
+    align-self: stretch !important;
+    text-align: center !important;
+    justify-content: center !important;
   }
 }

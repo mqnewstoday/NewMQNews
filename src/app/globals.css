@@ -635,4 +635,11 @@ p {
   #main-content {
     padding-top: 114px; /* Increased from 80px to perfectly clear the active horizontal mobile navbar */
   }
+
+  /* Compact Category Tags on Mobile */
+  .category-tag {
+    font-size: 0.62rem !important;
+    padding: 2px 8px !important;
+    letter-spacing: 0.02em !important;
+  }
 }
